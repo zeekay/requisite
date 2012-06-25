@@ -6,10 +6,7 @@ task 'build', 'Generate docs and compile project', ->
 
 task 'compile', 'Compile *.coffee -> *.js', ->
   console.log 'coffee: Compiling src/*.coffee -> lib/*.js'
-  exec [
-    './node_modules/.bin/coffee -bc -o lib/ src/'
-    'git add lib'
-  ]
+  exec './node_modules/.bin/coffee -bc -o lib/ src/'
 
 task 'docs', 'Generate docs with docco', ->
   exec './node_modules/.bin/docco-husky src/'
@@ -21,7 +18,6 @@ task 'gh-pages', 'Publish docs to gh-pages', ->
     'git stash'
     'git checkout gh-pages'
     'rm -rdf docs'
-    'git add -A'
     'git stash pop'
     'git commit -am "Updating docs"'
     'git push origin gh-pages'
@@ -32,5 +28,8 @@ task 'test', 'Run tests', ->
   exec './node_modules/.bin/mocha ./test --compilers coffee:coffee-script -R spec -t 5000 -c'
 
 task 'publish', 'Push to Github and publish current version on NPM', ->
-  exec 'git push'
-  exec 'npm publish'
+  exec [
+    './node_modules/.bin/coffee -bc -o lib/ src/'
+    'git push'
+    'npm publish'
+  ]
