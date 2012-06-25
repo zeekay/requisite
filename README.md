@@ -1,4 +1,4 @@
-mandala
+requisite
 =======
 
-A cosmic asset unifier.
+A cosmic JavaScript bundler.

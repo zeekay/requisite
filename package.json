@@ -1,11 +1,11 @@
 {
-  "name": "mandala",
-  "version": "0.1.6",
-  "description": "A cosmic asset unifier.",
+  "name": "requisite",
+  "version": "0.1.0",
+  "description": "A cosmic javascript bundler.",
   "main": "lib",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zeekay/mandala"
+    "url": "https://github.com/zeekay/requisite"
   },
   "keywords": [
     "asset",
@@ -19,11 +19,11 @@
     "email": "zeekayy@gmail.com",
     "url": "https://whatit.is"
   },
-  "homepage": "https://github.com/zeekay/mandala",
+  "homepage": "https://github.com/zeekay/requisite",
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/zeekay/mandala/blob/master/LICENSE"
+      "url": "https://github.com/zeekay/requisite/blob/master/LICENSE"
     }
   ],
   "dependencies": {
@@ -36,7 +36,7 @@
   },
   "docco_husky": {
     "output_dir": "docs/",
-    "project_name": "Mandala",
+    "project_name": "Requisite",
     "show_timestamp": false
   }
 }
