@@ -1,4 +1,4 @@
 node_modules/
+Cakefile
+test/
 src/
-docs/
-lib/
