@@ -12,7 +12,11 @@
     "minify",
     "compress",
     "inception",
-    "bundle"
+    "bundle",
+    "module",
+    "requirejs",
+    "require"
+    "browser"
   ],
   "author": {
     "name": "Zach Kelling",
