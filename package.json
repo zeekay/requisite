@@ -15,7 +15,7 @@
     "bundle",
     "module",
     "requirejs",
-    "require"
+    "require",
     "browser"
   ],
   "author": {
