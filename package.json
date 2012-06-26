@@ -35,12 +35,6 @@
   },
   "devDependencies": {
     "coffee-script": "~1.3.3",
-    "mocha": "~1.2.0",
-    "docco-husky": "~0.3.3"
-  },
-  "docco_husky": {
-    "output_dir": "docs/",
-    "project_name": "Requisite",
-    "show_timestamp": false
+    "mocha": "~1.2.0"
   }
 }
