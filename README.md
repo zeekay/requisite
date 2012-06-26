@@ -16,6 +16,7 @@ Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript a
       entry: '/path/to/entry.js'
       prepend: ['libs', 'to', 'be', 'prepended']
 
-    requisite.bundle() # bundled js
+    requisite.bundle, (err, content) ->
+      # use bundled js
 
 That's it!
