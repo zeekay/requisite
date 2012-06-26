@@ -12,18 +12,12 @@
 <li>Access to the AST allowing custom transformations.</li>
 </ul>
 <h3>Usage</h3>
-<p>```coffeescript
-requisite = require(&#39;requisite&#39;).createBundle
-  entry: &#39;/path/to/entry.js&#39;
-  prepend: [&#39;libs&#39;, &#39;to&#39;, &#39;be&#39;, &#39;prepended&#39;]
+<pre><code class="lang-coffeescript">requisite = require(<span class="string">'requisite'</span>).createBundle
+  entry: <span class="string">'/path/to/entry.js'</span>
+  prepend: [<span class="string">'libs'</span>, <span class="string">'to'</span>, <span class="string">'be'</span>, <span class="string">'prepended'</span>]
 
-</p>
-<p>requisite.bundle, (err, content) -&gt;
-</p>
-<h1>use bundled js</h1>
-<p>```
-
-</p>
+requisite.bundle, (err, content) ->
+  <span class="comment"># use bundled js</span></code></pre>
 <p>That&#39;s it!
 </p>
 </p></section><footer><p>This project is maintained by<a href="https://github.com/zeekay">zeekay</a></p><p><small>Hosted on GitHub Pages — Theme by<a href="https://github.com/orderedlist">orderedlist</a></small></p></footer></div><script src="javascripts/scale.fix.js"></script></body><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script></html>
