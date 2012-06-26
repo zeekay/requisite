@@ -12,5 +12,10 @@ Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript a
 - Access to the AST allowing custom transformations.
 
 ### Usage
+    requisite = require('requisite').createBundle
+      entry: '/path/to/entry.js'
+      prepend: ['libs', 'to', 'be', 'prepended']
 
-Stick all of your client-side JavaScript in a folder somewhere and point requisite at an entry point.
+    requisite.bundle() # bundled js
+
+That's it!
