@@ -10,6 +10,7 @@ Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript a
 - Very minimal and fast browser CommonJS module implementation.
 - Completely Asynchronous bundling suitable for use in Node.js applications.
 - Simple JavaScript API.
+- Easy access to JavaScript AST making it simple to write your own transformations.
 
 ### Usage
 
