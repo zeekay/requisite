@@ -22,7 +22,8 @@ task 'gh-pages', 'Publish docs to gh-pages', ->
       fs.writeFileSync __dirname + '/index.html', content, 'utf8'
       exec 'git add index.html', ->
         exec 'git commit -m "Updated gh-pages."', ->
-          exec 'git checkout master', ->
+          exec 'git push', ->
+            exec 'git checkout master', ->
 
 task 'test', 'Run tests', ->
   exec './node_modules/.bin/mocha ./test --compilers coffee:coffee-script -R spec -t 5000 -c'
