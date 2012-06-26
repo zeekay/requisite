@@ -12,11 +12,13 @@ Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript a
 - Access to the AST allowing custom transformations.
 
 ### Usage
-    requisite = require('requisite').createBundle
-      entry: '/path/to/entry.js'
-      prepend: ['libs', 'to', 'be', 'prepended']
+```coffeescript
+requisite = require('requisite').createBundle
+  entry: '/path/to/entry.js'
+  prepend: ['libs', 'to', 'be', 'prepended']
 
-    requisite.bundle, (err, content) ->
-      # use bundled js
+requisite.bundle, (err, content) ->
+  # use bundled js
+```
 
 That's it!
