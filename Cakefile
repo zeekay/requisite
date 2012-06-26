@@ -12,7 +12,8 @@ task 'docs', 'Generate docs with docco', ->
   exec './node_modules/.bin/docco-husky src/'
 
 task 'gh-pages', 'Publish docs to gh-pages', ->
-  brief  = require 'brief'
+  brief = require('brief')
+    quiet: false
   brief.updateGithubPages()
 
 task 'test', 'Run tests', ->
