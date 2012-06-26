@@ -4,14 +4,13 @@ Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript a
 
 ### Features
 
-- Asynchronous and Synchronous CommonJS modules.
-- Supports AMD as well.
-- Resolves dependencies intelligently, guaranteeing each file is only pulled in one time.
-- Very minimal and fast browser CommonJS module implementation.
-- Completely Asynchronous bundling suitable for use in Node.js applications.
-- Simple JavaScript API.
-- Easy access to JavaScript AST making it simple to write your own transformations.
+- CommonJS modules.
+- Relative dependency and NPM module resolution.
+- Minimal and fast CommonJS module implementation for the browser.
+- Asynchronous bundling suitable for use in Node.js applications.
+- JavaScript API for programmatic usage.
+- Access to the AST allowing custom transformations.
 
 ### Usage
 
-Stick all of your client-side JavaScript in a folder somewhere and point requisite to an entry point.
+Stick all of your client-side JavaScript in a folder somewhere and point requisite at an entry point.
