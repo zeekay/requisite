@@ -137,7 +137,7 @@ wrap = (file, {minify}) ->
   #{file.body}
   }).call(this)});
   """
-prelude = (err, callback) ->
+prelude = (callback) ->
   filename = resolve __dirname + '/prelude'
   fs.readFile filename, 'utf8', (err, data) ->
     ext = extname(filename).substring 1
@@ -145,15 +145,13 @@ prelude = (err, callback) ->
 
 # Bundles up client-side JS, traversing from an initial entry point.
 bundle = (entry, opts, callback) ->
-  if typeof opts is 'function'
-    [callback, opts] = [opts, {}]
-
   find entry, (err, requires) ->
     callback err, (wrap require, opts for _, require of requires).join('\n\n')
 
 exports.cli = -> require './cli'
 
 exports.createBundler = ({entry, prepend}) ->
+  entry = path.resolve entry
   bundler =
     bundle: (opts, callback) ->
       if typeof opts is 'function'

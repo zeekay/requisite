@@ -15,4 +15,9 @@ help = ->
   console.log program.helpInformation()
   process.exit()
 
-console.log program.libs
+help() unless program.entry
+
+bundle = require('./bundle')
+  entry: program.entry
+  output: program.output
+  libs: program.libs
