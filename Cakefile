@@ -1,15 +1,15 @@
 {exec} = require './src/utils'
 
-task 'build', 'Generate docs and compile project', ->
-  invoke 'docs'
-  invoke 'compile'
-
-task 'compile', 'Compile *.coffee -> *.js', ->
+task 'build', 'Compile *.coffee -> *.js', ->
   console.log 'coffee: Compiling src/*.coffee -> lib/*.js'
   exec './node_modules/.bin/coffee -bc -o lib/ src/'
 
 task 'docs', 'Generate docs with docco', ->
   exec './node_modules/.bin/docco-husky src/'
+
+task 'build:all', 'Generate docs and compile project', ->
+  invoke 'docs'
+  invoke 'compile'
 
 task 'gh-pages', 'Publish docs to gh-pages', ->
   brief = require('brief')
