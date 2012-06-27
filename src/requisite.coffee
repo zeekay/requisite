@@ -160,5 +160,6 @@ exports.createBundler = ({entry, prepend}) ->
       readFiles prepend, (err, a) ->
         prelude (err, b) ->
           bundle entry, opts, (err, c) ->
+            cache = {}
             throw err if err
             callback err, a + b + c

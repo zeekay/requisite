@@ -17,7 +17,7 @@ exports.json = (body, filename) ->
   "module.exports = #{body}"
 
 exports.coffee = (body, filename) ->
-  coffee.compile body, bare: true
+  coffee.compile body, bare: true, header: false
 
 exports.html = (body, filename) ->
   "module.exports = #{JSON.stringify}"
