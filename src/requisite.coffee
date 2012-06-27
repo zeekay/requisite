@@ -151,6 +151,8 @@ bundle = (entry, opts, callback) ->
   find entry, (err, requires) ->
     callback err, (wrap require, opts for _, require of requires).join('\n\n')
 
+exports.cli = -> require './cli'
+
 exports.createBundler = ({entry, prepend}) ->
   bundler =
     bundle: (opts, callback) ->

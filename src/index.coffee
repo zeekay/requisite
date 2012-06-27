@@ -17,5 +17,4 @@ else
 
 # Borrow version information from `package.json`.
 mod.version = require('../package.json').version
-
 module.exports = mod

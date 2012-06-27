@@ -1,16 +1,18 @@
 program = require 'jade/node_modules/commander'
 version = require('../package.json').version
 
+list = (val) -> val.split ','
+
 program
   .version(version)
-  .usage('-i <input> -o <output> -t <template>')
-  .option('-i, --input <file>', 'markdown file to use as input')
-  .option('-o, --output <file>', 'where to output rendered content')
-  .option('-t, --template <file>', 'jade template to use')
+  .usage('--entry <input> [-output <output>, --libs <lib1,lib2>]')
+  .option('-e, --entry <entry-point>', 'entry point to your code')
+  .option('-o, --output <file>', 'where to compile your code to')
+  .option('-l, --libs <files>', 'files which should be prepended to compiled output', list)
   .parse(process.argv)
 
 help = ->
   console.log program.helpInformation()
   process.exit()
 
-help() if !program.template or !program.input or !program.output
+console.log program.libs
