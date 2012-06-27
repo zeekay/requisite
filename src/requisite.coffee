@@ -32,6 +32,7 @@ find = (entry, callback) ->
   alias = do ->
     base = dirname(filename).length
     (filename) ->
+      filename = filename.replace(/\\/g, '/')
       if /node_modules/i.test filename
         idx = filename.indexOf '/node_modules'
         base = idx
