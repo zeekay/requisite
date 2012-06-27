@@ -8,8 +8,8 @@ if not path.existsSync mod
   fs.mkdirSync mod
   fs.writeFileSync path.join(mod, 'index.js'), "module.exports = {x: 42};"
 
-b = requisite.createBundle
-  entry: __dirname + '/app/entry'
+b = requisite.createBundler
+  entry: __dirname + '/assets/entry'
   prepend: []
 
 b.bundle (err, data) ->
