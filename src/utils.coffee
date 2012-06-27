@@ -1,9 +1,6 @@
-path    = require 'path'
 fs      = require 'fs'
 util    = require 'util'
 {spawn} = require 'child_process'
-
-{existsSync} = if fs.existsSync then fs else path
 
 exports.readFiles = (files, callback) ->
   if not Array.isArray files
