@@ -116,7 +116,7 @@ find = (entry, callback) ->
   iterate filename, entry
 
 # Wraps a required module in a define statement.
-wrap = (file, {minify}) ->
+wrap = (file) ->
 
   # update require statements
   if file.resolved.length and file.ast
