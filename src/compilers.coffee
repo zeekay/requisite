@@ -11,7 +11,7 @@ exports.coffee = (body, filename) ->
   coffee.compile body, bare: true, header: false
 
 exports.html = (body, filename) ->
-  "module.exports = #{JSON.stringify}"
+  "module.exports = #{JSON.stringify body}"
 
 require.extensions['.html'] = (module, filename) ->
   body = fs.readFileSync filename, 'utf8'
