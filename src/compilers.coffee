@@ -1,14 +1,5 @@
 coffee = require 'coffee-script'
 fs     = require 'fs'
-jade   = require 'jade'
-uglify = require('uglify-js').uglify
-parser = require('uglify-js').parser
-
-minify = (src) ->
-  ast = parser.parse src
-  ast = uglify.ast_mangle ast
-  ast = uglify.ast_squeeze ast
-  uglify.gen_code ast
 
 exports.js = (body, filename) ->
   body
@@ -27,12 +18,14 @@ require.extensions['.html'] = (module, filename) ->
   module.exports = JSON.stringify body
 
 exports.jade = (body, filename) ->
+  jade = require 'jade'
   func = jade.compile body,
     client: true
     debug: false
     compileDebug: false
-  "    module.exports = #{minify func.toString()}"
+  "    module.exports = #{func.toString()}"
 
 require.extensions['.jade'] = (module, filename) ->
+  jade = require 'jade'
   body = fs.readFileSync filename, 'utf8'
   module.exports = jade.compile body
