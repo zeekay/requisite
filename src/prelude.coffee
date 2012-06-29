@@ -27,3 +27,4 @@ do ->
   @require.define = (aliases, fn) ->
     for alias in aliases
       modules[alias] = fn
+    return

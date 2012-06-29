@@ -26,3 +26,4 @@ do ->
 
   @require.define = (alias, fn) ->
     modules[alias] = fn
+    return

@@ -1,7 +1,8 @@
-fs      = require 'fs'
-path    = require 'path'
-util    = require 'util'
-{spawn} = require 'child_process'
+fs       = require 'fs'
+path     = require 'path'
+util     = require 'util'
+{spawn}  = require 'child_process'
+{minify} = require './ast'
 
 # The location of exists/existsSync changed in node v0.8.0.
 if fs.existsSync
@@ -28,7 +29,7 @@ exports.fatal = (message, err) ->
   process.exit()
 
 # Concatenate files or strings together
-exports.concat = (files, callback) ->
+exports.concat = (files, opts, callback) ->
   if not files or files.length == 0
     return callback null, ''
 
@@ -38,6 +39,7 @@ exports.concat = (files, callback) ->
   idx = 0
   concatenated = ''
 
+  console.log files
   iterate = ->
     exports.exists files[idx], (exists) ->
       concat = (body) ->
@@ -45,7 +47,10 @@ exports.concat = (files, callback) ->
         concatenated += body
 
         if idx == files.length
-          callback null, concatenated
+          if opts.minify
+            callback null, minify concatenated
+          else
+            callback null, concatenated
         else
           iterate()
 

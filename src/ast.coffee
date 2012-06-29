@@ -41,18 +41,24 @@ class AST
     @ast = w.with_walkers transforms, => w.walk @ast
 
   # Minify AST destructively
-  minify: ->
+  kinify: ->
     @ast = uglify.ast_squeeze uglify.ast_mangle @ast
     @
 
-  # AST -> String
-  toString: (beautify = true, indent_start = 4, indent_level = 2) ->
-    uglify.gen_code @ast,
-      beautify: beautify
-      indent_start: indent_start
-      indent_level: indent_level
+  # Generate code from AST, optionally minifying
+  toString: (opts = {}) ->
+    if opts.minify
+      uglify.gen_code uglify.ast_squeeze uglify.ast_mangle @ast
+    else
+      uglify.gen_code @ast,
+        beautify: opts.beautify or true
+        indent_level: opts.indent_level or 2
+        indent_start: opts.indent_start or 4
 
 module.exports =
   AST: AST
   parse: (src, exigent_mode, embed_tokens) ->
     new AST src, exigent_mode, embed_tokens
+  minify: (src) ->
+    # strips trailing semicolon.
+    uglify.gen_code(uglify.ast_squeeze uglify.ast_mangle parser.parse src) + ';'

@@ -1,15 +1,21 @@
 compilers = require './compilers'
 crypto    = require 'crypto'
 fs        = require 'fs'
-{parse}   = require './ast'
 {resolve} = require './resolve'
 
+{parse, minify} = require './ast'
 {dirname, extname, join} = require 'path'
 {concat, fatal, fmtDate, uniq} = require './utils'
 
 cache = {}
 
-find = (entry, cb) ->
+# Find all dependencies
+find = (opts, cb) ->
+  if typeof opts is 'string'
+    [entry, opts] = [opts, {}]
+  else
+    entry = opts.entry
+
   count = 0
 
   alias = do ->
@@ -24,18 +30,18 @@ find = (entry, cb) ->
       name.pop()
       name.join('.').replace /\/index$/, ''
 
-  iterate = (require, parent) ->
-    if parent and /^[./]/.test require
+  iterate = (req, parent) ->
+    if parent and /^[./]/.test req
       # this is a relative require
-      path = join parent.base, require
+      path = join parent.base, req
     else
       # this is an npm module
-      path = require
+      path = req
 
     resolve path, (err, filename) ->
       if parent
         # Add to parent's map of resolved modules
-        parent.resolved[require] = filename
+        parent.resolved[req] = filename
 
       file =
         base: dirname filename
@@ -44,15 +50,15 @@ find = (entry, cb) ->
         filename: filename
         mtime: null
         aliases: [alias filename]
-        requireAs: require
+        requireAs: req
         requires: []
         resolved: {}
 
       walk = (file) ->
         # we must go deeper
         count += file.requires.length
-        for require in file.requires
-          iterate require, file
+        for req in file.requires
+          iterate req, file
 
         if count > 0
           --count
@@ -74,42 +80,63 @@ find = (entry, cb) ->
           body = ''
 
           stream.on 'data', (data) ->
+            # Update hash
             shasum.update data
             body += data
 
           stream.on 'end', ->
             file.hash = shasum.digest('hex').substring 0, 10
+            # Try to compile file using appropriate compiler
             try
-              body = compilers[file.ext](body, filename)
+              body = compilers[file.ext](body, filename, opts.hooks)
             catch err
               fatal "Error: Failed to compile #{filename}", err
 
+            # Find all dependencies that are required
             file.ast = parse body
             file.requires = file.ast.findRequires()
 
+            # Cache file
             cache[filename] = file
+
+            if not parent and opts.requireEntry
+              # Automatically require entry file
+              opts.hooks.after.__entry = "require('#{file.hash}');"
+
+            # Walk dependencies
             walk file
         else
           walk cache[filename]
 
   iterate entry
 
-# Returns bundled up requirements
+# Bundles modules starting from an entry point
 bundle = (opts, cb) ->
-  find opts.entry, (err, requires) ->
-    cb err, (wrap require, opts for _, require of requires).join('\n\n')
+  # Extra hooks to append/prepend supporting scripts requried by dependencies
+  opts.hooks =
+    after: {}
+    before: {}
+
+  find opts, (err, modules) ->
+    modules = (wrap mod, opts for _, mod of modules)
+    for k,v of opts.hooks.after
+      modules.push if opts.minify then minify v else v
+    for k,v of opts.hooks.before
+      modules.unshift if opts.minify then minify v else v
+    cb err, modules.join(if opts.minify then '' else '\n\n')
 
 # Wraps a required module in a define statement.
 wrap = (file, opts={}) ->
+  # Map of require calls to file hashes
+  map = {}
+  for req, filename of file.resolved
+    map[req] = cache[filename].hash
 
   # Generate AST with updated require calls.
-  map = {}
-  for require, filename of file.resolved
-    map[require] = cache[filename].hash
   ast = file.ast.updateRequires(map)
 
   if opts.minify
-    "require.define(['#{file.hash}'], function (require, module, exports) {(function(){#{ast.minify().toString(false)}}).call(this)});"
+    "require.define(['#{file.hash}'], function (require, module, exports) {(function(){#{ast.toString minify: true}}).call(this)});"
   else
     source = file.filename
     aliases = JSON.stringify file.aliases.concat file.hash
@@ -130,25 +157,35 @@ prelude = (opts, cb) ->
   resolve path, (err, filename) ->
     fs.readFile filename, 'utf8', (err, data) ->
       ext = extname(filename).substring 1
-      cb err, compilers[ext](data, filename)
+      content = compilers[ext](data, filename)
+      cb err, if opts.minify then minify content else content
+
+# Creates a Javascript bundler
+createBundler = (opts) ->
+  defaults =
+    # Scripts which should be bundled after entry module and dependencies.
+    after: []
+    # Scripts which should be bundled before entry module and dependencies.
+    before: []
+    # Whether to minify or not.
+    minify: false
+    # Whether to automatically require the entry module.
+    requireEntry: true
+
+  for k,v of defaults
+    opts[k] ?= v
+
+  bundler =
+    bundle: (cb) ->
+      concat opts.before, opts, (err, before) ->
+        prelude opts, (err, prelude) ->
+          bundle opts, (err, bundle) ->
+            concat opts.after, opts, (err, after) ->
+              cb err, [before, prelude, bundle, after].join(if opts.minify then '' else '\n\n').trim()
 
 module.exports =
   cli: -> require './cli'
+  createBundler: createBundler
   bundle: bundle
   find: find
   wrap: wrap
-  createBundler: (opts) ->
-    opts.after = opts.after or []
-    opts.before = opts.before or []
-    bundler =
-      bundle: (cb) ->
-        concat opts.before, (err, before) ->
-          prelude opts, (err, prelude) ->
-            bundle opts, (err, bundle) ->
-              resolve opts.entry, (err, filename) ->
-                opts.after = opts.after.concat """
-                // Require entrypoint automatically.
-                require(#{JSON.stringify cache[filename].hash});
-                """
-                concat opts.after, (err, after) ->
-                  cb err, [before, prelude, bundle, after].join('\n').trim()
