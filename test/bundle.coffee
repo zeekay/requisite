@@ -1,38 +1,18 @@
-assert        = require 'assert'
 createBundler = require '../src/bundle'
 fs            = require 'fs'
+should        = require('chai').should()
 {existsSync}  = require '../src/utils'
 {join}        = require 'path'
-
-# Drop comments and sort content.
-normalize = (content, char='\n') ->
-  content.split(char)
-    .sort()
-    .filter((v) -> not (/s*?\/\//.test v) and v.trim())
-    .join(char)
-
-# Verify that generated output matches expected output.
-checkExpected = (done, bundler, expected, char='\n') ->
-  fs.readFile expected, 'utf8', (err, expectedData) ->
-    bundler.bundle (err, actualData) ->
-      assert.equal normalize(actualData), expectedData
-      done()
 
 describe 'bundle', ->
   # Declare bundlers in outer scope so tests have access to them.
   bundler = null
-  bundlerMin = null
-  expected = join __dirname, 'assets', 'expected.js'
-  expectedMin = join __dirname, 'assets', 'expected.min.js'
+  bundleContent = null
 
-  before ->
+  before (done) ->
     # Create bundlers
     bundler = createBundler
       entry: join __dirname, '/assets/entry'
-
-    bundlerMin = createBundler
-      entry: join __dirname, '/assets/entry'
-      minify: true
 
     # Generate dummy npm module if necessary.
     mod = join __dirname, '..', 'node_modules', 'mod'
@@ -40,24 +20,27 @@ describe 'bundle', ->
       fs.mkdirSync mod
       fs.writeFileSync join(mod, 'index.js'), "module.exports = {x: 42};"
 
-    # Write out expected data.
-    if not existsSync expected
-      bundler.bundle (err, actualData) ->
-        fs.writeFileSync expected, normalize(actualData)
-
-    if not existsSync expectedMin
-      bundlerMin.bundle (err, actualData) ->
-        fs.writeFileSync expectedMin, normalize(actualData, ';')
+    bundler.bundle (err, content) ->
+      throw err if err
+      bundleContent = content
+      done()
 
   describe 'bundle#bundle()', ->
-    it 'bundled JavaScript should match expected', (done) ->
-      checkExpected done, bundler, expected
+    it 'should find and define all absolute/relatively required modules properly', ->
+      required = '''
+        require.define(["/a","70f886d883"]
+        require.define(["/b","8908bb92f8"]
+        require.define(["/c","318af1af20"]
+        require.define(["/test/assets/foo","58c67562d2"]
+        require.define(["/test/assets/template","04e021b689"]
+        require.define(["/entry","21568343a3"]
+        '''.split('\n')
 
-    it 'bundled JavaScript should still match expected after rebundling', (done) ->
-      checkExpected done, bundler, expected
+      for define in required
+        bundleContent.should.have.string define
 
-    it 'bundled & minified JavaScript should match expected', (done) ->
-      checkExpected done, bundlerMin, expected, ';'
+    it 'should find and define all modules required from node_modules', ->
+      bundleContent.should.have.string 'require.define(["/node_modules/mod","e63313c6a9"]'
 
-    it 'bundled & minified JavaScript should match expected after rebundling', (done) ->
-      checkExpected done, bundlerMin, expected, ';'
+    it 'should include the jade runtime', ->
+      bundleContent.should.have.string 'jade=function(exports){Array.isArray||(Array.isArray=function(arr){'
