@@ -1,3 +1,5 @@
+jade = require 'jade'
+
 exports.js = (body, filename) ->
   body
 
@@ -11,13 +13,13 @@ exports.coffee = (body, filename) ->
 exports.html = (body, filename) ->
   "module.exports = #{JSON.stringify body}"
 
-exports.jade = (body, filename, hooks) ->
-  if not hooks.jade
-    hooks.before.jade = require('fs').readFileSync require.resolve('jade/runtime.min'), 'utf8'
-
-  jade = require 'jade'
+exports.jade = (body, filename) ->
   func = jade.compile body,
     client: true
     debug: false
     compileDebug: false
   "    module.exports = #{func.toString()}"
+
+exports.jade.before = ->
+  # Add Jade runtime automatically
+  require('fs').readFileSync(require.resolve('jade/runtime.min'), 'utf8')

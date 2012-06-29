@@ -11,13 +11,21 @@ cache = {}
 
 # Find all dependencies
 find = (opts, cb) ->
-  if typeof opts is 'string'
-    [entry, opts] = [opts, {}]
-  else
-    entry = opts.entry
-
   count = 0
+  entry = opts.entry
+  hooks =
+    after: {}
+    before: {}
 
+  # Hook into module compilation
+  addHooks = (name, {after, before}) ->
+    if not hooks.after[name] and after
+      hooks.after[name] = after()
+
+    if not hooks.before[name] and before
+      hooks.before[name] = before()
+
+  # Create relative (to entry point) filename aliases
   alias = do ->
     base = dirname(entry).length
     (filename) ->
@@ -30,6 +38,7 @@ find = (opts, cb) ->
       name.pop()
       name.join('.').replace /\/index$/, ''
 
+  # Parse dependencies
   iterate = (req, parent) ->
     if parent and /^[./]/.test req
       # this is a relative require
@@ -54,6 +63,7 @@ find = (opts, cb) ->
         requires: []
         resolved: {}
 
+      # Iterate over dependencies
       walk = (file) ->
         # we must go deeper
         count += file.requires.length
@@ -64,6 +74,7 @@ find = (opts, cb) ->
           --count
         else
           # done recursing
+          opts.hooks = hooks
           cb null, cache
 
       fs.stat filename, (err, stat) ->
@@ -88,7 +99,7 @@ find = (opts, cb) ->
             file.hash = shasum.digest('hex').substring 0, 10
             # Try to compile file using appropriate compiler
             try
-              body = compilers[file.ext](body, filename, opts.hooks)
+              body = compilers[file.ext](body, filename)
             catch err
               fatal "Error: Failed to compile #{filename}", err
 
@@ -99,24 +110,27 @@ find = (opts, cb) ->
             # Cache file
             cache[filename] = file
 
+            # Add hooks
             if not parent and opts.requireEntry
-              # Automatically require entry file
-              opts.hooks.after.__entry = "require('#{file.hash}');"
+              addHooks '__entry', after: -> "require('#{file.hash}');"
+            addHooks file.ext, compilers[file.ext]
 
-            # Walk dependencies
             walk file
         else
-          walk cache[filename]
+          file = cache[filename]
+
+          # Add hooks
+          if not parent and opts.requireEntry
+            addHooks '__entry', after: -> "require('#{file.hash}');"
+          addHooks file.ext, compilers[file.ext]
+
+          walk file
 
   iterate entry
 
 # Bundles modules starting from an entry point
 bundle = (opts, cb) ->
   # Extra hooks to append/prepend supporting scripts requried by dependencies
-  opts.hooks =
-    after: {}
-    before: {}
-
   find opts, (err, modules) ->
     modules = (wrap mod, opts for _, mod of modules)
     for k,v of opts.hooks.after
