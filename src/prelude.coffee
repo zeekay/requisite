@@ -1,3 +1,4 @@
+# Prelude required by bundled modules.
 do ->
   modules = {}
   cache = {}

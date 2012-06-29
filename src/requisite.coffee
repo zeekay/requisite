@@ -135,6 +135,8 @@ module.exports =
   find: find
   wrap: wrap
   createBundler: ({entry, after, before}) ->
+    after = after or []
+    before = before or []
     bundler =
       bundle: (opts, cb) ->
         if typeof opts is 'function'
@@ -143,5 +145,10 @@ module.exports =
         concat before, (err, before) ->
           prelude (err, prelude) ->
             bundle entry, opts, (err, bundle) ->
-              concat after, (err, after) ->
-                cb err, [before, prelude, bundle, after].join('\n')
+              resolve entry, (err, filename) ->
+                after = after.concat """
+                // Require entrypoint automatically.
+                require(#{JSON.stringify cache[filename].hash});
+                """
+                concat after, (err, after) ->
+                  cb err, [before, prelude, bundle, after].join('\n').trim()

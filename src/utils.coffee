@@ -27,24 +27,36 @@ exports.fatal = (message, err) ->
   console.trace err.toString().substring 7
   process.exit()
 
-# Concatenate files together
+# Concatenate files or strings together
 exports.concat = (files, callback) ->
   if not files or files.length == 0
     return callback null, ''
 
-  complete = 0
+  if not Array.isArray files
+    files = [files]
+
+  idx = 0
   concatenated = ''
 
   iterate = ->
-    fs.readFile files[complete], 'utf8', (err, body) ->
+    exports.exists files[idx], (exists) ->
+      concat = (body) ->
+        idx += 1
+        concatenated += body
 
-      complete += 1
-      concatenated += body + '\n\n'
+        if idx == files.length
+          callback null, concatenated
+        else
+          iterate()
 
-      if complete == files.length
-        callback err, concatenated
+      if exists
+        # valid file
+        fs.readFile files[idx], 'utf8', (err, body) ->
+          throw err if err
+          concat body
       else
-        iterate()
+        # we assume it's a string
+        concat files[idx]
 
   iterate()
 
@@ -58,6 +70,8 @@ exports.fmtDate = (dateObj) ->
     hms[0] = h % 12 or 12
     hms.join(':')  + ' ' + suffix.toUpperCase()
   date + ' ' + time
+
+# Deep inspect helper
 exports.inspect = (value) ->
   console.log util.inspect value, false, null, true
 
@@ -66,11 +80,12 @@ exports.inspect = (value) ->
 # be executed serially.
 exports.exec = (args, callback) ->
   serial = (arr) ->
-    complete = 0
+    idx = 0
+
     iterate = ->
-      exports.exec arr[complete], ->
-        complete += 1
-        if complete == arr.length
+      exports.exec arr[idx], ->
+        idx += 1
+        if idx == arr.length
           return
         else
           iterate()
