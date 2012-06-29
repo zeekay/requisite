@@ -14,7 +14,7 @@ mkdir = (path, cb) ->
 module.exports = ({after, before, entry, output, minify}) ->
   entry = path.resolve entry
 
-  bundler = require('./requisite').createBundler
+  bundler = require('./bundle')
     after: after
     before: before
     entry: entry

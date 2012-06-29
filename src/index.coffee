@@ -15,6 +15,4 @@ if existsSync __dirname + '/../src'
 else
   mod = require "./#{modName}"
 
-# Borrow version information from `package.json`.
-mod.version = require('../package.json').version
-module.exports = mod
+mod.exports = mod
