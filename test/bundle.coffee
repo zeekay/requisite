@@ -8,7 +8,7 @@ createBundler   = require '../src/bundle'
 normalize = (content, char='\n') ->
   content.split(char)
     .sort()
-    .filter((v) -> /s*?\/\//.test v and v.trim())
+    .filter((v) -> not (/s*?\/\//.test v) and v.trim())
     .join(char)
 
 # Verify that generated output matches expected output.
