@@ -27,11 +27,9 @@ exports.fatal = (message, err) ->
   console.trace err.toString().substring 7
   process.exit()
 
+# Concatenate files together
 exports.readFiles = (files, callback) ->
-  if not Array.isArray files
-    files = [files]
-
-  if files.length == 0
+  if not files or files.length == 0
     return callback null, ''
 
   complete = 0
@@ -50,7 +48,7 @@ exports.readFiles = (files, callback) ->
 
   iterate()
 
-exports.prettyDate = (dateObj) ->
+exports.fmtDate = (dateObj) ->
   date = dateObj.toLocaleDateString()
   time = dateObj.toLocaleTimeString().replace /[0-9]{1,2}(:[0-9]{2}){2}/, (time) ->
     hms = time.split ':'

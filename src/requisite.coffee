@@ -5,11 +5,11 @@ fs        = require 'fs'
 {parse}   = require './ast'
 
 {dirname, extname, join} = require 'path'
-{fatal, prettyDate, readFiles, uniq} = require './utils'
+{fatal, fmtDate, readFiles, uniq} = require './utils'
 
 cache = {}
 
-findDependencies = (entry, callback) ->
+find = (entry, callback) ->
   count = 0
 
   alias = do ->
@@ -48,6 +48,18 @@ findDependencies = (entry, callback) ->
         requires: []
         resolved: {}
 
+      walk = (file) ->
+        # we must go deeper
+        count += file.requires.length
+        for require in file.requires
+          iterate require, file
+
+        if count > 0
+          --count
+        else
+          # done recursing
+          callback null, cache
+
       fs.stat filename, (err, stat) ->
         throw err if err
 
@@ -76,36 +88,18 @@ findDependencies = (entry, callback) ->
               file.ast = ast = parse body
               body = ast.toString()
               file.requires = ast.findRequires()
-
             file.body = body
-
             cache[filename] = file
-
-            # we must go deeper
-            count += file.requires.length
-            for require in file.requires
-              iterate require, file
-
-            if count > 0
-              --count
-            else
-              # done recursing
-              callback null, cache
+            walk file
         else
-          file = cache[filename]
-
-          # we must go deeper
-          count += file.requires.length
-          for require in file.requires
-            iterate require, file
-
-          if count > 0
-            --count
-          else
-            # done recursing
-            callback null, cache
+          walk cache[filename]
 
   iterate entry
+
+# Returns bundled up requirements
+bundle = (entry, opts, callback) ->
+  find entry, (err, requires) ->
+    callback err, (wrap require, opts for _, require of requires).join('\n\n')
 
 # Wraps a required module in a define statement.
 wrap = (file) ->
@@ -119,7 +113,7 @@ wrap = (file) ->
 
   source = file.filename
   aliases = JSON.stringify file.aliases.concat file.hash
-  modified = prettyDate file.mtime
+  modified = fmtDate file.mtime
 
   """
   // source: #{source}
@@ -129,27 +123,27 @@ wrap = (file) ->
   }).call(this)});
   """
 
+# Returns prelude file
 prelude = (callback) ->
   resolve __dirname + '/prelude', (err, filename) ->
     fs.readFile filename, 'utf8', (err, data) ->
       ext = extname(filename).substring 1
       callback err, compilers[ext](data, filename)
 
-# Bundles up client-side JS, traversing from an initial entry point.
-bundle = (entry, opts, callback) ->
-  findDependencies entry, (err, requires) ->
-    callback err, (wrap require, opts for _, require of requires).join('\n\n')
+module.exports =
+  cli: -> require './cli'
+  bundle: bundle
+  find: find
+  wrap: wrap
+  createBundler: ({entry, after, before}) ->
+    bundler =
+      bundle: (opts, callback) ->
+        if typeof opts is 'function'
+          [callback, opts] = [opts, {}]
 
-exports.cli = -> require './cli'
-
-exports.createBundler = ({entry, prepend}) ->
-  bundler =
-    bundle: (opts, callback) ->
-      if typeof opts is 'function'
-        [callback, opts] = [opts, {}]
-
-      readFiles prepend, (err, a) ->
-        prelude (err, b) ->
-          bundle entry, opts, (err, c) ->
-            cache = {}
-            callback err, a + b + c
+        readFiles before, (err, before) ->
+          prelude (err, prelude) ->
+            bundle entry, opts, (err, bundle) ->
+              readFiles after, (err, after) ->
+                cache = {}
+                callback err, before + prelude + bundle + after
