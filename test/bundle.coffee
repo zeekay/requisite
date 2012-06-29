@@ -1,6 +1,6 @@
 assert          = require 'assert'
 fs              = require 'fs'
-requisite       = require '../src/requisite'
+createBundler   = require '../src/bundle'
 {existsSync}    = require '../src/utils'
 {resolve, join} = require 'path'
 
@@ -25,10 +25,10 @@ describe 'bundle', ->
 
   before ->
     # Create bundlers
-    bundler = requisite.createBundler
+    bundler = createBundler
       entry: __dirname + '/assets/entry'
 
-    bundlerMin = requisite.createBundler
+    bundlerMin = createBundler
       entry: __dirname + '/assets/entry'
       minify: true
 

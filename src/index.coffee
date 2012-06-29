@@ -15,4 +15,4 @@ if existsSync __dirname + '/../src'
 else
   mod = require "./#{modName}"
 
-mod.exports = mod
+module.exports = mod
