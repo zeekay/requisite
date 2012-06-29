@@ -7,7 +7,7 @@ class AST
     else
       @ast = parser.parse src, exigent_mode, embed_tokens
 
-  # find require calls
+  # Find require calls
   findRequires: ->
     requires = []
     @walk
@@ -18,9 +18,9 @@ class AST
           requires.push args[0][1]
     requires
 
-  # update require calls using provided map
+  # Update require calls using provided map
   updateRequires: (map) ->
-    @transform
+    new_ast = @walk
       call: (expr, args) ->
         if expr[1] == 'require'
           # return updated node
@@ -28,20 +28,24 @@ class AST
           ['call',
             ['name', 'require'],
               [['string', update]]]
-    @
+    new AST new_ast
 
+  # Walk AST non-destructively
   walk: (transforms) ->
     w = uglify.ast_walker()
     w.with_walkers transforms, => w.walk @ast
 
+  # Transform AST destructively
   transform: (transforms) ->
     w = uglify.ast_walker()
     @ast = w.with_walkers transforms, => w.walk @ast
 
+  # Minify AST destructively
   minify: ->
     @ast = uglify.ast_squeeze uglify.ast_mangle @ast
     @
 
+  # AST -> String
   toString: (beautify = true, indent_start = 4, indent_level = 2) ->
     uglify.gen_code @ast,
       beautify: beautify

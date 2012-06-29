@@ -1,8 +1,8 @@
 compilers = require './compilers'
 crypto    = require 'crypto'
 fs        = require 'fs'
-{resolve} = require './resolve'
 {parse}   = require './ast'
+{resolve} = require './resolve'
 
 {dirname, extname, join} = require 'path'
 {fatal, fmtDate, readFiles, uniq} = require './utils'
@@ -27,12 +27,12 @@ find = (entry, callback) ->
   iterate = (require, parent) ->
     if parent and /^[./]/.test require
       # this is a relative require
-      requirePath = join parent.base, require
+      path = join parent.base, require
     else
       # this is an npm module
-      requirePath = require
+      path = require
 
-    resolve requirePath, (err, filename) ->
+    resolve path, (err, filename) ->
       if parent
         # Add to parent's map of resolved modules
         parent.resolved[require] = filename
@@ -108,8 +108,7 @@ wrap = (file) ->
     map = {}
     for require, filename of file.resolved
       map[require] = cache[filename].hash
-    file.ast.updateRequires(map)
-    file.body = file.ast.toString()
+    file.body = file.ast.updateRequires(map).toString()
 
   source = file.filename
   aliases = JSON.stringify file.aliases.concat file.hash
@@ -145,5 +144,4 @@ module.exports =
           prelude (err, prelude) ->
             bundle entry, opts, (err, bundle) ->
               readFiles after, (err, after) ->
-                cache = {}
                 callback err, before + prelude + bundle + after
