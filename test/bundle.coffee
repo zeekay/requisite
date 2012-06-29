@@ -26,11 +26,15 @@ describe 'bundle', ->
   prelude = 'return this.require.define = function(aliases, fn) {'
   jadeRuntime = 'jade=function(exports){Array.isArray||(Array.isArray=function(arr)'
   callEntry = "require('21568343a3');"
+  afterScripts = "alert('after');"
+  beforeScripts = "alert('before');"
 
   before (done) ->
     # Create bundlers
     bundler = createBundler
-      entry: join __dirname, '/assets/entry'
+      after:  join __dirname, '/assets/vendor/after.js'
+      before: join __dirname, '/assets/vendor/before.js'
+      entry:  join __dirname, '/assets/entry'
 
     # Generate dummy npm module if necessary.
     mod = join __dirname, '..', 'node_modules', 'mod'
@@ -60,6 +64,16 @@ describe 'bundle', ->
       for str in reqModules
         content.should.have.string str
 
+    it 'should include appropriate vendor scripts after bundled code', ->
+      content.should.have.string afterScripts
+
+    it 'should include appropriate vendor scripts before bundled code', ->
+      content.should.have.string beforeScripts
+
+    it 'should find and define all modules required from node_modules', ->
+      for str in reqModules
+        content.should.have.string str
+
     it 'should find and define all jade templates', ->
       for str in reqTemplates
         content.should.have.string str
@@ -74,6 +88,6 @@ describe 'bundle', ->
     it 'should still pass previous tests after being bundled up again', (done) ->
       bundler.bundle (err, content) ->
         throw err if err
-        for str in reqFiles.concat reqDirectories, reqModules, reqTemplates, prelude, jadeRuntime, callEntry
+        for str in reqFiles.concat reqDirectories, reqModules, reqTemplates, prelude, jadeRuntime, callEntry, afterScripts, beforeScripts
           content.should.have.string str
         done()
