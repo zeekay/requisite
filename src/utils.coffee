@@ -28,7 +28,7 @@ exports.fatal = (message, err) ->
   process.exit()
 
 # Concatenate files together
-exports.readFiles = (files, callback) ->
+exports.concat = (files, callback) ->
   if not files or files.length == 0
     return callback null, ''
 
@@ -48,6 +48,7 @@ exports.readFiles = (files, callback) ->
 
   iterate()
 
+# Date -> String formated nicely
 exports.fmtDate = (dateObj) ->
   date = dateObj.toLocaleDateString()
   time = dateObj.toLocaleTimeString().replace /[0-9]{1,2}(:[0-9]{2}){2}/, (time) ->
@@ -60,8 +61,10 @@ exports.fmtDate = (dateObj) ->
 exports.inspect = (value) ->
   console.log util.inspect value, false, null, true
 
+# Non-blocking exec, merely pipes stdin/stdout.
+# May be called with an array of cmds which will
+# be executed serially.
 exports.exec = (args, callback) ->
-  # Simple serial execution of commands, no error handling
   serial = (arr) ->
     complete = 0
     iterate = ->

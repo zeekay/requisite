@@ -5,11 +5,11 @@ fs        = require 'fs'
 {resolve} = require './resolve'
 
 {dirname, extname, join} = require 'path'
-{fatal, fmtDate, readFiles, uniq} = require './utils'
+{concat, fatal, fmtDate, uniq} = require './utils'
 
 cache = {}
 
-find = (entry, callback) ->
+find = (entry, cb) ->
   count = 0
 
   alias = do ->
@@ -58,7 +58,7 @@ find = (entry, callback) ->
           --count
         else
           # done recursing
-          callback null, cache
+          cb null, cache
 
       fs.stat filename, (err, stat) ->
         throw err if err
@@ -97,9 +97,9 @@ find = (entry, callback) ->
   iterate entry
 
 # Returns bundled up requirements
-bundle = (entry, opts, callback) ->
+bundle = (entry, opts, cb) ->
   find entry, (err, requires) ->
-    callback err, (wrap require, opts for _, require of requires).join('\n\n')
+    cb err, (wrap require, opts for _, require of requires).join('\n\n')
 
 # Wraps a required module in a define statement.
 wrap = (file) ->
@@ -123,11 +123,11 @@ wrap = (file) ->
   """
 
 # Returns prelude file
-prelude = (callback) ->
+prelude = (cb) ->
   resolve __dirname + '/prelude', (err, filename) ->
     fs.readFile filename, 'utf8', (err, data) ->
       ext = extname(filename).substring 1
-      callback err, compilers[ext](data, filename)
+      cb err, compilers[ext](data, filename)
 
 module.exports =
   cli: -> require './cli'
@@ -136,12 +136,12 @@ module.exports =
   wrap: wrap
   createBundler: ({entry, after, before}) ->
     bundler =
-      bundle: (opts, callback) ->
+      bundle: (opts, cb) ->
         if typeof opts is 'function'
-          [callback, opts] = [opts, {}]
+          [cb, opts] = [opts, {}]
 
-        readFiles before, (err, before) ->
+        concat before, (err, before) ->
           prelude (err, prelude) ->
             bundle entry, opts, (err, bundle) ->
-              readFiles after, (err, after) ->
-                callback err, before + prelude + bundle + after
+              concat after, (err, after) ->
+                cb err, [before, prelude, bundle, after].join('\n')
