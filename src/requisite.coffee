@@ -1,23 +1,16 @@
-compilers  = require './compilers'
-crypto     = require 'crypto'
-fs         = require 'fs'
-resolve    = require './resolve'
-{parse}    = require './ast'
+compilers = require './compilers'
+crypto    = require 'crypto'
+fs        = require 'fs'
+{resolve} = require './resolve'
+{parse}   = require './ast'
 
-utils      = require './utils'
-prettyDate = utils.prettyDate
-readFiles  = utils.readFiles
-uniq       = utils.uniq
-fatal      = utils.fatal
+{dirname, extname, join} = require 'path'
+{fatal, prettyDate, readFiles, uniq} = require './utils'
 
-path       = require 'path'
-dirname    = path.dirname
-extname    = path.extname
-join       = path.join
+cache = {}
 
-find = (entry, callback) ->
+findDependencies = (entry, callback) ->
   count = 0
-  cache = {}
 
   alias = do ->
     base = dirname(entry).length
@@ -34,12 +27,12 @@ find = (entry, callback) ->
   iterate = (require, parent) ->
     if parent and /^[./]/.test require
       # this is a relative require
-      path = join parent.base, require
+      requirePath = join parent.base, require
     else
       # this is an npm module
-      path = require
+      requirePath = require
 
-    resolve path, (err, filename) ->
+    resolve requirePath, (err, filename) ->
       if parent
         # Add to parent's map of resolved modules
         parent.resolved[require] = filename
@@ -118,7 +111,6 @@ find = (entry, callback) ->
 # Wraps a required module in a define statement.
 wrap = (file) ->
   if Object.keys(file.resolved).length and file.ast
-
     # Update require calls
     map = {}
     for require, filename of file.resolved
@@ -146,14 +138,12 @@ prelude = (callback) ->
 
 # Bundles up client-side JS, traversing from an initial entry point.
 bundle = (entry, opts, callback) ->
-  find entry, (err, requires) ->
+  findDependencies entry, (err, requires) ->
     callback err, (wrap require, opts for _, require of requires).join('\n\n')
 
 exports.cli = -> require './cli'
 
 exports.createBundler = ({entry, prepend}) ->
-  entry = path.resolve entry
-  console.log entry
   bundler =
     bundle: (opts, callback) ->
       if typeof opts is 'function'
@@ -163,5 +153,4 @@ exports.createBundler = ({entry, prepend}) ->
         prelude (err, b) ->
           bundle entry, opts, (err, c) ->
             cache = {}
-            throw err if err
             callback err, a + b + c
