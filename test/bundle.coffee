@@ -21,11 +21,7 @@ bundlerM = requisite.createBundler
 checkExpected = (b, expected, done) ->
   fs.readFile __dirname + expected, 'utf8', (err, expectedData) ->
     b.bundle (err, actualData) ->
-      e = expectedData.trim().split('\n')
-      a = actualData.trim().split('\n')
-      for line, idx in e
-        if not /^\s*?\/\//.test line
-          assert.equal a[idx], line
+      assert.equal actualData.trim(), expectedData.trim()
       done()
 
 describe 'bundler', ->
