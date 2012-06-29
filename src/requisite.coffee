@@ -52,7 +52,6 @@ findDependencies = (entry, callback) ->
         throw err if err
 
         if (not cache[filename]?.mtime) or (cache[filename].mtime < stat.mtime)
-          console.log "#{filename} not cached"
           file.mtime = stat.mtime
 
           # Create a unique hash for this file

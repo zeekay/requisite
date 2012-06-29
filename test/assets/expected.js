@@ -1,3 +1,4 @@
+
 (function() {
   var cache, modules;
   modules = {};
@@ -35,8 +36,8 @@
     return _results;
   };
 })();
-// source: /Users/sferreira/software/requisite/test/assets/entry.coffee
-// modified: Thursday, June 28, 2012 3:44:10 AM
+// source: /Volumes/Data/zk/play/requisite/test/assets/entry.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
 require.define(["/entry","21568343a3"], function (require, module, exports) {(function(){
     var a, b, c, template;
 
@@ -57,8 +58,8 @@ require.define(["/entry","21568343a3"], function (require, module, exports) {(fu
     template = require("04e021b689");
 }).call(this)});
 
-// source: /Users/sferreira/software/requisite/test/assets/a.coffee
-// modified: Thursday, June 28, 2012 3:44:10 AM
+// source: /Volumes/Data/zk/play/requisite/test/assets/a.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
 require.define(["/a","70f886d883"], function (require, module, exports) {(function(){
     module.exports = {
       a: "a",
@@ -66,16 +67,16 @@ require.define(["/a","70f886d883"], function (require, module, exports) {(functi
     };
 }).call(this)});
 
-// source: /Users/sferreira/software/requisite/test/assets/b.coffee
-// modified: Thursday, June 28, 2012 3:44:10 AM
+// source: /Volumes/Data/zk/play/requisite/test/assets/b.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
 require.define(["/b","8908bb92f8"], function (require, module, exports) {(function(){
     module.exports = {
       b: "b"
     };
 }).call(this)});
 
-// source: /Users/sferreira/software/requisite/test/assets/c.coffee
-// modified: Thursday, June 28, 2012 3:44:10 AM
+// source: /Volumes/Data/zk/play/requisite/test/assets/c.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
 require.define(["/c","c294c60394"], function (require, module, exports) {(function(){
     module.exports = {
       c: "c",
@@ -83,9 +84,17 @@ require.define(["/c","c294c60394"], function (require, module, exports) {(functi
     };
 }).call(this)});
 
-// source: /Users/sferreira/software/requisite/test/assets/template.jade
-// modified: Thursday, June 28, 2012 3:58:11 AM
-require.define(["/template","04e021b689"], function (require, module, exports) {(function(){
+// source: /Volumes/Data/zk/play/requisite/node_modules/mod/index.js
+// modified: Friday, June 29, 2012 2:07:54 AM
+require.define(["/node_modules/mod","e63313c6a9"], function (require, module, exports) {(function(){
+    module.exports = {
+      x: 42
+    };
+}).call(this)});
+
+// source: /Volumes/Data/zk/play/requisite/test/assets/template.jade
+// modified: Tuesday, June 26, 2012 1:22:56 AM
+require.define(["/test/assets/template","04e021b689"], function (require, module, exports) {(function(){
     module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -97,18 +106,10 @@ return buf.join("");
 }
 }).call(this)});
 
-// source: /Users/sferreira/software/requisite/test/assets/foo/index.coffee
-// modified: Thursday, June 28, 2012 3:44:10 AM
-require.define(["/foo","58c67562d2"], function (require, module, exports) {(function(){
+// source: /Volumes/Data/zk/play/requisite/test/assets/foo/index.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
+require.define(["/test/assets/foo","58c67562d2"], function (require, module, exports) {(function(){
     module.exports = {
       foo: "bar"
-    };
-}).call(this)});
-
-// source: /Users/sferreira/software/requisite/node_modules/mod/index.js
-// modified: Thursday, June 28, 2012 4:02:22 AM
-require.define(["/node_modules/mod","e63313c6a9"], function (require, module, exports) {(function(){
-    module.exports = {
-      x: 42
     };
 }).call(this)});

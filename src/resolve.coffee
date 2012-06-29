@@ -1,9 +1,9 @@
 compilers = require './compilers'
 fs        = require 'fs'
+utils     = require './utils'
 {join}    = require 'path'
 {sep}     = require 'path'
 {split}   = require 'path'
-{uniq}    = require './utils'
 
 # cache seen paths
 cache = {}
@@ -14,7 +14,7 @@ extensions = do ->
   # add extensions from compilers
   for k,v of compilers
     ext.push '.' + k
-  uniq ext
+  utils.uniq ext
 
 # node_modules paths
 modulePaths = do ->
@@ -31,7 +31,7 @@ modulePaths = do ->
 # Resolves entry point of relative directory of node module
 exports.resolveDirectory = resolveDirectory = (path, callback) ->
   packageJson = join path, 'package.json'
-  fs.exists packageJson, (exists) ->
+  utils.exists packageJson, (exists) ->
     if exists
       fs.readFile packageJson, (err, content) ->
         main = JSON.parse(content).main
@@ -49,9 +49,9 @@ exports.resolveModule = resolveModule = (name, callback) ->
     if idx == modulePaths
       throw new Error "Unable to resolve module #{name}"
     path = join modulePaths[idx], name
-    fs.exists path, (exists) ->
+    utils.exists path, (exists) ->
       if exists
-        callback null, require.resolve path
+        resolveDirectory path, callback
       else
         idx++
         iterate()

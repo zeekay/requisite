@@ -15,9 +15,13 @@ b = requisite.createBundler
   prepend: []
 
 describe 'bundler', ->
-  it 'should match expected.js', (done) ->
-    b.bundle (err, data) ->
-      console.log data
-      fs.readFile __dirname + '/assets/expected.js', 'utf8', (err, content) ->
-        assert.equal data.trim(), content.trim(), 'content is wrong'
-        done()
+  describe '#bundle()', ->
+    it 'should match expected.js', (done) ->
+      b.bundle (err, actual) ->
+        fs.readFile __dirname + '/assets/expected.js', 'utf8', (err, expected) ->
+          expected = expected.trim().split('\n')
+          actual   = actual.trim().split('\n')
+          for line, idx in expected
+            if not /^\s*?\/\//.test line
+              assert.equal actual[idx], line, "Line #{idx+1} does not match"
+          done()
