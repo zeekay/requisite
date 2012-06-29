@@ -11,16 +11,19 @@ mkdir = (path, cb) ->
           cb null
     cb null
 
-module.exports = ({entry, output, libs}) ->
+module.exports = ({after, before, entry, output, minify}) ->
   entry = path.resolve entry
-  output = output or "#{entry.replace path.extname(entry), ''}-bundle.js"
-  libs = libs or []
 
   bundler = require('./requisite').createBundler
+    after: after
+    before: before
     entry: entry
-    prepend: libs
+    minify: minify
 
   bundler.bundle (err, content) ->
-    mkdir path.dirname(output), (err) ->
-      fs.writeFile output, content, 'utf8', (err) ->
-        throw err if err
+    if output
+      mkdir path.dirname(output), (err) ->
+        fs.writeFile output, content, 'utf8', (err) ->
+          throw err if err
+    else
+      console.log content

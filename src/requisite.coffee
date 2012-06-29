@@ -84,11 +84,9 @@ find = (entry, cb) ->
             catch err
               fatal "Error: Failed to compile #{filename}", err
 
-            if file.ext in ['js', 'coffee']
-              file.ast = ast = parse body
-              body = ast.toString()
-              file.requires = ast.findRequires()
-            file.body = body
+            file.ast = parse body
+            file.requires = file.ast.findRequires()
+
             cache[filename] = file
             walk file
         else
@@ -97,34 +95,39 @@ find = (entry, cb) ->
   iterate entry
 
 # Returns bundled up requirements
-bundle = (entry, opts, cb) ->
-  find entry, (err, requires) ->
+bundle = (opts, cb) ->
+  find opts.entry, (err, requires) ->
     cb err, (wrap require, opts for _, require of requires).join('\n\n')
 
 # Wraps a required module in a define statement.
-wrap = (file) ->
-  if Object.keys(file.resolved).length and file.ast
-    # Update require calls
-    map = {}
-    for require, filename of file.resolved
-      map[require] = cache[filename].hash
-    file.body = file.ast.updateRequires(map).toString()
+wrap = (file, opts={}) ->
 
-  source = file.filename
-  aliases = JSON.stringify file.aliases.concat file.hash
-  modified = fmtDate file.mtime
+  # Generate AST with updated require calls.
+  map = {}
+  for require, filename of file.resolved
+    map[require] = cache[filename].hash
+  ast = file.ast.updateRequires(map)
 
-  """
-  // source: #{source}
-  // modified: #{modified}
-  require.define(#{aliases}, function (require, module, exports) {(function(){
-  #{file.body}
-  }).call(this)});
-  """
+  if opts.minify
+    "require.define(['#{file.hash}'], function (require, module, exports) {(function(){#{ast.minify().toString(false)}}).call(this)});"
+  else
+    source = file.filename
+    aliases = JSON.stringify file.aliases.concat file.hash
+    modified = fmtDate file.mtime
+    """
+    // source: #{source}
+    // modified: #{modified}
+    require.define(#{aliases}, function (require, module, exports) {(function(){
+    #{ast.toString()}
+    }).call(this)});
+    """
 
 # Returns prelude file
-prelude = (cb) ->
-  resolve __dirname + '/prelude', (err, filename) ->
+prelude = (opts, cb) ->
+  path = __dirname
+  path += if opts.minify then '/prelude-minify' else '/prelude'
+
+  resolve path, (err, filename) ->
     fs.readFile filename, 'utf8', (err, data) ->
       ext = extname(filename).substring 1
       cb err, compilers[ext](data, filename)
@@ -134,21 +137,18 @@ module.exports =
   bundle: bundle
   find: find
   wrap: wrap
-  createBundler: ({entry, after, before}) ->
-    after = after or []
-    before = before or []
+  createBundler: (opts) ->
+    opts.after = opts.after or []
+    opts.before = opts.before or []
     bundler =
-      bundle: (opts, cb) ->
-        if typeof opts is 'function'
-          [cb, opts] = [opts, {}]
-
-        concat before, (err, before) ->
-          prelude (err, prelude) ->
-            bundle entry, opts, (err, bundle) ->
-              resolve entry, (err, filename) ->
-                after = after.concat """
+      bundle: (cb) ->
+        concat opts.before, (err, before) ->
+          prelude opts, (err, prelude) ->
+            bundle opts, (err, bundle) ->
+              resolve opts.entry, (err, filename) ->
+                opts.after = opts.after.concat """
                 // Require entrypoint automatically.
                 require(#{JSON.stringify cache[filename].hash});
                 """
-                concat after, (err, after) ->
+                concat opts.after, (err, after) ->
                   cb err, [before, prelude, bundle, after].join('\n').trim()

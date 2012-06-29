@@ -9,6 +9,7 @@ program
   .option('-e, --entry <entry-point>', 'entry point to your code')
   .option('-o, --output <file>', 'where to compile your code to')
   .option('-l, --libs <files>', 'files which should be prepended to compiled output', list)
+  .option('-m, --minify', 'minify bundled code')
   .parse(process.argv)
 
 help = ->
@@ -17,7 +18,8 @@ help = ->
 
 help() unless program.entry
 
-bundle = require('./bundle')
+require('./build')
   entry: program.entry
   output: program.output
-  libs: program.libs
+  before: program.libs
+  minify: program.minify
