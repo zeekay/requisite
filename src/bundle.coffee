@@ -183,8 +183,7 @@ module.exports = createBundler = (opts) ->
 
   # Returns necessary prelude file.
   prelude = (opts, cb) ->
-    path = __dirname
-    path += if opts.minify then '/prelude-minify' else '/prelude'
+    path = join __dirname, if opts.minify then 'prelude-minify' else 'prelude'
 
     resolve path, (err, filename) ->
       fs.readFile filename, 'utf8', (err, data) ->
