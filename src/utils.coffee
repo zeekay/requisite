@@ -5,12 +5,20 @@ util     = require 'util'
 {minify} = require './ast'
 
 # The location of exists/existsSync changed in node v0.8.0.
+# Export a few things for compatibility purposes.
 if fs.existsSync
+  # node v0.8.0+
   exports.existsSync = existsSync = fs.existsSync
   exports.exists     = fs.exists
+  exports.sep        = path.sep
 else
+  # node v0.6.0+
   exports.existsSync = existsSync = path.existsSync
   exports.exists     = path.exists
+  if process.platform == 'win32'
+    exports.sep = '\\'
+  else
+    exports.sep = '/'
 
 # Filter duplicate items from an array, preserving order.
 exports.uniq = (arr) ->
@@ -39,7 +47,6 @@ exports.concat = (files, opts, callback) ->
   idx = 0
   concatenated = ''
 
-  console.log files
   iterate = ->
     exports.exists files[idx], (exists) ->
       concat = (body) ->

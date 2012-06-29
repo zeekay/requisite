@@ -1,7 +1,9 @@
-compilers      = require './compilers'
-fs             = require 'fs'
-{exists, uniq} = require './utils'
-{join, sep}    = require 'path'
+compilers = require './compilers'
+fs        = require 'fs'
+{exists}  = require './utils'
+{join}    = require 'path'
+{sep}     = require './utils'
+{uniq}    = require './utils'
 
 module.exports = (root) ->
   # Maintain a cache of resolved paths.
@@ -23,7 +25,6 @@ module.exports = (root) ->
     for path in root.split sep
       last = join last, sep, path
       paths.push join last, 'node_modules'
-    paths.shift()
     paths = paths.reverse()
     # Append any extra paths found in NODE_PATH
     if process.env.NODE_PATH
