@@ -39,11 +39,11 @@ module.exports = (root) ->
         fs.readFile packageJson, (err, content) ->
           main = JSON.parse(content).main
           if main
-            resolveRelative join(path, main), cb
+            resolveFile join(path, main), cb
           else
-            resolveRelative join(path, 'index'), cb
+            resolveFile join(path, 'index'), cb
       else
-        resolveRelative join(path, 'index'), cb
+        resolveFile join(path, 'index'), cb
 
   # Resolve path to npm module.
   resolveModule = (name, cb) ->
@@ -61,7 +61,7 @@ module.exports = (root) ->
     iterate()
 
   # Resolve path to relative module.
-  resolveRelative = resolveRelative = (path, cb) ->
+  resolveFile = resolveFile = (path, cb) ->
     idx = 0
     iterate = ->
       if idx == extensions.length
@@ -83,11 +83,11 @@ module.exports = (root) ->
 
   resolver =
     resolveDirectory: resolveDirectory
+    resolveFile: resolveFile
     resolveModule: resolveModule
-    resolveRelative: resolveRelative
     resolve: (path, cb) ->
-      # if path starts with . or / it's relative
-      if /^[./]/.test path
-        resolveRelative path, cb
+      # if path starts with . or / or C:\\ it's a file
+      if /^\.\/|\/|^\w\:\\/.test path
+        resolveFile path, cb
       else
         resolveModule path, cb

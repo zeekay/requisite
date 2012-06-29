@@ -56,11 +56,10 @@ module.exports = createBundler = (opts) ->
 
     # Parse dependencies
     iterate = (req, parent) ->
-      if parent and /^[./]/.test req
-        # this is a relative require
+      # Test whether we are requiring an absolute/relative file or a modules in node_modules
+      if parent and /^\.\/|\/|^\w\:\\/.test req
         path = join parent.base, req
       else
-        # this is an npm module
         path = req
 
       resolve path, (err, filename) ->
@@ -184,7 +183,6 @@ module.exports = createBundler = (opts) ->
   # Returns necessary prelude file.
   prelude = (opts, cb) ->
     path = join __dirname, if opts.minify then 'prelude-minify' else 'prelude'
-
     resolve path, (err, filename) ->
       fs.readFile filename, 'utf8', (err, data) ->
         ext = extname(filename).substring 1
