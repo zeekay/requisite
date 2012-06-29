@@ -25,6 +25,7 @@ describe 'bundle', ->
   ]
   prelude = 'return this.require.define = function(aliases, fn) {'
   jadeRuntime = 'jade=function(exports){Array.isArray||(Array.isArray=function(arr)'
+  callEntry = "require('21568343a3');"
 
   before (done) ->
     # Create bundlers
@@ -66,13 +67,13 @@ describe 'bundle', ->
     it 'should include the jade runtime', ->
       content.should.have.string jadeRuntime
 
+    it 'should automatically call the entry module', ->
+      content.should.have.string callEntry
+
   describe 'bundle#bundle() pt. ii: return of the bundle', ->
     it 'should still pass previous tests after being bundled up again', (done) ->
       bundler.bundle (err, content) ->
         throw err if err
-
-        content.should.have.string prelude
-        content.should.have.string jadeRuntime
-        for str in reqFiles.concat reqDirectories, reqModules, reqTemplates
+        for str in reqFiles.concat reqDirectories, reqModules, reqTemplates, prelude, jadeRuntime, callEntry
           content.should.have.string str
         done()
