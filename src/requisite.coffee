@@ -1,36 +1,26 @@
 compilers  = require './compilers'
 crypto     = require 'crypto'
 fs         = require 'fs'
+resolve    = require './resolve'
 {parse}    = require './ast'
 
 utils      = require './utils'
 prettyDate = utils.prettyDate
 readFiles  = utils.readFiles
+uniq       = utils.uniq
+fatal      = utils.fatal
 
 path       = require 'path'
 dirname    = path.dirname
 extname    = path.extname
 join       = path.join
 
-cache = {}
-
-fatal = (message, err) ->
-  console.error message
-  console.trace err.toString().substring 7
-  process.exit()
-
-resolve = (path) ->
-  try
-    require.resolve path
-  catch err
-    fatal "Error: Unable to resolve path to '#{path}'", err
-
 find = (entry, callback) ->
   count = 0
-  filename = resolve entry
+  cache = {}
 
   alias = do ->
-    base = dirname(filename).length
+    base = dirname(entry).length
     (filename) ->
       filename = filename.replace(/\\/g, '/')
       if /node_modules/i.test filename
@@ -41,88 +31,97 @@ find = (entry, callback) ->
       name.pop()
       name.join('.').replace /\/index$/, ''
 
-  iterate = (filename, as) ->
-    file =
-      base: dirname filename
-      body: ''
-      ext: extname(filename).substring 1
-      filename: filename
-      mtime: null
-      aliases: [alias filename]
-      requireAs: as
-      requires: []
-      resolved: []
+  iterate = (require, parent) ->
+    if parent and /^[./]/.test require
+      # this is a relative require
+      path = join parent.base, require
+    else
+      # this is an npm module
+      path = require
 
-    if not cache[filename]
-      cache[filename] = file
+    resolve path, (err, filename) ->
+      if parent
+        # Add to parent's map of resolved modules
+        parent.resolved[require] = filename
 
-    fs.stat filename, (err, stat) ->
-      throw err if err
+      file =
+        base: dirname filename
+        body: ''
+        ext: extname(filename).substring 1
+        filename: filename
+        mtime: null
+        aliases: [alias filename]
+        requireAs: require
+        requires: []
+        resolved: {}
 
-      # traverse required files
-      traverse = (file) ->
-        count += file.requires.length
+      fs.stat filename, (err, stat) ->
+        throw err if err
 
-        for require in file.requires
-          if /^[./]/.test require
-            # this is a relative require
-            filename = resolve join(file.base, require)
-          else
-            # npm module
-            filename = resolve require
+        if (not cache[filename]?.mtime) or (cache[filename].mtime < stat.mtime)
+          console.log "#{filename} not cached"
+          file.mtime = stat.mtime
 
-          file.resolved.push [filename, require]
+          # Create a unique hash for this file
+          shasum = crypto.createHash 'sha1'
+          stream = fs.ReadStream filename
+          stream.setEncoding 'utf8'
+
+          body = ''
+
+          stream.on 'data', (data) ->
+            shasum.update data
+            body += data
+
+          stream.on 'end', ->
+            file.hash = shasum.digest('hex').substring 0, 10
+            try
+              body = compilers[file.ext](body, filename)
+            catch err
+              fatal "Error: Failed to compile #{filename}", err
+
+            if file.ext in ['js', 'coffee']
+              file.ast = ast = parse body
+              body = ast.toString()
+              file.requires = ast.findRequires()
+
+            file.body = body
+
+            cache[filename] = file
+
+            # we must go deeper
+            count += file.requires.length
+            for require in file.requires
+              iterate require, file
+
+            if count > 0
+              --count
+            else
+              # done recursing
+              callback null, cache
+        else
+          file = cache[filename]
 
           # we must go deeper
-          iterate filename, require
+          count += file.requires.length
+          for require in file.requires
+            iterate require, file
 
-        if count > 0
-          --count
-        else
-          # done recursing
-          callback null, cache
+          if count > 0
+            --count
+          else
+            # done recursing
+            callback null, cache
 
-      if (not cache[filename].mtime) or (cache[filename].mtime < stat.mtime)
-        file.mtime = stat.mtime
-
-        # Create a unique hash for this file
-        shasum = crypto.createHash 'sha1'
-        stream = fs.ReadStream filename
-        stream.setEncoding 'utf8'
-
-        body = ''
-
-        stream.on 'data', (data) ->
-          shasum.update data
-          body += data
-
-        stream.on 'end', ->
-          file.hash = shasum.digest('hex').substring 0, 10
-          try
-            body = compilers[file.ext](body, filename)
-          catch err
-            fatal "Error: Failed to compile #{filename}", err
-
-          if file.ext in ['js', 'coffee']
-            file.ast = ast = parse body
-            body = ast.toString()
-            file.requires = ast.findRequires()
-
-          file.body = body
-          traverse file
-      else
-        # use cached version of the file
-        traverse cache[filename]
-
-  iterate filename, entry
+  iterate entry
 
 # Wraps a required module in a define statement.
 wrap = (file) ->
+  if Object.keys(file.resolved).length and file.ast
 
-  # update require statements
-  if file.resolved.length and file.ast
+    # Update require calls
     map = {}
-    for [filename, require] in file.resolved
+    for require, filename of file.resolved
       map[require] = cache[filename].hash
     file.ast.updateRequires(map)
     file.body = file.ast.toString()
@@ -138,11 +137,12 @@ wrap = (file) ->
   #{file.body}
   }).call(this)});
   """
+
 prelude = (callback) ->
-  filename = resolve __dirname + '/prelude'
-  fs.readFile filename, 'utf8', (err, data) ->
-    ext = extname(filename).substring 1
-    callback err, compilers[ext](data, filename)
+  resolve __dirname + '/prelude', (err, filename) ->
+    fs.readFile filename, 'utf8', (err, data) ->
+      ext = extname(filename).substring 1
+      callback err, compilers[ext](data, filename)
 
 # Bundles up client-side JS, traversing from an initial entry point.
 bundle = (entry, opts, callback) ->
@@ -153,6 +153,7 @@ exports.cli = -> require './cli'
 
 exports.createBundler = ({entry, prepend}) ->
   entry = path.resolve entry
+  console.log entry
   bundler =
     bundle: (opts, callback) ->
       if typeof opts is 'function'

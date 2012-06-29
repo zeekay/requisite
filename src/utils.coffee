@@ -2,6 +2,22 @@ fs      = require 'fs'
 util    = require 'util'
 {spawn} = require 'child_process'
 
+# Filter duplicate items from an array, preserving order.
+exports.uniq = (arr) ->
+  seen = {}
+  uniq = []
+  for i in arr
+    if i not in seen
+      seen[i] = true
+      uniq.push i
+  uniq
+
+# Display error message and quit
+exports.fatal = (message, err) ->
+  console.error message
+  console.trace err.toString().substring 7
+  process.exit()
+
 exports.readFiles = (files, callback) ->
   if not Array.isArray files
     files = [files]
