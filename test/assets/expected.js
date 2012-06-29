@@ -68,6 +68,14 @@ require.define(["/a","70f886d883"], function (require, module, exports) {(functi
     };
 }).call(this)});
 
+// source: /Volumes/Data/zk/play/requisite/test/assets/b.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
+require.define(["/b","8908bb92f8"], function (require, module, exports) {(function(){
+    module.exports = {
+      b: "b"
+    };
+}).call(this)});
+
 // source: /Volumes/Data/zk/play/requisite/test/assets/c.coffee
 // modified: Friday, June 29, 2012 6:10:29 AM
 require.define(["/c","318af1af20"], function (require, module, exports) {(function(){
@@ -79,27 +87,11 @@ require.define(["/c","318af1af20"], function (require, module, exports) {(functi
     alert("hi");
 }).call(this)});
 
-// source: /Volumes/Data/zk/play/requisite/test/assets/b.coffee
-// modified: Tuesday, June 26, 2012 1:22:56 AM
-require.define(["/b","8908bb92f8"], function (require, module, exports) {(function(){
-    module.exports = {
-      b: "b"
-    };
-}).call(this)});
-
 // source: /Volumes/Data/zk/play/requisite/node_modules/mod/index.js
 // modified: Friday, June 29, 2012 2:07:54 AM
 require.define(["/node_modules/mod","e63313c6a9"], function (require, module, exports) {(function(){
     module.exports = {
       x: 42
-    };
-}).call(this)});
-
-// source: /Volumes/Data/zk/play/requisite/test/assets/foo/index.coffee
-// modified: Tuesday, June 26, 2012 1:22:56 AM
-require.define(["/test/assets/foo","58c67562d2"], function (require, module, exports) {(function(){
-    module.exports = {
-      foo: "bar"
     };
 }).call(this)});
 
@@ -117,6 +109,14 @@ require.define(["/test/assets/template","04e021b689"], function (require, module
         buf.push("<h1>hi!</h1>");
       }
       return buf.join("");
+    };
+}).call(this)});
+
+// source: /Volumes/Data/zk/play/requisite/test/assets/foo/index.coffee
+// modified: Tuesday, June 26, 2012 1:22:56 AM
+require.define(["/test/assets/foo","58c67562d2"], function (require, module, exports) {(function(){
+    module.exports = {
+      foo: "bar"
     };
 }).call(this)});
 

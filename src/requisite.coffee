@@ -65,17 +65,16 @@ find = (opts, cb) ->
 
       # Iterate over dependencies
       walk = (file) ->
-        # we must go deeper
         count += file.requires.length
         for req in file.requires
+          # We must go deeper...
           iterate req, file
-
         if count > 0
           --count
         else
-          # done recursing
+          # Done recursing, setup hooks and return ordered dependencies
           opts.hooks = hooks
-          cb null, cache
+          cb null, (mod for filename, mod of cache)
 
       fs.stat filename, (err, stat) ->
         throw err if err
@@ -115,8 +114,10 @@ find = (opts, cb) ->
               addHooks '__entry', after: -> "require('#{file.hash}');"
             addHooks file.ext, compilers[file.ext]
 
+            # Walk dependencies
             walk file
         else
+          # Use cached file
           file = cache[filename]
 
           # Add hooks
@@ -124,6 +125,7 @@ find = (opts, cb) ->
             addHooks '__entry', after: -> "require('#{file.hash}');"
           addHooks file.ext, compilers[file.ext]
 
+          # Walk dependencies
           walk file
 
   iterate entry
@@ -132,7 +134,7 @@ find = (opts, cb) ->
 bundle = (opts, cb) ->
   # Extra hooks to append/prepend supporting scripts requried by dependencies
   find opts, (err, modules) ->
-    modules = (wrap mod, opts for _, mod of modules)
+    modules = (wrap mod, opts for mod in modules)
     for k,v of opts.hooks.after
       modules.push if opts.minify then minify v else v
     for k,v of opts.hooks.before
