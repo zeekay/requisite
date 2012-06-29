@@ -48,7 +48,7 @@ module.exports = (root) ->
   resolveModule = (name, cb) ->
     idx = 0
     iterate = ->
-      if idx == modulePaths
+      if idx == modulePaths.length
         throw new Error "Unable to resolve module #{name}"
       path = join modulePaths[idx], name
       exists path, (exist) ->
