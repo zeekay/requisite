@@ -7,7 +7,24 @@ should        = require('chai').should()
 describe 'bundle', ->
   # Declare bundlers in outer scope so tests have access to them.
   bundler = null
-  bundleContent = null
+  content = null
+  reqFiles = [
+    'require.define(["/a","70f886d883"]'
+    'require.define(["/b","8908bb92f8"]'
+    'require.define(["/c","318af1af20"]'
+    'require.define(["/entry","21568343a3"]'
+  ]
+  reqDirectories = [
+    'require.define(["/test/assets/foo","58c67562d2"]'
+  ]
+  reqModules = [
+    'require.define(["/node_modules/mod","e63313c6a9"]'
+  ]
+  reqTemplates = [
+    'require.define(["/test/assets/template","04e021b689"]'
+  ]
+  prelude = 'return this.require.define = function(aliases, fn) {'
+  jadeRuntime = 'jade=function(exports){Array.isArray||(Array.isArray=function(arr)'
 
   before (done) ->
     # Create bundlers
@@ -20,27 +37,42 @@ describe 'bundle', ->
       fs.mkdirSync mod
       fs.writeFileSync join(mod, 'index.js'), "module.exports = {x: 42};"
 
-    bundler.bundle (err, content) ->
+    # Save output of bundle() for tests, call twice to ensure there are no issues with caching
+    bundler.bundle (err, _content) ->
       throw err if err
-      bundleContent = content
+      content = _content
       done()
 
   describe 'bundle#bundle()', ->
-    it 'should find and define all absolute/relatively required modules properly', ->
-      required = '''
-        require.define(["/a","70f886d883"]
-        require.define(["/b","8908bb92f8"]
-        require.define(["/c","318af1af20"]
-        require.define(["/test/assets/foo","58c67562d2"]
-        require.define(["/test/assets/template","04e021b689"]
-        require.define(["/entry","21568343a3"]
-        '''.split('\n')
+    it 'should include the appropriate prelude', ->
+      content.should.have.string prelude
 
-      for define in required
-        bundleContent.should.have.string define
+    it 'should find and define all absolute/relatively required files properly', ->
+      for str in reqFiles
+        content.should.have.string str
+
+    it 'should find and define all absolute/relatively required directories properly', ->
+      for str in reqDirectories
+        content.should.have.string str
 
     it 'should find and define all modules required from node_modules', ->
-      bundleContent.should.have.string 'require.define(["/node_modules/mod","e63313c6a9"]'
+      for str in reqModules
+        content.should.have.string str
+
+    it 'should find and define all jade templates', ->
+      for str in reqTemplates
+        content.should.have.string str
 
     it 'should include the jade runtime', ->
-      bundleContent.should.have.string 'jade=function(exports){Array.isArray||(Array.isArray=function(arr){'
+      content.should.have.string jadeRuntime
+
+  describe 'bundle#bundle() pt. ii: return of the bundle', ->
+    it 'should still pass previous tests after being bundled up again', (done) ->
+      bundler.bundle (err, content) ->
+        throw err if err
+
+        content.should.have.string prelude
+        content.should.have.string jadeRuntime
+        for str in reqFiles.concat reqDirectories, reqModules, reqTemplates
+          content.should.have.string str
+        done()
