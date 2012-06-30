@@ -50,7 +50,7 @@ module.exports = (root) ->
     idx = 0
     iterate = ->
       if idx == modulePaths.length
-        throw new Error "Unable to resolve module #{name}"
+        return cb new Error "Unable to resolve module #{name}"
       path = join modulePaths[idx], name
       exists path, (exist) ->
         if exist
@@ -65,7 +65,7 @@ module.exports = (root) ->
     idx = 0
     iterate = ->
       if idx == extensions.length
-        throw new Error "Unable to resolve path to module #{path}"
+        return cb new Error "Unable to resolve path to module #{path}"
       fs.realpath path+extensions[idx], cache, (err, resolved) ->
         if not err
           fs.lstat resolved, (err, stats) ->
@@ -75,7 +75,7 @@ module.exports = (root) ->
               cache[path] = resolved
               cb null, resolved
             else
-              throw new Error "What the fuck!?"
+              return cb new Error "What the fuck!?"
         else
           idx++
           iterate()

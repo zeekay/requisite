@@ -1,5 +1,5 @@
 # Prelude required by bundled modules.
-do ->
+require = do ->
   modules = {}
   cache = {}
 
@@ -28,3 +28,5 @@ do ->
     for alias in aliases
       modules[alias] = fn
     return
+
+  @require

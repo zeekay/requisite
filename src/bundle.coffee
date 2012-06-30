@@ -48,6 +48,7 @@ module.exports = createBundler = (opts) ->
     hooks =
       after: {}
       before: {}
+    seen = {}
 
     # Hook into module compilation
     addHooks = (name, {after, before}) ->
@@ -70,6 +71,23 @@ module.exports = createBundler = (opts) ->
         name.pop()
         name.join('.').replace /\/index$/, ''
 
+    # Increment count and check for completion
+    done = ->
+      if count > 0
+        --count
+      else
+        # Done recursing, setup hooks and return ordered dependencies
+        opts.hooks = hooks
+        cb null, (mod for filename, mod of cache)
+
+    # Iterate over dependencies
+    walk = (file) ->
+      count += file.requires.length
+      for req in file.requires
+        # We must go deeper...
+        iterate req, file
+      done()
+
     # Parse dependencies
     iterate = (req, parent) ->
       # Test whether we are requiring an absolute/relative file or a modules in node_modules
@@ -79,9 +97,17 @@ module.exports = createBundler = (opts) ->
         path = req
 
       resolve path, (err, filename) ->
+        return cb err if err
+
         if parent
           # Add to parent's map of resolved modules
           parent.resolved[req] = filename
+
+        # Keep track of all the files we've seen to deal with circular dependencies
+        if not seen[filename]
+          seen[filename] = true
+        else
+          return done()
 
         file =
           base: dirname filename
@@ -94,21 +120,8 @@ module.exports = createBundler = (opts) ->
           requires: []
           resolved: {}
 
-        # Iterate over dependencies
-        walk = (file) ->
-          count += file.requires.length
-          for req in file.requires
-            # We must go deeper...
-            iterate req, file
-          if count > 0
-            --count
-          else
-            # Done recursing, setup hooks and return ordered dependencies
-            opts.hooks = hooks
-            cb null, (mod for filename, mod of cache)
-
         fs.stat filename, (err, stat) ->
-          throw err if err
+          return cb err if err
 
           if (not cache[filename]?.mtime) or (cache[filename].mtime < stat.mtime)
             file.mtime = stat.mtime
@@ -131,7 +144,7 @@ module.exports = createBundler = (opts) ->
               try
                 body = compilers[file.ext](body, filename)
               catch err
-                throw new Error "Error: Failed to compile #{filename}"
+                return cb new Error "Error: Failed to compile #{filename}"
 
               # Find all dependencies that are required
               file.ast = parse body
@@ -166,6 +179,7 @@ module.exports = createBundler = (opts) ->
     wrapper = opts.wrapper or wrap
     # Extra hooks to append/prepend supporting scripts requried by dependencies
     find opts, (err, modules) ->
+      return cb err if err
       modules = (wrapper mod, opts for mod in modules)
 
       if opts.compilerHooks
@@ -217,10 +231,11 @@ module.exports = createBundler = (opts) ->
 
     path = opts.prelude ? join __dirname, if opts.minify then 'prelude-minify' else 'prelude'
     resolve path, (err, filename) ->
+      return cb err if err
       fs.readFile filename, 'utf8', (err, data) ->
         ext = extname(filename).substring 1
         content = compilers[ext](data, filename)
-        cb err, if opts.minify then minify content else content
+        cb null, if opts.minify then minify content else content
 
   # Return JavaScript bundler.
   bundler =
@@ -228,7 +243,11 @@ module.exports = createBundler = (opts) ->
     wrap: wrap
     bundle: (cb) ->
       concat opts.before, opts, (err, before) ->
+        return cb err if err
         prelude opts, (err, prelude) ->
+          return cb err if err
           bundle opts, (err, bundle) ->
+            return cb err if err
             concat opts.after, opts, (err, after) ->
-              cb err, [before, prelude, bundle, after].join(if opts.minify then '' else '\n\n').trim()
+              return cb err if err
+              cb null, [before, prelude, bundle, after].join(if opts.minify then '' else '\n\n').trim()
