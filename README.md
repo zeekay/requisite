@@ -41,6 +41,7 @@ Creates a bundler which can asynchronously bundle your code. At the very minimum
 #### Options
 
 Several additional options can be passed to `createBundler`:
+
 * `entry` Entry point of your application. Required.
 * `after` List of scripts to include after bundled modules.
 * `before` List of scripts to include before bundled modules.
