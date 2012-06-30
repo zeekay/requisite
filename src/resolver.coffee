@@ -20,7 +20,6 @@ module.exports = (root) ->
 
   # Build list of valid node_modules paths.
   modulePaths = do (root) ->
-    console.log root
     last = ''
     paths = []
     for path in root.split sep
@@ -31,8 +30,6 @@ module.exports = (root) ->
     if process.env.NODE_PATH
       paths = paths.concat process.env.NODE_PATH.split ':'
     paths
-
-  console.log modulePaths
 
   # Resolve directory/npm module to index/main file.
   resolveDirectory = (path, cb) ->
