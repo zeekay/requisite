@@ -16,6 +16,16 @@ module.exports = createBundler = (opts) ->
     minify: false
     # Whether to automatically require the entry module.
     requireEntry: true
+    # AST transformations/walkers
+    astTransforms: []
+    astWalkers: []
+    astFilters: []
+    # Hook to replace the function which wraps each module
+    wrapper: null
+    # Hook to replace prelude which is included
+    prelude: null
+    # Whether to include compiler related hooks
+    compilerHooks: true
 
   for k,v of defaults
     opts[k] ?= v
@@ -153,24 +163,36 @@ module.exports = createBundler = (opts) ->
 
   # Bundles modules starting from an entry point
   bundle = (opts, cb) ->
+    wrapper = opts.wrapper or wrap
     # Extra hooks to append/prepend supporting scripts requried by dependencies
     find opts, (err, modules) ->
-      modules = (wrap mod, opts for mod in modules)
-      for k,v of opts.hooks.after
-        modules.push if opts.minify then minify v else v
-      for k,v of opts.hooks.before
-        modules.unshift if opts.minify then minify v else v
+      modules = (wrapper mod, opts for mod in modules)
+
+      if opts.compilerHooks
+        for k,v of opts.hooks.after
+          modules.push if opts.minify then minify v else v
+        for k,v of opts.hooks.before
+          modules.unshift if opts.minify then minify v else v
       cb err, modules.join(if opts.minify then '' else '\n\n')
 
   # Wraps a required module in a define statement.
   wrap = (file, opts={}) ->
     # Map of require calls to file hashes
+
     map = {}
     for req, filename of file.resolved
       map[req] = cache[filename].hash
 
     # Generate AST with updated require calls.
     ast = file.ast.updateRequires(map)
+
+    # Perform any extra AST manipulations
+    for filter in opts.astFilters
+      ast.call filter, opts
+    for walker in opts.astWalkers
+      ast.walk walker
+    for transform in opts.astTransforms
+      ast.transform transform
 
     if opts.minify
       "require.define(['#{file.hash}'], function (require, module, exports) {(function(){#{ast.toString minify: true}}).call(this)});"
@@ -188,7 +210,10 @@ module.exports = createBundler = (opts) ->
 
   # Returns necessary prelude file.
   prelude = (opts, cb) ->
-    path = join __dirname, if opts.minify then 'prelude-minify' else 'prelude'
+    if opts.prelude is false
+      return cb null, ''
+
+    path = opts.prelude ? join __dirname, if opts.minify then 'prelude-minify' else 'prelude'
     resolve path, (err, filename) ->
       fs.readFile filename, 'utf8', (err, data) ->
         ext = extname(filename).substring 1

@@ -11,19 +11,18 @@ mkdir = (path, cb) ->
           cb null
     cb null
 
-module.exports = ({after, before, entry, output, minify}) ->
-  entry = path.resolve entry
+module.exports = (opts) ->
+  # Get full path to entry
+  opts.entry = path.resolve opts.entry
 
-  bundler = require('./bundle')
-    after: after
-    before: before
-    entry: entry
-    minify: minify
+  # Create bundler with our opts
+  bundler = require('./bundle')(opts)
 
+  # Bundle Javascript, output to file if opts.output or stdout
   bundler.bundle (err, content) ->
-    if output
-      mkdir path.dirname(output), (err) ->
-        fs.writeFile output, content, 'utf8', (err) ->
+    if opts.output
+      mkdir path.dirname(opts.output), (err) ->
+        fs.writeFile opts.output, content, 'utf8', (err) ->
           throw err if err
     else
       console.log content
