@@ -2,9 +2,9 @@ compilers = require './compilers'
 crypto    = require 'crypto'
 fs        = require 'fs'
 resolver  = require './resolver'
-{parse, minify} = require './ast'
+{concat, fmtDate, uniq} = require './utils'
 {dirname, extname, join} = require 'path'
-{concat, fatal, fmtDate, uniq} = require './utils'
+{parse, minify} = require './ast'
 
 module.exports = createBundler = (opts) ->
   defaults =
@@ -131,7 +131,7 @@ module.exports = createBundler = (opts) ->
               try
                 body = compilers[file.ext](body, filename)
               catch err
-                fatal "Error: Failed to compile #{filename}", err
+                throw new Error "Error: Failed to compile #{filename}"
 
               # Find all dependencies that are required
               file.ast = parse body

@@ -30,12 +30,6 @@ exports.uniq = (arr) ->
       uniq.push i
   uniq
 
-# Display error message and quit
-exports.fatal = (message, err) ->
-  console.error message
-  console.trace err.toString().substring 7
-  process.exit()
-
 # Concatenate files or strings together
 exports.concat = (files, opts, callback) ->
   if not files or files.length == 0
