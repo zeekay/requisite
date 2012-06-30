@@ -22,6 +22,7 @@
 
 </p>
 <p>Example:
+
 </p>
 <pre><code class="lang-javascript">requisite = require(<span class="string">'requisite'</span>).createBundler({
   entry: <span class="string">'/path/to/app.js'</span>
@@ -38,7 +39,7 @@ requisite.bundle(<span class="function"><span class="keyword">function</span> <s
 
 </p>
 <h4>Options</h4>
-<p>Several additional options can be passed to <code>createBundler</code>:
+<p>Several options can be passed to <code>createBundler</code> which can influence how your code is assembled:
 
 </p>
 <ul>
@@ -47,14 +48,14 @@ requisite.bundle(<span class="function"><span class="keyword">function</span> <s
 <li><code>before</code> List of scripts to include before bundled modules.</li>
 <li><code>minify</code> Whether to minify or not. Defaults to false.</li>
 <li><code>requireEntry</code> Whether to automatically require the entry module. Defaults to true.</li>
-<li><code>astTransforms</code> Transformations to apply to each modules AST.</li>
-<li><code>astWalkers</code> Walkers to apply to each modules AST.</li>
-<li><code>astFilters</code> Filters to apply to each modules AST.</li>
+<li><code>astTransforms</code> Transformations to apply to each module&#39;s AST.</li>
+<li><code>astWalkers</code> Walkers to apply to each module&#39;s AST.</li>
+<li><code>astFilters</code> Filters to apply to each module&#39;s AST.</li>
 <li><code>wrapper</code> Hook to replace default module wrapper, which wraps each module in <code>define</code> call.</li>
 <li><code>prelude</code> Hook to replace default prelude file, which contains basic client-side CommonJS implementation.</li>
 <li><code>compilerHooks</code> Whether to inject scripts added by compilers. This allows compilers (such as the jade compiler) to automatically inject necessary scripts. Defaults true.</li>
 </ul>
-<h3>bundler.bundle([cb])</h3>
+<h3>bundler.bundle(cb)</h3>
 <ul>
 <li><code>cb</code> {Function} Called when an error occurs or you application has been bundled<ul>
 <li><code>err</code> {Error | null}</li>
