@@ -39,19 +39,21 @@ requisite.bundle(<span class="function"><span class="keyword">function</span> <s
 </p>
 <h4>Options</h4>
 <p>Several additional options can be passed to <code>createBundler</code>:
-<em> <code>entry</code> Entry point of your application. Required.
-</em> <code>after</code> List of scripts to include after bundled modules.
-<em> <code>before</code> List of scripts to include before bundled modules.
-</em> <code>minify</code> Whether to minify or not. Defaults to false.
-<em> <code>requireEntry</code> Whether to automatically require the entry module. Defaults to true.
-</em> <code>astTransforms</code> Transformations to apply to each modules AST.
-<em> <code>astWalkers</code> Walkers to apply to each modules AST.
-</em> <code>astFilters</code> Filters to apply to each modules AST.
-<em> <code>wrapper</code> Hook to replace default module wrapper, which wraps each module in <code>define</code> call.
-</em> <code>prelude</code> Hook to replace default prelude file, which contains basic client-side CommonJS implementation.
-* <code>compilerHooks</code> Whether to inject scripts added by compilers. This allows compilers (such as the jade compiler) to automatically inject necessary scripts. Defaults true.
 
 </p>
+<ul>
+<li><code>entry</code> Entry point of your application. Required.</li>
+<li><code>after</code> List of scripts to include after bundled modules.</li>
+<li><code>before</code> List of scripts to include before bundled modules.</li>
+<li><code>minify</code> Whether to minify or not. Defaults to false.</li>
+<li><code>requireEntry</code> Whether to automatically require the entry module. Defaults to true.</li>
+<li><code>astTransforms</code> Transformations to apply to each modules AST.</li>
+<li><code>astWalkers</code> Walkers to apply to each modules AST.</li>
+<li><code>astFilters</code> Filters to apply to each modules AST.</li>
+<li><code>wrapper</code> Hook to replace default module wrapper, which wraps each module in <code>define</code> call.</li>
+<li><code>prelude</code> Hook to replace default prelude file, which contains basic client-side CommonJS implementation.</li>
+<li><code>compilerHooks</code> Whether to inject scripts added by compilers. This allows compilers (such as the jade compiler) to automatically inject necessary scripts. Defaults true.</li>
+</ul>
 <h3>bundler.bundle([cb])</h3>
 <ul>
 <li><code>cb</code> {Function} Called when an error occurs or you application has been bundled<ul>
