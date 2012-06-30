@@ -1,8 +1,8 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h3>Introduction</h3>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h2>Introduction</h2>
 <p>Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript applictions using CommonJS modules in Node.js and in the browser. Requisite traces your applications dependencies and bundles your code up.
 
 </p>
-<h3>Features</h3>
+<h2>Features</h2>
 <ul>
 <li>CommonJS modules.</li>
 <li>Resolve relative modules as well as NPM modules.</li>
@@ -12,17 +12,52 @@
 <li>Flexible JavaScript API allowing easy programmatic usage.</li>
 <li>Command line build-tool for simple projects</li>
 </ul>
-<h3>Commandline</h3>
-<pre><code class="lang-bash">requisite --entry /path/to/app.js --output /path/to/bundle.js --minify</code></pre>
-<h3>JavaScript API</h3>
-<pre><code class="lang-coffeescript">requisite = require(<span class="string">'requisite'</span>).createBundle
-    <span class="comment"># Entry point of your application</span>
-    entry: <span class="string">'/path/to/app.js'</span>
-    <span class="comment"># Scripts which should be bundled after entry module and dependencies.</span>
-    after: []
-    <span class="comment"># Scripts which should be bundled before entry module and dependencies.</span>
-    before: [<span class="string">'/path'</span>, <span class="string">'/to'</span>, <span class="string">'/jquery'</span>, <span class="string">'/etc'</span>]
+<h2>Command-line</h2>
+<pre><code class="lang-bash">requisite --entry ./app.js --output ./bundle.js --minify</code></pre>
+<p>Refer to <code>requisite --help</code> for additional usage options.
 
-requisite.bundle, (err, content) ->
-  <span class="comment"># use bundled JavaScript.</span></code></pre>
+</p>
+<h2>JavaScript API</h2>
+<p>The JavaScript API is fully asynchronous, and designed to offer absolute control over Requisite&#39;s behavior.
+
+</p>
+<p>Example:
+</p>
+<pre><code class="lang-javascript">requisite = require(<span class="string">'requisite'</span>).createBundler({
+  entry: <span class="string">'/path/to/app.js'</span>
+});
+
+requisite.bundle(<span class="function"><span class="keyword">function</span> <span class="params">(err, content)</span> {</span>
+  <span class="comment">// Use bundled JavaScript.</span>
+});</code></pre>
+<h3>createBundler(options)</h3>
+<ul>
+<li><code>options</code> {Object}</li>
+</ul>
+<p>Creates a bundler which can asynchronously bundle your code. At the very minimum <code>options</code> must contain the <code>entry</code> property pointing to your application.
+
+</p>
+<h4>Options</h4>
+<p>Several additional options can be passed to <code>createBundler</code>:
+<em> <code>entry</code> Entry point of your application. Required.
+</em> <code>after</code> List of scripts to include after bundled modules.
+<em> <code>before</code> List of scripts to include before bundled modules.
+</em> <code>minify</code> Whether to minify or not. Defaults to false.
+<em> <code>requireEntry</code> Whether to automatically require the entry module. Defaults to true.
+</em> <code>astTransforms</code> Transformations to apply to each modules AST.
+<em> <code>astWalkers</code> Walkers to apply to each modules AST.
+</em> <code>astFilters</code> Filters to apply to each modules AST.
+<em> <code>wrapper</code> Hook to replace default module wrapper, which wraps each module in <code>define</code> call.
+</em> <code>prelude</code> Hook to replace default prelude file, which contains basic client-side CommonJS implementation.
+* <code>compilerHooks</code> Whether to inject scripts added by compilers. This allows compilers (such as the jade compiler) to automatically inject necessary scripts. Defaults true.
+
+</p>
+<h3>bundler.bundle([cb])</h3>
+<ul>
+<li><code>cb</code> {Function} Called when an error occurs or you application has been bundled<ul>
+<li><code>err</code> {Error | null}</li>
+<li><code>content</code> {String} Your bundled code.</li>
+</ul>
+</li>
+</ul>
 </p></section><footer></footer></div><script src="javascripts/scale.fix.js"></script></body><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script></html>
