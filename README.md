@@ -20,9 +20,11 @@ requisite --entry ./app.js --output ./bundle.js --minify
 Refer to `requisite --help` for additional usage options.
 
 ## JavaScript API
+
 The JavaScript API is fully asynchronous, and designed to offer absolute control over Requisite's behavior.
 
 Example:
+
 ```javascript
 requisite = require('requisite').createBundler({
   entry: '/path/to/app.js'
@@ -34,27 +36,29 @@ requisite.bundle(function (err, content) {
 ```
 
 ### createBundler(options)
+
 * `options` {Object}
 
 Creates a bundler which can asynchronously bundle your code. At the very minimum `options` must contain the `entry` property pointing to your application.
 
 #### Options
 
-Several additional options can be passed to `createBundler`:
+Several options can be passed to `createBundler` which can influence how your code is assembled:
 
 * `entry` Entry point of your application. Required.
 * `after` List of scripts to include after bundled modules.
 * `before` List of scripts to include before bundled modules.
 * `minify` Whether to minify or not. Defaults to false.
 * `requireEntry` Whether to automatically require the entry module. Defaults to true.
-* `astTransforms` Transformations to apply to each modules AST.
-* `astWalkers` Walkers to apply to each modules AST.
-* `astFilters` Filters to apply to each modules AST.
+* `astTransforms` Transformations to apply to each module's AST.
+* `astWalkers` Walkers to apply to each module's AST.
+* `astFilters` Filters to apply to each module's AST.
 * `wrapper` Hook to replace default module wrapper, which wraps each module in `define` call.
 * `prelude` Hook to replace default prelude file, which contains basic client-side CommonJS implementation.
 * `compilerHooks` Whether to inject scripts added by compilers. This allows compilers (such as the jade compiler) to automatically inject necessary scripts. Defaults true.
 
-### bundler.bundle([cb])
+### bundler.bundle(cb)
+
 * `cb` {Function} Called when an error occurs or you application has been bundled
-    * `err` {Error | null}
-    * `content` {String} Your bundled code.
+  * `err` {Error | null}
+  * `content` {String} Your bundled code.
