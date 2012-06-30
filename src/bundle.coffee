@@ -20,9 +20,15 @@ module.exports = createBundler = (opts) ->
   for k,v of defaults
     opts[k] ?= v
 
+  # Update compilers with custom compilers
+  if opts.compilers
+    for k,v of opts.compilers
+      compilers[k] = v
+
   # Build resolver.
   {resolve} = require('./resolver')(dirname opts.entry)
 
+  # Cache parsed files
   cache = {}
 
   # Find all dependencies
