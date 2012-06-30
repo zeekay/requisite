@@ -23,7 +23,7 @@ describe 'bundle', ->
   reqTemplates = [
     'require.define(["/test/assets/template","04e021b689"]'
   ]
-  prelude = 'return this.require.define = function(aliases, fn) {'
+  prelude = 'require = (function() {'
   jadeRuntime = 'jade=function(exports){Array.isArray||(Array.isArray=function(arr)'
   callEntry = "require('21568343a3');"
   afterScripts = "alert('after');"
