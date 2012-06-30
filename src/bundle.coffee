@@ -178,7 +178,6 @@ module.exports = createBundler = (opts) ->
   # Wraps a required module in a define statement.
   wrap = (file, opts={}) ->
     # Map of require calls to file hashes
-
     map = {}
     for req, filename of file.resolved
       map[req] = cache[filename].hash
@@ -212,6 +211,9 @@ module.exports = createBundler = (opts) ->
   prelude = (opts, cb) ->
     if opts.prelude is false
       return cb null, ''
+
+    if typeof opts.prelude isnt 'string'
+      opts.prelude = null
 
     path = opts.prelude ? join __dirname, if opts.minify then 'prelude-minify' else 'prelude'
     resolve path, (err, filename) ->
