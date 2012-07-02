@@ -4,8 +4,12 @@ fs        = require 'fs'
 {join}    = require 'path'
 {sep}     = require './utils'
 {uniq}    = require './utils'
+{resolve} = require 'path'
 
 module.exports = (root) ->
+  # Get absolute path
+  root = resolve root
+
   # Maintain a cache of resolved paths.
   cache = {}
 
@@ -30,6 +34,8 @@ module.exports = (root) ->
     if process.env.NODE_PATH
       paths = paths.concat process.env.NODE_PATH.split ':'
     paths
+
+  console.log modulePaths
 
   # Resolve directory/npm module to index/main file.
   resolveDirectory = (path, cb) ->
