@@ -144,25 +144,8 @@ module.exports = createBundler = (opts) ->
               try
                 body = compilers[file.ext](body, filename)
               catch err
-                if file.ext == 'coffee'
-                  lineno = /Parse error on line (\d+)/.exec(err.message)[1]
-                  cb err if not lineno
-
-                  n = parseInt lineno, 10
-
-                  lines = body.split '\n'
-                  extra = []
-                  for i in [n-4..n+3]
-                    continue if i < 0
-
-                    if lines[i]
-                      if i+1 == n
-                        extra.push " > #{i+1}. #{lines[i]}"
-                      else
-                        extra.push "   #{i+1}. #{lines[i]}"
-
-                  err.stack = "\n#{extra.join('\n')}\n\n#{err.stack}"
-                  return cb err
+                handler = compilers[file.ext].error or (e) -> e
+                return cb handler err, body, filename
 
               # Find all dependencies that are required
               file.ast = parse body
