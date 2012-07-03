@@ -6,7 +6,7 @@ resolver  = require './resolver'
 {dirname, extname, join} = require 'path'
 {parse, minify} = require './ast'
 
-module.exports = createBundler = (opts) ->
+module.exports = (opts) ->
   defaults =
     # Scripts which should be bundled after entry module and dependencies.
     after: []

@@ -26,7 +26,7 @@ The JavaScript API is fully asynchronous, and designed to offer absolute control
 Example:
 
 ```javascript
-requisite = require('requisite').createBundler({
+requisite = require('requisite')({
   entry: '/path/to/app.js'
 });
 
