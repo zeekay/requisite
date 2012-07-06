@@ -43,8 +43,6 @@ module.exports = (root) ->
       paths = paths.concat process.env.NODE_PATH.split ':'
     paths
 
-  console.log modulePaths
-
   # Resolve directory/npm module to index/main file.
   resolveDirectory = (path, cb) ->
     packageJson = join path, 'package.json'
