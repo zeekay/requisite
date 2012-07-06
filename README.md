@@ -11,6 +11,7 @@ Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript a
 * Access to the AST allowing custom transformations.
 * Flexible JavaScript API allowing easy programmatic usage.
 * Command line build-tool for simple projects
+* Theoretical Windows Support!
 
 ## Command-line
 
