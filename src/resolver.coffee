@@ -26,9 +26,17 @@ module.exports = (root) ->
   modulePaths = do (root) ->
     last = ''
     paths = []
+
+    # windows hax
+    if match = root.match /\w:/
+        drive = match[0]
+        root = root.substring 2
+    else
+        drive = ''
+
     for path in root.split sep
       last = join last, sep, path
-      paths.push join last, 'node_modules'
+      paths.push join drive, last, 'node_modules'
     paths = paths.reverse()
     # Append any extra paths found in NODE_PATH
     if process.env.NODE_PATH
@@ -58,7 +66,11 @@ module.exports = (root) ->
       path = join modulePaths[idx], name
       exists path, (exist) ->
         if exist
-          resolveDirectory path, cb
+          fs.lstat path, (err, stats) ->
+            if stats.isDirectory()
+              resolveDirectory path, cb
+            else
+              resolveFile path, cb
         else
           idx++
           iterate()
@@ -91,7 +103,7 @@ module.exports = (root) ->
     resolveModule: resolveModule
     resolve: (path, cb) ->
       # if path starts with . or / or C:\\ it's a file
-      if /^\.\/|\/|^\w\:\\/.test path
+      if /^\.\/|^\/|^\w\:\\/.test path
         resolveFile path, cb
       else
         resolveModule path, cb

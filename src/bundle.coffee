@@ -6,7 +6,7 @@ resolver  = require './resolver'
 {dirname, extname, join} = require 'path'
 {parse, minify} = require './ast'
 
-module.exports = createBundler = (opts) ->
+module.exports = (opts) ->
   defaults =
     # Scripts which should be bundled after entry module and dependencies.
     after: []
@@ -91,7 +91,7 @@ module.exports = createBundler = (opts) ->
     # Parse dependencies
     iterate = (req, parent) ->
       # Test whether we are requiring an absolute/relative file or a modules in node_modules
-      if parent and /^\.\/|\/|^\w\:\\/.test req
+      if parent and /^\.\/|^\/|^\w\:\\/.test req
         path = join parent.base, req
       else
         path = req
@@ -144,7 +144,8 @@ module.exports = createBundler = (opts) ->
               try
                 body = compilers[file.ext](body, filename)
               catch err
-                return cb new Error "Error: Failed to compile #{filename}"
+                handler = compilers[file.ext].error or (e) -> e
+                return cb handler err, body, filename
 
               # Find all dependencies that are required
               file.ast = parse body

@@ -34,14 +34,11 @@ describe 'cli', ->
       fs.mkdirSync mod
       fs.writeFileSync join(mod, 'index.js'), "module.exports = {x: 42};"
 
-    cmd = "#{join(__dirname, '../bin/requisite')}" +
-          " -e #{join(__dirname, './assets/entry')}" +
-          " -b #{join(__dirname, './assets/vendor/before.js')}" +
-          " -a #{join(__dirname, './assets/vendor/after.js')}"
-
-    cmd = './bin/requisite -e ./test/assets/entry
-                           -b ./test/assets/vendor/before.js
-                           -a ./test/assets/vendor/after.js'
+    pathTo = (file) -> join __dirname, file
+    cmd = "#{pathTo '../bin/requisite'}
+          -e #{pathTo './assets/entry'}
+          -b #{pathTo './assets/vendor/before.js'}
+          -a #{pathTo './assets/vendor/after.js'}"
 
     exec cmd, (error, _stdout, stderr) ->
       throw error if error
