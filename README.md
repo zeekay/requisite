@@ -63,3 +63,8 @@ Several options can be passed to `createBundler` which can influence how your co
 * `cb` {Function} Called when an error occurs or you application has been bundled
   * `err` {Error | null}
   * `content` {String} Your bundled code.
+
+## Development
+
+Before you can hack on requisite you need to run `npm install &&
+cake build`.
