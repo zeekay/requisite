@@ -34,8 +34,9 @@ exports.html = (body, filename) ->
 exports.jade = (body, filename) ->
   func = jade.compile body,
     client: true
-    debug: false
     compileDebug: false
+    debug: false
+    filename: filename
   "    module.exports = #{func.toString()}"
 
 exports.jade.before = ->
