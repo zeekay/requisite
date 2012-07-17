@@ -91,7 +91,7 @@ module.exports = (opts) ->
     # Parse dependencies
     iterate = (req, parent) ->
       # Test whether we are requiring an absolute/relative file or a modules in node_modules
-      if parent and /^\.\/|^\/|^\w\:\\/.test req
+      if parent and /^\.{1,2}\/|^\/|^\w\:\\/.test req
         path = join parent.base, req
       else
         path = req

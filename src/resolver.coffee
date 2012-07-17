@@ -103,7 +103,7 @@ module.exports = (root) ->
     resolveModule: resolveModule
     resolve: (path, cb) ->
       # if path starts with . or / or C:\\ it's a file
-      if /^\.\/|^\/|^\w\:\\/.test path
+      if /^\.{1,2}\/|^\/|^\w\:\\/.test path
         resolveFile path, cb
       else
         resolveModule path, cb
