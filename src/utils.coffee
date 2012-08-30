@@ -62,13 +62,18 @@ exports.concat = (files, opts, callback) ->
   if not files or files.length == 0
     return callback null, ''
 
+  # passed callback as second argument
+  if typeof opts is 'function'
+    [opts, callback] = [{}, opts]
+
   if not Array.isArray files
     files = [files]
 
     if exports.globRequired files
-      return exports.globAll files, (err, _files) ->
+      exports.globAll files, (err, _files) ->
         throw err if err
         exports.concat _files, opts, callback
+      return
 
   idx = 0
   concatenated = ''
@@ -127,6 +132,7 @@ exports.exec = (args, callback) ->
         else
           iterate()
     iterate()
+
     # passed callback as second argument
     if typeof opts is 'function'
       callback = opts
