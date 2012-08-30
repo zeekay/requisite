@@ -69,11 +69,11 @@ exports.concat = (files, opts, callback) ->
   if not Array.isArray files
     files = [files]
 
-    if exports.globRequired files
-      exports.globAll files, (err, _files) ->
-        throw err if err
-        exports.concat _files, opts, callback
-      return
+  if exports.globRequired files
+    exports.globAll files, (err, _files) ->
+      throw err if err
+      exports.concat _files, opts, callback
+    return
 
   idx = 0
   concatenated = ''
