@@ -38,9 +38,9 @@
     "jade": "~0.26.3"
   },
   "devDependencies": {
-    "chai": "~1.1.0",
-    "coffee-script": "~1.3.3",
-    "mocha": "~1.2.0"
+    "chai": "*",
+    "coffee-script": "*",
+    "mocha": "*"
   },
   "engines": {
     "node": ">=0.6.0"
