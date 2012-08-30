@@ -1,5 +1,3 @@
-jade = require 'jade'
-
 exports.js = (body, filename) ->
   body
 
@@ -32,6 +30,7 @@ exports.html = (body, filename) ->
   "module.exports = #{JSON.stringify body}"
 
 exports.jade = (body, filename) ->
+  jade = require 'jade'
   func = jade.compile body,
     client: true
     compileDebug: false

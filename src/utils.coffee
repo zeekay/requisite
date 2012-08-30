@@ -30,6 +30,33 @@ exports.uniq = (arr) ->
       uniq.push i
   uniq
 
+# detect whether an array of files contains a glob pattern
+exports.globRequired = (files) ->
+  for file in files
+    if '*' in file or '+' in file
+      return true
+  return false
+
+# find all files
+exports.globAll = (patterns, callback) ->
+  glob = require 'glob'
+
+  idx = 0
+  files = []
+
+  iterate = ->
+    if idx == patterns.length
+      callback null, files
+    else
+      pattern = patterns[idx]
+      idx += 1
+
+      glob pattern, {nosort: true, silent: true}, (err, _files) ->
+        for file in _files
+          files.push file
+        iterate()
+  iterate()
+
 # Concatenate files or strings together
 exports.concat = (files, opts, callback) ->
   if not files or files.length == 0
@@ -37,6 +64,11 @@ exports.concat = (files, opts, callback) ->
 
   if not Array.isArray files
     files = [files]
+
+    if exports.globRequired files
+      return exports.globAll files, (err, _files) ->
+        throw err if err
+        exports.concat _files, opts, callback
 
   idx = 0
   concatenated = ''
@@ -63,7 +95,6 @@ exports.concat = (files, opts, callback) ->
       else
         # we assume it's a string
         concat files[idx]
-
   iterate()
 
 # Date -> String formated nicely

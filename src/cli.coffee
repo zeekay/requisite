@@ -1,4 +1,4 @@
-program = require 'jade/node_modules/commander'
+program = require 'commander'
 version = require('../package.json').version
 
 module.exports = ->
