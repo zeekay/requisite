@@ -48,7 +48,11 @@ module.exports = (root) ->
     packageJson = join path, 'package.json'
     exists packageJson, (exist) ->
       if exist
+        # add node_modules to modulePaths
+        modulePaths.push join path, 'node_modules'
+        # try to read packge.json
         fs.readFile packageJson, (err, content) ->
+          # use main property in package.json or index.js
           main = JSON.parse(content).main
           if main
             resolveFile join(path, main), cb

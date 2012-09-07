@@ -1,7 +1,6 @@
 compilers = require './compilers'
 crypto    = require 'crypto'
 fs        = require 'fs'
-resolver  = require './resolver'
 {concat, fmtDate, uniq} = require './utils'
 {dirname, extname, join} = require 'path'
 {parse, minify} = require './ast'
