@@ -20,9 +20,15 @@ module.exports = (opts) ->
 
   # Bundle Javascript, output to file if opts.output or stdout
   bundler.bundle (err, content) ->
+    if err
+      throw err
+      process.exit 1
+
     if opts.output
       mkdir path.dirname(opts.output), (err) ->
         fs.writeFile opts.output, content, 'utf8', (err) ->
-          throw err if err
+          if err
+            throw err
+            process.exit 1
     else
       console.log content
