@@ -2,9 +2,9 @@ compilers = require './compilers'
 fs        = require 'fs'
 {exists}  = require './utils'
 {join}    = require 'path'
+{resolve} = require 'path'
 {sep}     = require './utils'
 {uniq}    = require './utils'
-{resolve} = require 'path'
 
 module.exports = (root) ->
   # Get absolute path
