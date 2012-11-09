@@ -1,27 +1,30 @@
-{exec} = require './src/utils'
+{exec} = require 'child_process'
 
-task 'build', 'Compile *.coffee -> *.js', ->
-  console.log 'coffee: Compiling src/*.coffee -> lib/*.js'
-  exec './node_modules/.bin/coffee -bc -o lib/ src/'
+run = (cmd, callback) ->
+  exec cmd, (err, stderr, stdout) ->
+    if stderr
+      console.error stderr.trim()
+    if stdout
+      console.log stdout.trim()
+
+    if typeof callback == 'function'
+      callback err, stderr, stdout
+
+task 'build', 'compile src/*.coffee to lib/*.js', ->
+  run './node_modules/.bin/coffee -bc -o lib/ src/'
 
 task 'docs', 'Generate docs with docco', ->
   exec './node_modules/.bin/docco-husky src/'
 
-task 'build:all', 'Generate docs and compile project', ->
-  invoke 'docs'
-  invoke 'compile'
-
 task 'gh-pages', 'Publish docs to gh-pages', ->
-  brief = require('brief')
-    quiet: false
-  brief.updateGithubPages()
+  brief = require 'brief'
+  brief.update()
 
 task 'test', 'Run tests', ->
-  exec './node_modules/.bin/mocha ./test --compilers coffee:coffee-script -R spec -t 5000 -c'
+  run './node_modules/.bin/mocha ./test --compilers coffee:coffee-script -R spec -t 5000 -c'
 
-task 'publish', 'Push to Github and publish current version on NPM', ->
-  exec [
-    './node_modules/.bin/coffee -bc -o lib/ src/'
-    'git push'
-    'npm publish'
-  ]
+task 'publish', 'Publish project', ->
+  run './node_modules/.bin/coffee -bc -o lib/ src/', ->
+    run 'git push', ->
+      run 'npm publish', ->
+        invoke 'gh-pages'
