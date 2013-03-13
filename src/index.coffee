@@ -259,8 +259,15 @@ class Wrapper
 
 module.exports =
   Module:  Module
+
   Wrapper: Wrapper
+
   print:   print
+
+  bundle: (entry, options, callback) ->
+    @walk entry, options, (err, wrapper) ->
+      wrapper.toString options
+
   walk: (entry, options, callback) ->
     if typeof options == 'function'
       [callback, options] = [options, {}]
