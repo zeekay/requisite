@@ -14,10 +14,12 @@ task 'gh-pages', 'Publish docs to gh-pages', ->
   brief.update()
 
 task 'test', 'Run tests', ->
-  run './node_modules/.bin/mocha ./test --compilers coffee:coffee-script -R spec -t 5000 -c'
+  exec './node_modules/.bin/mocha test/ --compilers coffee:coffee-script -R spec -t 5000 -c'
 
 task 'publish', 'Publish project', ->
-  run './node_modules/.bin/coffee -bc -o lib/ src/', ->
-    run 'git push', ->
-      run 'npm publish', ->
-        invoke 'gh-pages'
+  exec """
+     ./node_modules/.bin/coffee -bc -o lib/ src/
+     git push
+     npm publish
+    """.split '\n', ->
+    invoke 'gh-pages'

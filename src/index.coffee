@@ -257,13 +257,10 @@ class Wrapper
   toString: (options) ->
     print @ast, options
 
-module.exports = requisite =
+module.exports =
   Module:  Module
-
   Wrapper: Wrapper
-
   print:   print
-
   walk: (entry, options, callback) ->
     if typeof options == 'function'
       [callback, options] = [options, {}]

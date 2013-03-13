@@ -1,11 +1,22 @@
-requisite.walk './test/assets/entry',
-  exclude: /storage\/xul|storage\/addon-sdk/
-, (err, bundle, required, async, excluded) ->
-  log '\ndependencies:'
-  log v.absolutePath for k, v of required
+requisite = require '../lib'
 
-  log '\nasync modules:'
-  log v.requireAs for k, v of async
+log = ->
+  console.log.apply console, arguments
 
-  log '\nexcluded modules:'
-  log v.absolutePath for k, v of excluded
+describe 'requisite', ->
+  describe '#walk', ->
+    it 'should successfully parse all dependencies', (done) ->
+      log()
+      requisite.walk './test/assets/entry',
+        exclude: /storage\/xul|storage\/addon-sdk/
+      , (err, bundle, required, async, excluded) ->
+        log '\ndependencies:'
+        log v.absolutePath for k, v of required
+
+        log '\nasync modules:'
+        log v.requireAs for k, v of async
+
+        log '\nexcluded modules:'
+        log v.absolutePath for k, v of excluded
+
+        done()
