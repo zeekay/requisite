@@ -7,8 +7,10 @@ describe 'requisite', ->
   describe '#walk', ->
     it 'should successfully parse all dependencies', (done) ->
       log()
+
       requisite.walk './test/assets/entry',
-        exclude: /storage\/xul|storage\/addon-sdk/
+        exclude: /excluded/
+        include: ['included']
       , (err, bundle, required, async, excluded) ->
         log '\ndependencies:'
         log v.absolutePath for k, v of required

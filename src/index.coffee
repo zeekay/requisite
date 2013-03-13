@@ -270,6 +270,10 @@ module.exports =
     excluded     = {}
     unresolved   = [new Module entry, {exclude: options.exclude}]
 
+    if options.include?
+      for extra in options.include
+        unresolved.push new Module extra
+
     iterate = ->
       module = unresolved.shift()
       module.parse (err) ->
