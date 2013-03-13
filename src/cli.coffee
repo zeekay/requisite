@@ -22,10 +22,9 @@ options =
 args = process.argv.slice 2
 
 entry = args.shift()
-unless entry?
-  help()
 
-console.log entry
+if (not entry?) or entry.charAt(0) == '-'
+  help()
 
 while opt = args.shift()
   switch opt
@@ -38,6 +37,8 @@ while opt = args.shift()
     when '-p', '--prelude'
       options.prelude = args.shift()
     when '-h', '--help'
+      help()
+    else
       help()
 
 requisite = require('../lib')

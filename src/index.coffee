@@ -7,31 +7,31 @@ log = ->
   console.log.apply console, arguments
 
 print = (ast, options = {}) ->
+  opts = {}
+
   unless options.minify
-    options.beautify     ?= true
-    options.comments     ?= -> true
-    options.indent_level ?= 2
-    options.semicolons   ?= false
+    opts.beautify     = true
+    opts.comments     = -> true
+    opts.indent_level = 2
+    opts.semicolons   = false
 
   if options.sourceMap
     sourceMap = uglify.SourceMap
       file: options.normalizedPath
       orig: options.sourceMap
-    options.source_map = sourceMap
+    opts.source_map = sourceMap
 
-  # if options.minify
-  #   # compress
-  #   compressor = uglify.Compressor()
-  #   ast = ast.transform compressor
-  #   ast.figure_out_scope()
+  if options.minify
+    # compress
+    compressor = uglify.Compressor()
+    ast = ast.transform compressor
+    ast.figure_out_scope()
 
-  #   # mangle
-  #   ast.compute_char_frequency()
-  #   ast.mangle_names()
+    # mangle
+    ast.compute_char_frequency()
+    ast.mangle_names()
 
-  delete options.minify
-
-  stream = uglify.OutputStream options
+  stream = uglify.OutputStream opts
   ast.print stream
 
   if options.sourceMap
@@ -266,7 +266,8 @@ module.exports =
 
   bundle: (entry, options, callback) ->
     @walk entry, options, (err, wrapper) ->
-      wrapper.toString options
+      throw err if err
+      callback null, (wrapper.toString options)
 
   walk: (entry, options, callback) ->
     if typeof options == 'function'
