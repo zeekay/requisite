@@ -4,11 +4,12 @@ help = ->
   Usage: requisite path/to/entry-module [options]
 
   Options:
-    -b, --bare                   Do not wrap output in closure
+    -b, --bare                   Compile without a top-level function wrapper
     -e, --export  <name>         Export module as <name>
-    -x, --exclude <regex>        Regex to exclude modules from being parsed
+    -h, --help                   Display this help
     -i, --include [modules...]   Additional modules to parse and include
     -p, --prelude <file>         File to use as prelude, or false to disable
+    -x, --exclude <regex>        Regex to exclude modules from being parsed
   """
   process.exit(1)
 
