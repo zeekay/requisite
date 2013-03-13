@@ -1,4 +1,0 @@
-- Make AST walking/transformation easy
-- JSON/JS/CS configs
-- Use Hash for uniqueness
-- Guarantee node_modules can recursively be resolved

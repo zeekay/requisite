@@ -1,10 +1,32 @@
-a = require './a'
-b = require './b'
-c = -> require './c'
+# relative require
+relative = require './relative'
 
-module.exports =
-  a: a
-  b: b
-  c: c()
+# relative require immediately called
+relativeCalled = require('./relative-called') 'arg', 'arg2'
 
-template = require './template'
+# relative require with property access
+relativeProp = require('./relative-prop').prop
+
+# unqualified require
+unqualified = require 'unqualified'
+
+# async require with lambda
+require './async-lambda', (err, module) ->
+
+# async require with named func
+callback = (err, module) ->
+require './async-named-func', callback
+
+# async require with method
+callbacks =
+  method: (err, module) ->
+require './async-method', callbacks.method
+
+# require jade template
+template = require './jade-template'
+
+# test excludes
+excluded = require './excluded'
+
+# test includes
+included = require './included'

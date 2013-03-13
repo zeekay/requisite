@@ -1,20 +1,13 @@
-{exec} = require 'child_process'
-
-run = (cmd, callback) ->
-  exec cmd, (err, stderr, stdout) ->
-    if stderr
-      console.error stderr.trim()
-    if stdout
-      console.log stdout.trim()
-
-    if typeof callback == 'function'
-      callback err, stderr, stdout
+exec = require 'executive'
 
 task 'build', 'compile src/*.coffee to lib/*.js', ->
-  run './node_modules/.bin/coffee -bc -o lib/ src/'
+  exec './node_modules/.bin/coffee -bc -m -o lib/ src/'
 
-task 'docs', 'Generate docs with docco', ->
-  exec './node_modules/.bin/docco-husky src/'
+task 'watch', 'watch for changes and recompile project', ->
+  exec './node_modules/.bin/coffee -bc -m -w -o lib/ src/'
+
+task 'run', 'run project', ->
+  exec 'node -e "require(\'source-map-support\').install(); require(\'./lib/index\')"'
 
 task 'gh-pages', 'Publish docs to gh-pages', ->
   brief = require 'brief'
