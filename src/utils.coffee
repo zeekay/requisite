@@ -1,3 +1,5 @@
+uglify = require 'uglify-js'
+
 module.exports =
   log: ->
     console.log.apply console, arguments

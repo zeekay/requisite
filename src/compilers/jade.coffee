@@ -1,22 +1,22 @@
-compile = (options) ->
-  func = require('jade').compile options.source,
+module.exports = (options, callback) ->
+  jade    = require 'jade'
+  path    = require 'path'
+  resolve = require '../resolve'
+
+  # cache runtime resolution
+  resolve 'jade-runtime',
+    absolutePath: require('path').join __dirname, 'jade-runtime.js'
+    resolveFrom: path.dirname @absolutePath
+    cache: true
+
+  func = jade.compile options.source,
     client: true
     compileDebug: false
     debug: false
     filename: options.filename
 
-  """
-  jade = require('jade-runtime');
+  callback null, """
+    jade = require('jade-runtime');
 
-  module.exports = #{func.toString()}
-  """
-
-module.exports = (options, callback) ->
-  module = new @constructor 'jade-runtime',
-    absolutePath: require('path').join __dirname, 'jade-runtime.js'
-    requireAs: 'jade-runtime'
-    requiredFrom: @absolutePath
-
-  module.parse =>
-    @dependencies['jade-runtime'] = module
-    callback null, compile options
+    module.exports = #{func.toString()}
+    """

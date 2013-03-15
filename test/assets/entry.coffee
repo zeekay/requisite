@@ -3,6 +3,7 @@ relative = require './relative'
 
 # relative require immediately called
 relativeCalled = require('./relative-called') 'arg', 'arg2'
+require('./relative-called') 'arg', 'arg2'
 
 # relative require with property access
 relativeProp = require('./relative-prop').prop

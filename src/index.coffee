@@ -18,7 +18,6 @@ class Module
     # paths may be passed in if resolved in advance
     @absolutePath   = options.absolutePath
     @basePath       = options.basePath
-    @extension      = options.extension
     @normalizedPath = options.normalizedPath
     @requireAs      = options.requireAs
 
@@ -55,18 +54,21 @@ class Module
     Module.moduleCache[@requireAs] = @
 
   # source wrapped in define statement.
-  wrapped: ->
-    """
-    // source: #{@absolutePath}
-    require.#{if @async then 'async' else 'define'}("#{@requireAs}", function(module, exports, __dirname, __filename) {
-      #{@source}
-    });
-    """
+  wrap: (ast) ->
+    wrapper = uglify.parse """
+      // source: #{@absolutePath}
+      require.#{if @async then 'async' else 'define'}("#{@requireAs}", function(module, exports, __dirname, __filename) {
+        // replaced with source
+      });
+      """
+    wrapper.body[0].body.args[1].body = [ast]
+    wrapper
 
   # compile source using appropriately compiler
   compile: (callback) ->
+    extension = (@extension ? path.extname @absolutePath).substr 1
     fs.readFile @absolutePath, 'utf8', (err, source) =>
-      unless (compiler = @compilers[@extension.substr 1])? and typeof compiler is 'function'
+      unless (compiler = @compilers[extension])? and typeof compiler is 'function'
         throw new Error "No suitable compiler found for #{@absolutePath}"
 
       # call compiler with a reference to this module
@@ -85,38 +87,34 @@ class Module
         @parse callback
       return
 
-    @ast = uglify.parse @wrapped(),
+    # parse source
+    ast = uglify.parse @source,
       filename: @normalizedPath
 
-    nodes = []
-    @ast.walk new uglify.TreeWalker (node, descend) ->
-      # detect valid require statement for transform
-      if (node instanceof uglify.AST_Call) \
-          # node must start with require
-          and node.start.value == 'require' \
-          # node may not end with define, i.e., require.define
-          and (not node.expression?.end?.value != 'define') \
-          and node.args[0].value?
-        nodes.push node
-      return
+    # find all requires
+    calls = []
+    ast.walk new uglify.TreeWalker (node, descend) ->
+      calls.push node if node instanceof uglify.AST_Call and \
+                         node.start.value == 'require' and \
+                         node.expression.end.value == 'require'
 
-    required = @resolveDependencies nodes
+    # wrap module now that requires have been found
+    @ast = @wrap ast
+
+    # resolve paths to all required modules
+    @resolveDependencies calls
 
     # fully parse all required dependencies
-    @parseDependencies required.slice 0, callback
+    required = (module for requiredAs, module of @dependencies.required)
+    @parseDependencies required, callback
 
-  resolveDependencies: (nodes) ->
-    while node = nodes.shift()
-      required = node.args[0]
-      extraArg = node.args[1]
+  resolveDependencies: (calls) ->
+    while call = calls.shift()
+      # module required
+      required = call.args[0]
 
-      unless extraArg?
-        async = false
-      else if extraArg.start.value = 'function'
-        async = true
-
-      if required.value == @requireAs
-        continue
+      # async if extra arg exists
+      async    = call.args[1]?
 
       paths = resolve required.value,
         basePath:   @basePath
@@ -144,8 +142,6 @@ class Module
         @dependencies.async[module.requireAs] = module
       else
         @dependencies.required[module.requireAs] = module
-
-    @dependencies.required
 
   parseDependencies: (unresolved, callback) ->
     if unresolved.length == 0
@@ -182,12 +178,24 @@ class Wrapper
       @append prelude
 
   # can be passed an ast or module instance
-  append: (ast) ->
-    if ast instanceof Module
-      ast = ast.ast
+  append: (module) ->
+    if (isModule = module instanceof Module)
+      ast = module.ast
+    else
+      ast = module
 
     @lastNode.body = @lastNode.body.concat ast.body
     @lastNode.end  = ast.end
+
+    if isModule
+      # append all dependencies as well
+      seen = {}
+      dependencies = (v for k, v of module.dependencies.required)
+      while (dependency = dependencies.shift())?
+        @append dependency.ast
+        for k, v of dependency.dependencies.required
+          unless seen[v]?
+            dependencies.push seen[k] = v
 
   toString: (options) ->
     print @ast, options
@@ -198,11 +206,12 @@ module.exports =
   Wrapper: Wrapper
 
   bundle: (entry, options, callback) ->
-    @walk entry, options, (err, wrapper) ->
+    @parse entry, options, (err, wrapper) ->
       throw err if err
-      callback null, (wrapper.toString options)
 
-  walk: (entry, options, callback) ->
+      callback null, wrapper.toString options
+
+  parse: (entry, options, callback) ->
     if typeof options == 'function'
       [callback, options] = [options, {}]
 
@@ -214,19 +223,19 @@ module.exports =
       exclude: options.exclude
 
     main.parse ->
+      # append main module
       wrapper.append main
 
-      if options.include?
-        unresolved = options.include.slice 0
-
+      # append any included modules
+      if (unresolved = options.include)?
         iterate = ->
-          if unresolved.length = 0
-            callback null, wrapper
-          else
-            module = new Module unresolved.shift(),
+          unless unresolved.length == 0
+            module = new Module unresolved.pop(),
               requiredBy: main.absolutePath
-              requiredBy: main.basePath
+              basePath: main.basePath
             module.parse ->
               wrapper.append module
               iterate()
+          else
+            callback null, wrapper
         iterate()

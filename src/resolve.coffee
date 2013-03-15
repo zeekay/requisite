@@ -1,10 +1,14 @@
 extensions = ('.' + ext for ext of require('./compilers'))
 path       = require 'path'
 resolve    = require 'resolve'
-
 cache      = {}
 
 module.exports = (requiredAs, options = {}) ->
+  # asked to cache lookup in advance
+  if options.cache?
+    cache[options.resolveFrom+requiredAs] = options.absolutePath
+    return
+
   unless (requiredBy = options.requiredBy)?
     # entry module, all required modules should be resolved relative to it's dir
     resolveFrom = path.dirname path.resolve requiredAs
