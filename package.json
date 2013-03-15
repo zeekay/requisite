@@ -41,7 +41,7 @@
     "chai": "~1.5.0",
     "coffee-script": "~1.6.1",
     "mocha": "~1.8.2",
-    "executive": "~0.1.10"
+    "executive": "~0.1.11"
   },
   "dependencies": {
     "uglify-js": "~2.2.5",

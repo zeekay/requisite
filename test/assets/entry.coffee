@@ -10,6 +10,9 @@ relativeProp = require('./relative-prop').prop
 # unqualified require
 unqualified = require 'unqualified'
 
+# dir require with nested require
+dir = require './dir'
+
 # async require with lambda
 require './async-lambda', (err, module) ->
 
@@ -28,5 +31,5 @@ template = require './jade-template'
 # test excludes
 excluded = require './excluded'
 
-# test includes
-included = require './included'
+# this include should also be included
+ # included = require './included'
