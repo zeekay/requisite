@@ -22,11 +22,11 @@ class Wrapper
       @append acorn.parse fs.readFileSync @prelude
 
   # can be passed an ast or module instance
-  append: (module) ->
-    if (isModule = module instanceof Module)
-      ast = module.ast
+  append: (mod) ->
+    if (isModule = mod instanceof Module)
+      ast = mod.ast
     else
-      ast = module
+      ast = mod
 
     if ast.body?
       for node in ast.body
@@ -35,13 +35,19 @@ class Wrapper
     if isModule
       # append all dependencies as well
       seen = {}
-      dependencies = (v for k, v of module.dependencies)
-      while (dependency = dependencies.shift())?
-        unless dependency.async or dependency.excluded
-          @append dependency.ast
-          for k, v of dependency.dependencies
-            unless seen[v]?
-              dependencies.push seen[k] = v
+      deps = []
+
+      for k,v of mod.dependencies
+        seen[k] = true
+        deps.push v
+
+      while (dep = deps.shift())?
+        unless dep.async or dep.excluded
+          @append dep.ast
+          for k, v of dep.dependencies
+            unless seen[k]?
+              seen[k] = true
+              deps.push v
 
   toString: (options) ->
     codegen @ast, options
