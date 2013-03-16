@@ -4,7 +4,7 @@ Wrapper = require './wrapper'
 exportEntry = (name, requireAs) ->
   acorn = require 'acorn'
   path  = require 'path'
-  (acorn.parse "global.#{path.basename name} = require('#{requireAs}');").body[0]
+  acorn.parse "global.#{path.basename name} = require('#{requireAs}');"
 
 module.exports =
   Module:  Module

@@ -109,7 +109,7 @@ class Module
       if node.type == 'CallExpression' and node.callee.name == 'require'
         [required, callback] = node.arguments
 
-        if required.type == 'Literal'
+        if required.type == 'Literal' and typeof required.value is 'string'
           module = resolve required.value,
             basePath:   @basePath
             extensions: @extensions
