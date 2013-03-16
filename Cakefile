@@ -2,7 +2,6 @@ exec = require 'executive'
 
 task 'build', 'compile src/*.coffee to lib/*.js', ->
   exec './node_modules/.bin/coffee -bc -m -o lib/ src/'
-  console.log 'done'
 
 task 'watch', 'watch for changes and recompile project', ->
   exec './node_modules/.bin/coffee -bc -m -w -o lib/ src/'

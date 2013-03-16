@@ -9,11 +9,10 @@ class Wrapper
   constructor: (options = {}) ->
     @prelude  = options.prelude ? (path.join __dirname, 'prelude.js')
     @bare     = options.bare    ? false
+    @ast      = acorn.parse ''
+    @body     = @ast.body
 
-    if @bare
-      @ast      = acorn.parse ''
-      @body     = @ast.body
-    else
+    unless @bare
       @ast = acorn.parse '(function (global){}.call(this))'
       walk @ast, (node) =>
         if node.type == 'BlockStatement'

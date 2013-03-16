@@ -1,5 +1,6 @@
 Module  = require './module'
 Wrapper = require './wrapper'
+utils   = require './utils'
 
 module.exports =
   Module:  Module
@@ -45,23 +46,28 @@ module.exports =
     options.include ?= []
 
     wrapper = new Wrapper
-      prelude: options.prelude
       bare:    options.bare
+      prelude: options.prelude
 
-    main = new Module entry,
-      exclude: options.exclude
+    iterate = ->
+      unless options.include.length == 0
+        module = new Module options.include.pop(),
+          requiredBy: main.absolutePath
+          basePath: main.basePath
+        module.parse =>
+          wrapper.append module
+          iterate()
+      else
+        main = new Module entry,
+          exclude: options.exclude
 
-    main.parse =>
-      wrapper.append main
+        main.parse =>
+          wrapper.append main
 
-      iterate = ->
-        unless options.include.length == 0
-          module = new Module options.include.pop(),
-            requiredBy: main.absolutePath
-            basePath: main.basePath
-          module.parse =>
-            wrapper.append module
-            iterate()
-        else
+          if options.export?
+            wrapper.append utils.export options.export, main.requireAs
+
           callback null, wrapper
-      iterate()
+
+    iterate()
+
