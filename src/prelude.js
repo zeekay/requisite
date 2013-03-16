@@ -4,8 +4,8 @@ var process = {
   env: {},
   argv: [],
   nextTick: function(fn) { setTimeout(fn, 0); },
-  cwd: function(){ return '/'; },
-  chdir: function(){}
+  cwd: function() { return '/'; },
+  chdir: function() {}
 };
 
 // Require module

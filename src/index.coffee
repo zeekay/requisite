@@ -1,6 +1,10 @@
 Module  = require './module'
 Wrapper = require './wrapper'
-utils   = require './utils'
+
+exportEntry = (name, requireAs) ->
+  acorn = require 'acorn'
+  path  = require 'path'
+  (acorn.parse "global.#{path.basename name} = require('#{requireAs}');").body[0]
 
 module.exports =
   Module:  Module
@@ -51,9 +55,7 @@ module.exports =
 
     iterate = ->
       unless options.include.length == 0
-        module = new Module options.include.pop(),
-          requiredBy: main.absolutePath
-          basePath: main.basePath
+        module = new Module options.include.pop()
         module.parse =>
           wrapper.append module
           iterate()
@@ -65,9 +67,8 @@ module.exports =
           wrapper.append main
 
           if options.export?
-            wrapper.append utils.export options.export, main.requireAs
+            wrapper.append exportEntry options.export, main.requireAs
 
           callback null, wrapper
 
     iterate()
-

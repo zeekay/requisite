@@ -50,15 +50,16 @@ class Module
       basePath:   @basePath
 
   # source wrapped in define statement.
-  wrap: (ast) ->
-    wrapper = uglify.parse """
+  wrap: ->
+    ast = acorn.parse """
       // source: #{@absolutePath}
       require.#{if @async then 'async' else 'define'}("#{@requireAs}", function(module, exports, __dirname, __filename) {
         // replaced with source
       });
       """
-    wrapper.body[0].body.args[1].body = [ast]
-    wrapper
+    walk ast, (node) =>
+      node.body = [@ast] if node.type == 'BlockStatement'
+    @ast = ast.body[0]
 
   # compile source using appropriately compiler
   compile: (callback) ->
@@ -93,6 +94,9 @@ class Module
 
     # transform AST to use root-relative paths
     dependencies = @transform()
+
+    # wrap module in define
+    @wrap()
 
     # parse dependencies into fully-fledged modules
     @traverse dependencies, callback

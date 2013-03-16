@@ -41,7 +41,3 @@ walk = (node, visitor) ->
 module.exports =
   codegen: codegen
   walk: walk
-  export: (name, requireAs) ->
-    acorn = require 'acorn'
-    path  = require 'path'
-    acorn.parse "global.#{path.basename name} = require('#{requireAs}');"

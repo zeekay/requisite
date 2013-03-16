@@ -19,7 +19,7 @@ class Wrapper
           @body = node.body
 
     if @prelude
-      @append acorn.parse fs.readFileSync @prelude
+      @append (acorn.parse fs.readFileSync @prelude).body[0]
 
   # can be passed an ast or module instance
   append: (module) ->

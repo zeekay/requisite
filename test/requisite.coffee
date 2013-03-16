@@ -5,7 +5,8 @@ describe 'requisite', ->
     it 'should bundle all dependencies', (done) ->
       requisite.bundle './test/assets/entry',
         exclude: /excluded/
-        include: ['./included']
+        include: ['./test/assets/included']
+        export: 'entry'
       , (err, bundle) ->
         console.log bundle
         done()
@@ -14,7 +15,7 @@ describe 'requisite', ->
     it 'should parse all dependencies', (done) ->
       requisite.parse './test/assets/entry',
         exclude: /excluded/
-        include: ['./included']
+        include: ['./test/assets/included']
       , (err, wrapper) ->
         done()
 
