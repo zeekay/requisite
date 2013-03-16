@@ -1,6 +1,10 @@
 # relative require
 relative = require './relative'
 
+# relative variable
+relativePath = './relative'
+require relativePath
+
 # relative require immediately called
 relativeCalled = require('./relative-called') 'arg', 'arg2'
 require('./relative-called') 'arg', 'arg2'

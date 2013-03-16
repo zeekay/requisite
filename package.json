@@ -46,6 +46,6 @@
   "dependencies": {
     "uglify-js": "~2.2.5",
     "resolve": "~0.3.0",
-    "source-map-support": "~0.1.2"
+    "acorn": "~0.1.0"
   }
 }

@@ -7,9 +7,6 @@ task 'build', 'compile src/*.coffee to lib/*.js', ->
 task 'watch', 'watch for changes and recompile project', ->
   exec './node_modules/.bin/coffee -bc -m -w -o lib/ src/'
 
-task 'run', 'run project', ->
-  exec 'node -e "require(\'source-map-support\').install(); require(\'./lib/index\')"'
-
 task 'gh-pages', 'Publish docs to gh-pages', ->
   brief = require 'brief'
   brief.update()
