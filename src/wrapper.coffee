@@ -8,7 +8,7 @@ Module          = require './module'
 class Wrapper
   constructor: (options = {}) ->
     @prelude  = options.prelude ? (path.join __dirname, 'prelude.js')
-    @bare     = options.bare    ? false
+    @bare     = options.bare ? false
     @ast      = acorn.parse ''
     @body     = @ast.body
 
@@ -19,7 +19,7 @@ class Wrapper
           @body = node.body
 
     if @prelude
-      @append (acorn.parse fs.readFileSync @prelude).body[0]
+      @append acorn.parse fs.readFileSync @prelude
 
   # can be passed an ast or module instance
   append: (module) ->
@@ -28,7 +28,9 @@ class Wrapper
     else
       ast = module
 
-    @body.push ast
+    if ast.body?
+      for node in ast.body
+        @body.push node
 
     if isModule
       # append all dependencies as well

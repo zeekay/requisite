@@ -58,8 +58,9 @@ class Module
       });
       """
     walk ast, (node) =>
-      node.body = [@ast] if node.type == 'BlockStatement'
-    @ast = ast.body[0]
+      if node.type == 'BlockStatement'
+        node.body = @ast.body
+    @ast = ast
 
   # compile source using appropriately compiler
   compile: (callback) ->

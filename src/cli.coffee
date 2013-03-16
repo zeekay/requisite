@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
-help = ->
+
+help = (code) ->
   console.log """
   Usage: requisite path/to/entry-module [options]
 
@@ -11,7 +12,7 @@ help = ->
     -p, --prelude <file>         File to use as prelude, or false to disable
     -x, --exclude <regex>        Regex to exclude modules from being parsed
   """
-  process.exit(1)
+  process.exit code
 
 options =
   bare: false
@@ -31,6 +32,9 @@ while opt = args.shift()
   switch opt
     when '-b', '--bare'
       options.bare = true
+    when '-i', '--include'
+      while (module = args.shift())? and module.charAt(0) != '-'
+        options.include.push module
     when '-x', '--exclude'
       options.exclude = new RegExp args.shift()
     when '-e', '--export'
@@ -38,9 +42,9 @@ while opt = args.shift()
     when '-p', '--prelude'
       options.prelude = args.shift()
     when '-h', '--help'
-      help()
+      help 0
     else
-      help()
+      help 1
 
 requisite = require('../lib')
 
