@@ -1,21 +1,24 @@
 {
   "name": "requisite",
-  "version": "1.0.0-beta2",
+  "version": "1.0.0-beta3",
   "description": "A cosmic javascript bundler.",
   "repository": {
     "type": "git",
     "url": "https://github.com/zeekay/requisite"
   },
   "keywords": [
+    "analysis",
     "asset",
-    "minify",
+    "browser",
+    "bundle",
+    "commonjs",
     "compress",
     "inception",
-    "bundle",
+    "minify",
     "module",
-    "requirejs",
+    "modules",
     "require",
-    "browser"
+    "requirejs"
   ],
   "author": {
     "name": "Zach Kelling",
@@ -44,8 +47,12 @@
     "executive": "~0.1.11"
   },
   "dependencies": {
-    "uglify-js": "~2.2.5",
-    "resolve": "~0.3.0",
-    "acorn": "~0.1.0"
+    "acorn": "~0.1.0",
+    "escodegen": "0.0.19",
+    "resolve": "~0.3.0"
+  },
+  "optionalDependencies": {
+    "esmangle": "0.0.10"
+    "uglify-js": "~2.2.5"
   }
 }
