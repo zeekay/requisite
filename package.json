@@ -44,7 +44,9 @@
     "chai": "~1.5.0",
     "coffee-script": "~1.6.1",
     "mocha": "~1.8.2",
-    "executive": "~0.1.11"
+    "executive": "~0.1.11",
+    "express": "~3.1.0",
+    "superagent": "~0.13.0"
   },
   "dependencies": {
     "acorn": "~0.1.0",
@@ -52,7 +54,7 @@
     "resolve": "~0.3.0"
   },
   "optionalDependencies": {
-    "esmangle": "0.0.10"
+    "esmangle": "0.0.10",
     "uglify-js": "~2.2.5"
   }
 }

@@ -7,10 +7,12 @@ Module          = require './module'
 
 class Wrapper
   constructor: (options = {}) ->
-    @prelude  = options.prelude ? (path.join __dirname, 'prelude.js')
     @bare     = options.bare ? false
+    @prelude  = options.prelude ? (path.join __dirname, 'prelude.js')
+
     @ast      = acorn.parse ''
     @body     = @ast.body
+    @modules  = {}
 
     unless @bare
       @ast = acorn.parse '(function (global){}.call(this))'
@@ -33,6 +35,9 @@ class Wrapper
         @body.push node
 
     if isModule
+      # make available as via find
+      @modules[mod.requireAs] = mod
+
       # append all dependencies as well
       seen = {}
       deps = []
@@ -42,14 +47,20 @@ class Wrapper
         deps.push v
 
       while (dep = deps.shift())?
-        unless dep.async or dep.excluded
+        if dep.async
+          @modules[dep.requireAs] = dep
+        else if not dep.excluded
           @append dep.ast
           for k, v of dep.dependencies
             unless seen[k]?
               seen[k] = true
               deps.push v
 
+  find: (requireAs) ->
+    key = requireAs.replace /^\//, ''
+    @modules[key]
+
   toString: (options) ->
-    codegen @ast, options
+    console.log codegen @ast, options
 
 module.exports = Wrapper

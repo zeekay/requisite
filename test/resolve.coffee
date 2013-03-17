@@ -1,6 +1,6 @@
+should  = require('chai').should()
 path    = require 'path'
 resolve = require '../lib/resolve'
-should  = require('chai').should()
 
 entryPath = path.resolve './test/assets/entry.coffee'
 entryBase = path.dirname entryPath
