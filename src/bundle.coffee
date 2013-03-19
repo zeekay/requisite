@@ -16,22 +16,22 @@ module.exports = (entry, options, callback) ->
     bare:    options.bare
     prelude: options.prelude
 
-  iterate = ->
-    unless options.include.length == 0
+  main = new Module entry,
+    exclude: options.exclude
+
+  appendIncludes = (callback) ->
+    if options.include.length == 0
+      callback null
+    else
       module = new Module options.include.pop()
       module.parse =>
-        wrapper.append module
-        iterate()
-    else
-      main = new Module entry,
-        exclude: options.exclude
+        main.append module
+        appendIncludes callback
 
-      main.parse =>
-        wrapper.append main
+  main.parse =>
+    if options.export?
+      main.append exportEntry options.export, main.requireAs
 
-        if options.export?
-          wrapper.append exportEntry options.export, main.requireAs
-
-        callback null, wrapper
-
-  iterate()
+    appendIncludes ->
+      wrapper.wrap main
+      callback null, main

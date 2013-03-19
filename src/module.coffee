@@ -40,9 +40,6 @@ class Module
     @normalizedPath = options.normalizedPath
     @requireAs      = options.requireAs
 
-    # cache ourself
-    Module.moduleCache[@requireAs] = @
-
   # resolve paths
   resolve: ->
     @[k] = v for k, v of resolve @requiredAs,
@@ -67,26 +64,32 @@ class Module
     unless @absolutePath? and @normalizedPath?
       @resolve()
 
-    extension = (@extension ? path.extname @absolutePath).substr 1
-    fs.readFile @absolutePath, 'utf8', (err, source) =>
-      unless (compiler = @compilers[extension])? and typeof compiler is 'function'
-        throw new Error "No suitable compiler found for #{@absolutePath}"
+    fs.stat @absolutePath, (err, stat) =>
+      throw err if err
 
-      # call compiler with a reference to this module
-      compiler.call @, {source: source, filename: @normalizedPath}, (err, source, sourceMap) =>
-        throw err if err
+      if @mtime? and @mtime < stat.mtime
+        return callback()
 
-        @source = source
-        @sourceMap = sourceMap
+      @mtime = stat.mtime
+      extension = (path.extname @absolutePath).substr 1
 
-        callback()
+      fs.readFile @absolutePath, 'utf8', (err, source) =>
+        unless (compiler = @compilers[extension])?
+          throw new Error "No suitable compiler found for #{@absolutePath}"
+
+        # call compiler with a reference to this module
+        compiler.call @, {source: source, filename: @normalizedPath}, (err, source, sourceMap) =>
+          throw err if err
+
+          @source = source
+          @sourceMap = sourceMap
+
+          callback()
 
   # parse source file into ast
   parse: (callback) ->
     unless @source?
-      @compile =>
-        @parse callback
-      return
+      return @compile => @parse callback
 
     # parse source to AST
     @ast = acorn.parse @source,
@@ -98,6 +101,9 @@ class Module
 
     # wrap module in define
     @wrap()
+
+    # cache ourself
+    Module.moduleCache[@requireAs] = @
 
     # parse dependencies into fully-fledged modules
     @traverse dependencies, callback
@@ -129,31 +135,49 @@ class Module
 
   # traverse dependencies recursively, parsing them as well
   traverse: (dependencies, callback) ->
-    unless dependencies.length == 0
-      module = dependencies.shift()
+    return callback() if dependencies.length == 0
 
-      if (cached = Module.moduleCache[module.requireAs])?
-        @dependencies[module.requireAs] = cached
-        cached.dependents[@requireAs] = @
-        return @traverse dependencies, callback
+    mod = dependencies.shift()
 
-      module = new Module module.requiredAs, module
-      module.exclude = @exclude
-      module.dependents[@requireAs] = @
+    # already seen this module, or it's excluded, continue
+    if @dependencies[mod.requireAs]? or @exclude? and @exclude.test mod.requireAs
+      return @traverse dependencies, callback
 
-      if @exclude? and @exclude.test module.requireAs
-        module.excluded = true
-        return @traverse dependencies, callback
-      else
-        @dependencies[module.requireAs] = module
+    # use cached module if previously parsed by someone else
+    if (cached = @find mod.requireAs)?
+      @dependencies[mod.requireAs] = cached
+      cached.dependents[@requireAs] = @
+      @append cached
+      return @traverse dependencies, callback
 
-      # continue
-      module.parse =>
-        @traverse dependencies, callback
-    else
-      callback()
+    # create module and parse it baby
+    mod = new Module mod.requiredAs, mod
+    mod.exclude = @exclude
+    mod.dependents[@requireAs] = @
+    @dependencies[mod.requireAs] = mod
+
+    # continue
+    mod.parse =>
+      # append parsed module to our AST
+      @append mod
+      @traverse dependencies, callback
+
+  append: (mod) ->
+    if mod.ast?.body?
+      for node in mod.ast.body
+        @ast.body.push node
+
+  find: (requireAs) ->
+    query = requireAs.replace /^\//, ''
+    Module.moduleCache[query]
 
   toString: (options) ->
     codegen @ast, options
+
+for k,v of Module::
+  do (k,v) ->
+    Module::[k] = ->
+      # console.log 'Module#' + k, (Array::slice.call arguments, 0).join ','
+      v.apply @, arguments
 
 module.exports = Module

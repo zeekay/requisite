@@ -21,46 +21,16 @@ class Wrapper
           @body = node.body
 
     if @prelude
-      @append acorn.parse fs.readFileSync @prelude
-
-  # can be passed an ast or module instance
-  append: (mod) ->
-    if (isModule = mod instanceof Module)
-      ast = mod.ast
-    else
-      ast = mod
-
-    if ast.body?
-      for node in ast.body
+      prelude = acorn.parse fs.readFileSync @prelude
+      for node in prelude.body
         @body.push node
 
-    if isModule
-      # make available as via find
-      @modules[mod.requireAs] = mod
-
-      # append all dependencies as well
-      seen = {}
-      deps = []
-
-      for k,v of mod.dependencies
-        seen[k] = true
-        deps.push v
-
-      while (dep = deps.shift())?
-        if dep.async
-          @modules[dep.requireAs] = dep
-        else if not dep.excluded
-          @append dep.ast
-          for k, v of dep.dependencies
-            unless seen[k]?
-              seen[k] = true
-              deps.push v
-
-  find: (requireAs) ->
-    key = requireAs.replace /^\//, ''
-    @modules[key]
+  wrap: (module) ->
+    @body = [module.ast]
+    module.ast = @ast
+    module
 
   toString: (options) ->
-    console.log codegen @ast, options
+    codegen @ast, options
 
 module.exports = Wrapper
