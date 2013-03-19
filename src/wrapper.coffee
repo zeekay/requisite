@@ -26,7 +26,8 @@ class Wrapper
         @body.push node
 
   wrap: (module) ->
-    @body = [module.ast]
+    for node in module.ast.body
+      @body.push node
     module.ast = @ast
     module
 

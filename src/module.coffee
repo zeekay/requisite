@@ -87,7 +87,12 @@ class Module
           callback()
 
   # parse source file into ast
-  parse: (callback) ->
+  parse: (options, callback) ->
+    if typeof options == 'function'
+      [callback, options] = [options, {}]
+
+    options.deep ?= true
+
     unless @source?
       return @compile => @parse callback
 
@@ -105,8 +110,9 @@ class Module
     # cache ourself
     Module.moduleCache[@requireAs] = @
 
-    # parse dependencies into fully-fledged modules
-    @traverse dependencies, callback
+    if options.deep
+      # parse dependencies into fully-fledged modules
+      @traverse dependencies, callback
 
   # transform require expressions in AST to use root-relative paths
   transform: ->

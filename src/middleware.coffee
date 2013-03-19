@@ -28,6 +28,7 @@ module.exports = (entry, options={}) ->
       return next()
 
     res.writeHead 200
+
     res.end mod.toString(), 'utf8'
 
   # Wrap this is a named function to make debugging easier.
