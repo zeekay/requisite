@@ -28,12 +28,15 @@ describe 'middleware', ->
   app = null
   before (done) ->
     app = express()
-    app.use (middleware './test/assets/entry')
+    app.use middleware './test/assets/entry',
+      export: 'entry'
     app.listen PORT, -> done()
 
   it 'should serve entry module', (done) ->
     get '/entry', (res) ->
       res.ok.should.be.ok
+
+      console.log res.text
 
       shouldContainModules res.text, [
         './test/assets/relative-prop.js'
@@ -43,6 +46,8 @@ describe 'middleware', ->
   it 'should serve async modules', (done) ->
     get '/async-lambda', (res) ->
       res.ok.should.be.ok
+
+      # console.log res.text
 
       shouldContainModules res.text, [
         # './test/assets/async-lambda.js'

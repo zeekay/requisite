@@ -38,6 +38,18 @@ walk = (node, visitor) ->
     for el in node
       walk el, visitor
 
+clone = (obj) ->
+  if not obj? or typeof obj isnt 'object'
+    return obj
+
+  inst = new obj.constructor()
+
+  for key of obj
+    inst[key] = clone obj[key]
+
+  return inst
+
 module.exports =
   codegen: codegen
   walk: walk
+  clone: clone

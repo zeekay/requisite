@@ -1,10 +1,5 @@
 Module  = require './module'
-Wrapper = require './wrapper'
-
-exportEntry = (name, requireAs) ->
-  acorn = require 'acorn'
-  path  = require 'path'
-  acorn.parse "global.#{path.basename name} = require('#{requireAs}');"
+{Prelude} = require './wrapper'
 
 module.exports = (entry, options, callback) ->
   if typeof options == 'function'
@@ -12,26 +7,24 @@ module.exports = (entry, options, callback) ->
 
   options.include ?= []
 
-  wrapper = new Wrapper
+  main = new Module entry,
+    exclude: options.exclude
+    export: options.export
+
+  wrapper = new Prelude
     bare:    options.bare
     prelude: options.prelude
 
-  main = new Module entry,
-    exclude: options.exclude
-
-  appendIncludes = (callback) ->
-    if options.include.length == 0
-      callback null
-    else
-      module = new Module options.include.pop()
-      module.parse =>
-        main.append module
-        appendIncludes callback
-
   main.parse =>
-    if options.export?
-      main.append exportEntry options.export, main.requireAs
+    addIncludes = (callback) ->
+      if options.include.length == 0
+        callback null
+      else
+        module = new Module options.include.pop()
+        module.parse =>
+          main.dependencies[module.requireAs] = module
+          addIncludes callback
 
-    appendIncludes ->
-      wrapper.wrap main
+    addIncludes ->
+      main.toplevel = wrapper
       callback null, main
