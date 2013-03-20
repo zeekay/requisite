@@ -36,7 +36,7 @@ describe 'middleware', ->
     get '/entry', (res) ->
       res.ok.should.be.ok
 
-      console.log res.text
+      # console.log res.text
 
       shouldContainModules res.text, [
         './test/assets/relative-prop.js'

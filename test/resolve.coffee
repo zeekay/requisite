@@ -15,6 +15,7 @@ tests =
 
     result:
       absolutePath:   entryPath
+      basePath:       entryBase
       extension:      '.coffee'
       normalizedPath: 'entry.coffee'
       requireAs:      'entry'
@@ -28,6 +29,7 @@ tests =
 
     result:
       absolutePath:   path.resolve './test/assets/relative.js'
+      basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'relative.js'
       requireAs:      'relative'
@@ -42,6 +44,7 @@ tests =
 
     result:
       absolutePath:   path.resolve './test/assets/node_modules/unqualified/index.js'
+      basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'node_modules/unqualified/index.js'
       requireAs:      'node_modules/unqualified/index'
@@ -55,12 +58,10 @@ tests =
 
     result:
       absolutePath:   path.resolve './test/assets/dir/nested.js'
+      basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'dir/nested.js'
       requireAs:      'dir/nested'
-
-for k, v of tests
-  v.result.basePath = path.dirname v.result.absolutePath
 
 describe 'resolve', ->
   for name, test of tests

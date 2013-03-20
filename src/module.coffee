@@ -110,20 +110,20 @@ class Module
         [required, callback] = node.arguments
 
         if required.type == 'Literal' and typeof required.value is 'string'
-          module = resolve required.value,
+          mod = resolve required.value,
             basePath:   @basePath
             extensions: @extensions
             requiredAs: required.value
             requiredBy: @absolutePath
 
           # transform node
-          required.value = module.requireAs
+          required.value = mod.requireAs
 
           # is async?
-          module.async = callback?
+          mod.async = callback?
 
           # add to list of dependencies
-          dependencies.push module
+          dependencies.push mod
         return true
     dependencies
 
@@ -208,7 +208,7 @@ class Module
 
     console.log (line[0] for line in lines).join '\n'
 
-  toString: (options) ->
+  bundle: ->
     toplevel = @toplevel ? new wrapper.Wrapper()
 
     @walkDependencies @, (mod, depth) ->
@@ -222,7 +222,10 @@ class Module
       for node in (acorn.parse "global.#{@export} = require('#{@requireAs}');").body
         toplevel.body.push node
 
-    utils.codegen toplevel.ast, options
+    toplevel.ast
+
+  toString: (options) ->
+    utils.codegen @bundle(), options
 
 for k,v of Module::
   do (k,v) ->

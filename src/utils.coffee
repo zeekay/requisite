@@ -1,19 +1,5 @@
 codegen = (ast, options = {}) ->
-  if options.minify
-    options =
-      comment: no
-      format:
-        indent:
-          style: ''
-          base: 0
-        renumber: yes
-        hexadecimal: yes
-        quotes: 'auto'
-        escapeless: yes
-        compact: yes
-        parentheses: no
-        semicolons: no
-  else
+  unless options.minify
     options =
       comment: yes
       format:
@@ -25,8 +11,11 @@ codegen = (ast, options = {}) ->
         parentheses: no
         compact: no
         semicolons: no
-
     require('escodegen').generate ast, options
+  else
+    minifier = options.minifier ? 'uglify'
+    minify = require './minify'
+    minify[minifier] ast, options
 
 walk = (node, visitor) ->
   if node? and typeof node == 'object'

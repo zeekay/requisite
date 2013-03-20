@@ -5,7 +5,9 @@ module.exports = (options, callback) ->
 
   # cache runtime resolution
   resolve 'jade-runtime',
-    absolutePath: require('path').join __dirname, 'jade-runtime.js'
+    absolutePath: path.join __dirname, 'jade-runtime.js'
+    normalizedPath: 'jade-runtime.js'
+    requireAs: 'jade-runtime'
     resolveFrom: path.dirname @absolutePath
     cache: true
 
