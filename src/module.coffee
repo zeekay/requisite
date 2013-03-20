@@ -1,4 +1,4 @@
-acorn = require 'esprima'
+acorn = require 'acorn'
 fs    = require 'fs'
 path  = require 'path'
 
