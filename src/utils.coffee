@@ -38,7 +38,35 @@ clone = (obj) ->
 
   return inst
 
+# draw simple graph of dependencies
+graph = (mod) ->
+  console.log mod.requireAs
+
+  lines = []
+
+  mod.walkDependencies mod, (mod, depth, seen) ->
+    if seen
+      lines.pop()
+      return
+
+    line = '├─' + mod.requireAs
+
+    if depth > 0
+      line = (new Array depth*2).join(' ') + line
+    lines.push [line, depth]
+
+  for [line, depth], idx in lines
+    unless lines[idx+1]?
+      lines[idx][0] = line.replace '├─', '└─'
+    else
+      [nextLine, nextDepth] = lines[idx+1]
+      if nextLine? and depth != nextDepth
+        lines[idx][0] = line.replace '├─', '└─'
+
+  console.log (line[0] for line in lines).join '\n'
+
 module.exports =
-  codegen: codegen
-  walk: walk
   clone: clone
+  codegen: codegen
+  graph: graph
+  walk: walk

@@ -202,7 +202,10 @@ class Module
     seen = {}
 
     walk = (mod, fn, depth) ->
-      return if seen[mod.requireAs]
+      if seen[mod.requireAs]
+        fn mod, depth, true
+        return
+
       seen[mod.requireAs] = true
 
       depth += 1
@@ -212,28 +215,6 @@ class Module
           walk v, fn, depth
 
     walk mod, fn, depth
-
-  # draw simple graph of dependencies
-  drawGraph: ->
-    console.log @requireAs
-
-    lines = []
-
-    @walkDependencies @, (mod, depth) ->
-      line = '├─' + mod.requireAs
-      if depth > 0
-        line = (new Array depth*2).join(' ') + line
-      lines.push [line, depth]
-
-    for [line, depth], idx in lines
-      unless lines[idx+1]?
-        lines[idx][0] = line.replace '├─', '└─'
-      else
-        [nextLine, nextDepth] = lines[idx+1]
-        if nextLine? and depth != nextDepth
-          lines[idx][0] = line.replace '├─', '└─'
-
-    console.log (line[0] for line in lines).join '\n'
 
   bundle: ->
     toplevel = (@toplevel ? new wrapper.Wrapper()).clone()
