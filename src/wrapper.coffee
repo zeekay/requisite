@@ -1,20 +1,19 @@
-acorn = require 'acorn'
-fs    = require 'fs'
-path  = require 'path'
+fs     = require 'fs'
+path   = require 'path'
 
-Module          = require './module'
-{codegen, walk} = require './utils'
+Module = require './module'
+utils  = require './utils'
 
 class Wrapper
   constructor: ->
-    @ast = acorn.parse ''
+    @ast = utils.parse ''
     @body = @ast.body
 
   walk: (fn) ->
-    walk @ast, fn
+    utils.walk @ast, fn
 
   toString: (options) ->
-    codegen @ast, options
+    utils.codegen @ast, options
 
   clone: ->
     new @constructor @
@@ -30,21 +29,21 @@ class Prelude extends Wrapper
     super()
 
     unless @bare
-      @ast = acorn.parse '(function (global){}.call(this, this))'
+      @ast = utils.parse '(function (global){}.call(this, this))'
       @walk (node) =>
         if node.type == 'BlockStatement'
           @body = node.body
 
     if @prelude
-      prelude = acorn.parse fs.readFileSync @prelude
+      prelude = utils.parse fs.readFileSync @prelude
       for node in prelude.body
         @body.push node
       if @async
-        preludeAsync = acorn.parse fs.readFileSync @preludeAsync
+        preludeAsync = utils.parse fs.readFileSync @preludeAsync
         for node in preludeAsync.body
           @body.push node
         unless @bare
-          for node in (acorn.parse "global.require = require").body
+          for node in (utils.parse "global.require = require").body
             @body.push node
 
 class Define extends Wrapper
@@ -53,7 +52,7 @@ class Define extends Wrapper
     absolutePath = options.absolutePath ? ''
     async = options.async ? false
 
-    @ast = acorn.parse """
+    @ast = utils.parse """
       // source: #{absolutePath}
       require.#{if async then 'async' else 'define'}("#{requireAs}", function(module, exports, __dirname, __filename) {
         // replaced with source

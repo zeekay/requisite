@@ -31,7 +31,7 @@ codegen = (ast, options = {}) ->
     minify[minifier] ast, options
 
 # parse source into ast
-parse = (source, options) ->
+parse = (source, options = {}) ->
   parser = require options.parser ? 'acorn'
   if options.comment
     parser = require 'esprima'

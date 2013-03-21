@@ -1,4 +1,3 @@
-acorn = require 'acorn'
 fs    = require 'fs'
 path  = require 'path'
 
@@ -104,7 +103,7 @@ class Module
       return @compile => @parse callback
 
     # parse source to AST
-    @ast = acorn.parse @source,
+    @ast = utils.parse @source,
       locations: true
       sourceFile: @normalizedPath
 
@@ -226,7 +225,7 @@ class Module
       toplevel.body.push node
 
     if @export
-      for node in (acorn.parse "global.#{@export} = require('#{@requireAs}');").body
+      for node in (utils.parse "global.#{@export} = require('#{@requireAs}');").body
         toplevel.body.push node
 
     toplevel.ast
