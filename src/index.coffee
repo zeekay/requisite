@@ -7,6 +7,7 @@ expose =
   minify:    -> require './minify'
   resolve:   -> require './resolve'
   utils:     -> require './utils'
+  watch:     -> require './watch'
 
 for k,v of expose
   Object.defineProperty module.exports, k, enumerable: true, get: v

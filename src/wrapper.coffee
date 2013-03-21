@@ -16,6 +16,9 @@ class Wrapper
   toString: (options) ->
     codegen @ast, options
 
+  clone: ->
+    new @constructor @
+
 class Prelude extends Wrapper
   constructor: (options = {}) ->
 

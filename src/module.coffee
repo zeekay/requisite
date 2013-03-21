@@ -10,6 +10,21 @@ wrapper   = require './wrapper'
 class Module
   @moduleCache = {}
 
+  @find = (query) ->
+    switch typeof query
+      when 'function'
+        for k,v of Module.moduleCache
+          return v if query v
+      when 'string'
+        requireAs = query.replace /^\//, ''
+        Module.moduleCache[requireAs]
+      else
+        throw new Error 'Invalid query for find'
+
+  @walk = (fn) ->
+    for mod in @moduleCache
+      fn mod
+
   constructor: (requiredAs, options = {}) ->
     # relative or unqualified require to module
     @requiredAs   = requiredAs
@@ -58,7 +73,7 @@ class Module
     fs.stat @absolutePath, (err, stat) =>
       throw err if err
 
-      if @mtime? and @mtime < stat.mtime
+      if @mtime? and @mtime > stat.mtime
         return callback()
 
       @mtime = stat.mtime
@@ -84,7 +99,7 @@ class Module
 
     options.deep ?= true
 
-    unless @source?
+    if options.force or not @source?
       return @compile => @parse callback
 
     # parse source to AST
@@ -98,9 +113,10 @@ class Module
     # cache ourself
     Module.moduleCache[@requireAs] = @
 
-    if options.deep
-      # parse dependencies into fully-fledged modules
-      @traverse dependencies, callback
+    @dependencies = {}
+
+    # parse dependencies into fully-fledged modules
+    @traverse dependencies, callback, options.deep
 
   # transform require expressions in AST to use root-relative paths
   transform: ->
@@ -128,20 +144,20 @@ class Module
     dependencies
 
   # traverse dependencies recursively, parsing them as well
-  traverse: (dependencies, callback) ->
+  traverse: (dependencies, callback, deep) ->
     return callback() if dependencies.length == 0
 
     mod = dependencies.shift()
 
     # already seen this module, or it's excluded, continue
     if @dependencies[mod.requireAs]? or @exclude? and @exclude.test mod.requireAs
-      return @traverse dependencies, callback
+      return @traverse dependencies, callback, deep
 
     # use cached module if previously parsed by someone else
     if (cached = @find mod.requireAs)?
       @dependencies[mod.requireAs] = cached
       cached.dependents[@requireAs] = @
-      return @traverse dependencies, callback
+      return @traverse dependencies, callback, deep
 
     # create module and parse it baby
     mod = new Module mod.requiredAs, mod
@@ -149,19 +165,20 @@ class Module
     mod.dependents[@requireAs] = @
     @dependencies[mod.requireAs] = mod
 
-    # parse module
+    return callback() unless deep
+
+    # parse dependency as well
     mod.parse =>
       # continue parsing deps
-      @traverse dependencies, callback
+      @traverse dependencies, callback, deep
 
   append: (mod) ->
     for node in mod.ast?.body ? []
       @ast.body.push node
     return
 
-  find: (requireAs) ->
-    query = requireAs.replace /^\//, ''
-    Module.moduleCache[query]
+  find: (query) ->
+    Module.find query
 
   wrapped: ->
     define = new wrapper.Define
@@ -218,7 +235,8 @@ class Module
     console.log (line[0] for line in lines).join '\n'
 
   bundle: ->
-    toplevel = @toplevel ? new wrapper.Wrapper()
+    toplevel = (@toplevel ? new wrapper.Wrapper()).clone()
+
     @walkDependencies @, (mod, depth) ->
       for node in mod.wrapped().body
         toplevel.body.push node

@@ -1,18 +1,36 @@
 #!/usr/bin/env coffee
 
-help = (code) ->
+fs = require 'fs'
+requisite = require('../lib')
+
+writeBundle = (bundle, options) ->
+  _options =
+    minify: options.minify
+    minifer: options.minifer
+
+  if options.output?
+    fs.writeFileSync options.output, bundle.toString _options, 'utf8'
+  else
+    console.log bundle.toString _options
+
+help = (code, message) ->
   console.log """
   Usage: requisite path/to/entry-module [options]
 
   Options:
     -b, --bare                   Compile without a top-level function wrapper
-    -e, --export  <name>         Export module as <name>
-    -h, --help                   Display this help
+    -e, --export <name>          Export module as <name>
     -i, --include [modules...]   Additional modules to parse and include
-    -p, --prelude <file>         File to use as prelude, or false to disable
     -m, --minify                 Minify output
+    -o, --output <file>          Write bundle to file instead of stdout
+    -p, --prelude <file>         File to use as prelude, or false to disable
+        --no-prelude             Exclude prelude from bundle
+    -w, --watch                  Watch for changes, and recompile
     -x, --exclude <regex>        Regex to exclude modules from being parsed
+
+    -h, --help                   Display this help
   """
+  console.log '\n' + message if message
   process.exit code
 
 options =
@@ -20,7 +38,10 @@ options =
   exclude: null
   export: null
   include: []
+  minify: false
+  output: null
   prelude: null
+  watch: false
 
 args = process.argv.slice 2
 
@@ -41,18 +62,25 @@ while opt = args.shift()
     when '-e', '--export'
       options.export = args.shift()
     when '-m', '--minify'
-      options.minify = args.shift()
+      options.minify = true
+    when '-o', '--output'
+      options.output = args.shift()
     when '-p', '--prelude'
       options.prelude = args.shift()
+    when '-w', '--watch'
+      options.watch = true
     when '-h', '--help'
       help 0
     else
       help 1
 
-requisite = require('../lib')
+if options.watch and not options.output?
+  help 1, 'Output must be specified when using watch'
 
 requisite.bundle entry, options, (err, bundle) ->
-  throw err if err?
+  writeBundle bundle, options
 
-  console.log bundle.toString
-    minify: options.minify
+  if options.watch
+    requisite.watch bundle, (event, filename, mod) ->
+      console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - recompiling, #{filename} changed"
+      writeBundle bundle, options
