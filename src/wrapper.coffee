@@ -30,7 +30,7 @@ class Prelude extends Wrapper
     super()
 
     unless @bare
-      @ast = acorn.parse '(function (global){}.call(this))'
+      @ast = acorn.parse '(function (global){}.call(this, this))'
       @walk (node) =>
         if node.type == 'BlockStatement'
           @body = node.body

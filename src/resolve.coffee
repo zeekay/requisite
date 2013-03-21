@@ -29,7 +29,7 @@ module.exports = (requiredAs, options = {}) ->
 
   extension      = path.extname absolutePath
   normalizedPath = path.join './', (absolutePath.replace basePath, '')
-  requireAs      = normalizedPath.replace extension, ''
+  requireAs      = options.requireAs ? normalizedPath.replace extension, ''
 
   cache[resolveFrom+requiredAs] =
     absolutePath:   absolutePath

@@ -1,11 +1,28 @@
-Module  = require './module'
+async     = require 'async'
+Module    = require './module'
 {Prelude} = require './wrapper'
+
+addIncludes = (includes, main, callback) ->
+  async.map ([k,v] for k,v of includes), ([requireAs, absolutePath], callback) ->
+    mod = new Module absolutePath,
+      absolutePath: absolutePath
+      basePath: main.basePath
+      requireAs: requireAs
+
+    mod.parse ->
+      main.dependencies[requireAs] = mod
+      callback()
+
+  , (err) ->
+    throw err if err
+
+    callback()
 
 module.exports = (entry, options, callback) ->
   if typeof options == 'function'
     [callback, options] = [options, {}]
 
-  options.include ?= []
+  options.includes ?= {}
 
   main = new Module entry,
     exclude: options.exclude
@@ -16,15 +33,6 @@ module.exports = (entry, options, callback) ->
     prelude: options.prelude
 
   main.parse =>
-    addIncludes = (callback) ->
-      if options.include.length == 0
-        callback null
-      else
-        module = new Module options.include.pop()
-        module.parse =>
-          main.dependencies[module.requireAs] = module
-          addIncludes callback
-
-    addIncludes ->
+    addIncludes options.includes, main, ->
       main.toplevel = wrapper
       callback null, main

@@ -62,6 +62,7 @@ class Module
   # resolve paths
   resolve: ->
     @[k] = v for k, v of resolve @requiredAs,
+      requireAs:  @requireAs
       requiredBy: @requiredBy
       basePath:   @basePath
 
