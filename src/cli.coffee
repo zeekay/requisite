@@ -15,6 +15,7 @@ writeBundle = (bundle, options) ->
 
 help = (code, message) ->
   console.log """
+
   Usage: requisite path/to/entry-module [options]
 
   Options:
