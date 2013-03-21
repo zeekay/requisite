@@ -1,3 +1,16 @@
+# clone ast
+clone = (obj) ->
+  if not obj? or typeof obj isnt 'object'
+    return obj
+
+  inst = new obj.constructor()
+
+  for key of obj
+    inst[key] = clone obj[key]
+
+  return inst
+
+# generate string from ast, optionally minify
 codegen = (ast, options = {}) ->
   unless options.minify
     options =
@@ -17,6 +30,21 @@ codegen = (ast, options = {}) ->
     minify = require './minify'
     minify[minifier] ast, options
 
+# parse source into ast
+parse = (source, options) ->
+  parser = require options.parser ? 'acorn'
+  if options.comment
+    parser = require 'esprima'
+    ast = parser.parse source,
+      raw: true
+      tokens: true
+      range: true
+      comment: true
+    ast = require('escodegen').attachComments ast, ast.comments, ast.tokens
+  else
+    ast = parser.parse source
+
+# walk ast
 walk = (node, visitor) ->
   if node? and typeof node == 'object'
     unless visitor node
@@ -26,17 +54,6 @@ walk = (node, visitor) ->
   else if Array.isArray node
     for el in node
       walk el, visitor
-
-clone = (obj) ->
-  if not obj? or typeof obj isnt 'object'
-    return obj
-
-  inst = new obj.constructor()
-
-  for key of obj
-    inst[key] = clone obj[key]
-
-  return inst
 
 # draw simple graph of dependencies
 graph = (mod) ->
@@ -84,4 +101,5 @@ module.exports =
   clone: clone
   codegen: codegen
   graph: graph
+  parse: parse
   walk: walk
