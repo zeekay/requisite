@@ -208,7 +208,7 @@ class Module
       depth += 1
 
       for k,v of mod.dependencies
-        unless fn v, depth
+        unless (fn v, depth) == false
           walk v, fn, depth
 
     walk mod, fn, depth
