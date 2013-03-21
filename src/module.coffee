@@ -180,11 +180,20 @@ class Module
 
   # walk dependencies calling fn
   walkDependencies: (mod, fn, depth=0) ->
-    depth += 1
+    # maintain a reference of modules seen to prevent infinite recursion (and for efficiency)
+    seen = {}
 
-    for k,v of mod.dependencies
-      fn v, depth
-      @walkDependencies v, fn, depth
+    walk = (mod, fn, depth) ->
+      return if seen[mod.requireAs]
+      seen[mod.requireAs] = true
+
+      depth += 1
+
+      for k,v of mod.dependencies
+        unless fn v, depth
+          walk v, fn, depth
+
+    walk mod, fn, depth
 
   # draw simple graph of dependencies
   drawGraph: ->
@@ -210,7 +219,6 @@ class Module
 
   bundle: ->
     toplevel = @toplevel ? new wrapper.Wrapper()
-
     @walkDependencies @, (mod, depth) ->
       for node in mod.wrapped().body
         toplevel.body.push node
@@ -227,10 +235,10 @@ class Module
   toString: (options) ->
     utils.codegen @bundle(), options
 
-for k,v of Module::
-  do (k,v) ->
-    Module::[k] = ->
-      # console.log 'Module#' + k, (Array::slice.call arguments, 0).join ','
-      v.apply @, arguments
+# for k,v of Module::
+#   do (k,v) ->
+#     Module::[k] = ->
+#       console.log 'Module#' + k, (Array::slice.call arguments, 0).join ','
+#       v.apply @, arguments
 
 module.exports = Module

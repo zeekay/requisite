@@ -10,6 +10,7 @@ help = (code) ->
     -h, --help                   Display this help
     -i, --include [modules...]   Additional modules to parse and include
     -p, --prelude <file>         File to use as prelude, or false to disable
+    -m, --minify                 Minify output
     -x, --exclude <regex>        Regex to exclude modules from being parsed
   """
   process.exit code
@@ -39,6 +40,8 @@ while opt = args.shift()
       options.exclude = new RegExp args.shift()
     when '-e', '--export'
       options.export = args.shift()
+    when '-m', '--minify'
+      options.minify = args.shift()
     when '-p', '--prelude'
       options.prelude = args.shift()
     when '-h', '--help'
@@ -51,4 +54,5 @@ requisite = require('../lib')
 requisite.bundle entry, options, (err, bundle) ->
   throw err if err?
 
-  console.log bundle
+  console.log bundle.toString
+    minify: options.minify
