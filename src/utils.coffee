@@ -32,17 +32,25 @@ codegen = (ast, options = {}) ->
 
 # parse source into ast
 parse = (source, options = {}) ->
-  parser = require options.parser ? 'acorn'
+  options.parser ?= 'acorn'
+
   if options.comment
-    parser = require 'esprima'
-    ast = parser.parse source,
-      raw: true
-      tokens: true
-      range: true
-      comment: true
-    ast = require('escodegen').attachComments ast, ast.comments, ast.tokens
-  else
-    ast = parser.parse source
+    options.parser = 'esprima'
+
+  switch options.parser
+    when 'acorn'
+      ast = (require 'acorn').parse source,
+        sourceFile: options.filename
+        locations: true
+
+    when 'esprima'
+      parser = require 'esprima'
+      ast = parser.parse source,
+        comment: true
+        range: true
+        raw: true
+        tokens: true
+      ast = require('escodegen').attachComments ast, ast.comments, ast.tokens
 
 # walk ast
 walk = (node, visitor) ->

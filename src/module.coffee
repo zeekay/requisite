@@ -103,9 +103,7 @@ class Module
       return @compile => @parse callback
 
     # parse source to AST
-    @ast = utils.parse @source,
-      locations: true
-      sourceFile: @normalizedPath
+    @ast = utils.parse @source, filename: @normalizedPath
 
     # transform AST to use root-relative paths
     dependencies = @transform()
