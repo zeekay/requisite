@@ -40,11 +40,26 @@ clone = (obj) ->
 
 # draw simple graph of dependencies
 graph = (mod) ->
+  # walk dependencies
+  seen = {}
+  walkdeps = (mod, fn, depth = 0) ->
+    if seen[mod.requireAs]
+      fn mod, depth, true
+      return
+
+    seen[mod.requireAs] = true
+
+    depth += 1
+
+    for k,v of mod.dependencies
+      unless (fn v, depth) == false
+        walkdeps v, fn, depth
+
   console.log mod.requireAs
 
   lines = []
 
-  mod.walkDependencies mod, (mod, depth, seen) ->
+  walkdeps mod, (mod, depth, seen) ->
     if seen
       lines.pop()
       return

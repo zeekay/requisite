@@ -197,29 +197,28 @@ class Module
     utils.walk @ast, fn
 
   # walk dependencies calling fn
-  walkDependencies: (mod, fn, depth=0) ->
+  walkDependencies: (mod, fn) ->
+    if typeof mod == 'function'
+      [fn, mod] = [mod, @]
+
     # maintain a reference of modules seen to prevent infinite recursion (and for efficiency)
     seen = {}
 
-    walk = (mod, fn, depth) ->
-      if seen[mod.requireAs]
-        fn mod, depth, true
-        return
+    walk = (mod, fn) ->
+      return if seen[mod.requireAs]
 
       seen[mod.requireAs] = true
 
-      depth += 1
-
       for k,v of mod.dependencies
-        unless (fn v, depth) == false
-          walk v, fn, depth
+        unless (fn v) == false
+          walk v, fn
 
-    walk mod, fn, depth
+    walk mod, fn
 
   bundle: ->
     toplevel = (@toplevel ? new wrapper.Wrapper()).clone()
 
-    @walkDependencies @, (mod, depth) ->
+    @walkDependencies (mod) ->
       for node in mod.wrapped().body
         toplevel.body.push node
 
