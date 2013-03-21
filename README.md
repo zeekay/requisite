@@ -18,7 +18,7 @@ Usage: requisite path/to/entry-module [options]
 Options:
   -b, --bare                   Compile without a top-level function wrapper
   -e, --export <name>          Export module as <name>
-  -i, --include [modules...]   Additional modules to parse and include
+  -i, --include [module, ...]  Additional modules to include, in <require as>:<path to module> format
   -m, --minify                 Minify output
   -o, --output <file>          Write bundle to file instead of stdout
   -p, --prelude <file>         File to use as prelude, or false to disable

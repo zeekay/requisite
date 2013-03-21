@@ -21,7 +21,7 @@ help = (code, message) ->
   Options:
     -b, --bare                   Compile without a top-level function wrapper
     -e, --export <name>          Export module as <name>
-    -i, --include [modules...]   Additional modules to parse and include
+    -i, --include [module, ...]  Additional modules to include, in <require as>:<path to module> format
     -m, --minify                 Minify output
     -o, --output <file>          Write bundle to file instead of stdout
     -p, --prelude <file>         File to use as prelude, or false to disable
@@ -62,7 +62,11 @@ while opt = args.shift()
       options.bare = true
     when '-i', '--include'
       while (module = args.shift())? and module.charAt(0) != '-'
-        options.include.push module
+        try
+          [requireAs, absolutePath] = module.split ':'
+          options.include[requireAs] = absolutePath
+        catch err
+          help 1, 'Invalid argument to include'
     when '-x', '--exclude'
       options.exclude = new RegExp args.shift()
     when '-e', '--export'

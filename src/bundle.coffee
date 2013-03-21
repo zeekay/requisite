@@ -22,7 +22,7 @@ module.exports = (entry, options, callback) ->
   if typeof options == 'function'
     [callback, options] = [options, {}]
 
-  options.includes ?= {}
+  options.include ?= {}
 
   main = new Module entry,
     exclude: options.exclude
@@ -33,6 +33,6 @@ module.exports = (entry, options, callback) ->
     prelude: options.prelude
 
   main.parse =>
-    addIncludes options.includes, main, ->
+    addIncludes options.include, main, ->
       main.toplevel = wrapper
       callback null, main
