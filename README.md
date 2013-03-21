@@ -23,7 +23,7 @@ Options:
   -o, --output <file>          Write bundle to file instead of stdout
   -p, --prelude <file>         File to use as prelude, or false to disable
       --no-prelude             Exclude prelude from bundle
-  -w, --watch                  Watch for changes, and recompile
+  -w, --watch                  Write bundle to file and and recompile on file changes
   -x, --exclude <regex>        Regex to exclude modules from being parsed
 
   -v, --version                Display version
