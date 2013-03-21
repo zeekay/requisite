@@ -28,6 +28,7 @@ help = (code, message) ->
     -w, --watch                  Watch for changes, and recompile
     -x, --exclude <regex>        Regex to exclude modules from being parsed
 
+    -v, --version                Display version
     -h, --help                   Display this help
   """
   console.log '\n' + message if message
@@ -48,7 +49,11 @@ args = process.argv.slice 2
 entry = args.shift()
 
 if (not entry?) or entry.charAt(0) == '-'
-  help()
+  if entry in ['-v', '--version']
+    console.log require('../package').version
+    process.exit 0
+  else
+    help 1
 
 while opt = args.shift()
   switch opt
