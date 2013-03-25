@@ -1,4 +1,4 @@
-should    = require('chai').should()
+should = require('chai').should()
 bundle = require '../lib/bundle'
 
 describe 'bundle', ->
