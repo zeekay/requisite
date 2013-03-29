@@ -207,6 +207,8 @@ class Module
       seen[mod.requireAs] = true
 
       for k,v of mod.dependencies
+        continue if seen[k]
+
         unless (fn v) == false
           walk v, fn
 
