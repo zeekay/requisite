@@ -9,7 +9,9 @@ module.exports = (entry, options={}) ->
         middleware req, res, next
       return
 
-    url = req.url
+    url = req.url.replace /\.\w+$/, ''
+
+    console.log url: url
 
     unless (mod = bundle.find url)?
       return next()
