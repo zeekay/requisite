@@ -36,6 +36,9 @@
   "bin": {
     "requisite": "./bin/requisite"
   },
+  "scripts": {
+    "prepublish": "cake build"
+  },
   "engines": {
     "node": ">=0.6.0"
   },
