@@ -14,9 +14,7 @@ task 'test', 'Run tests', ->
   exec './node_modules/.bin/mocha test/ --compilers coffee:coffee-script -R spec -t 5000 -c'
 
 task 'publish', 'Publish project', ->
-  exec """
-     ./node_modules/.bin/coffee -bc -o lib/ src/
-     git push
-     npm publish
-    """.split '\n', ->
-    invoke 'gh-pages'
+  exec [
+    'git push'
+    'npm publish'
+  ]
