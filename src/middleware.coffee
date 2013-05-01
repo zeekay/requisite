@@ -11,8 +11,6 @@ module.exports = (entry, options={}) ->
 
     url = req.url.replace /\.\w+$/, ''
 
-    console.log url: url
-
     unless (mod = bundle.find url)?
       return next()
 
