@@ -1,17 +1,26 @@
-module.exports = (entry, options={}) ->
+{parse} = require 'url'
+
+module.exports = (options={}) ->
+  unless options.entry?
+    throw new Error 'Entry module unspecified'
+
   maxAge = options.maxAge or 0
   bundle = null
 
   middleware = (req, res, next) ->
     unless bundle?
-      require('./bundle') entry, options, (err, _bundle) ->
+      require('./bundle') options.entry, options, (err, _bundle) ->
         bundle = _bundle
         middleware req, res, next
       return
 
-    url = req.url.replace /\.\w+$/, ''
+    # parse url to deal with oddness
+    url  = parse req.url, true, true
 
-    unless (mod = bundle.find url)?
+    # strip extension from module path
+    path = url.pathname.replace /\.\w+$/, ''
+
+    unless (mod = bundle.find path)?
       return next()
 
     now = new Date().toUTCString()
