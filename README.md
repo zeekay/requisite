@@ -34,3 +34,31 @@ Example:
 ```bash
 requisite src/entry.coffee > lib/bundle.js
 ```
+
+### API
+If you want more fine-grained control over requisite you can require it in your
+own projects and use it directly.
+
+```javascript
+    require('requisite').bundle({
+        entry: './src/index',
+        include: './src/some-module',
+        exclude: '',
+        export: 'global-name'
+    }, function(err, bundles) {
+        bundles.forEach(function(bundle, asyncBundles) {
+            bundle.write(bundle);
+        });
+    });
+```
+
+### Middleware
+For development it can be useful to serve bundles up dynamically, and a connect
+middleware is provided for exactly this purpose. Express example:
+
+```javascript
+  app.use('/js', require('requisite').middleware({
+    entry: __dirname + '/assets/app.js',
+    export: 'app'
+  }))
+```

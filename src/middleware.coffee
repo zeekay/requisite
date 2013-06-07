@@ -5,12 +5,12 @@ module.exports = (options={}) ->
     throw new Error 'Entry module unspecified'
 
   maxAge = options.maxAge or 0
-  bundle = null
+  cache  = null
 
   middleware = (req, res, next) ->
-    unless bundle?
-      require('./bundle') options.entry, options, (err, _bundle) ->
-        bundle = _bundle
+    unless cache?
+      require('./bundle') options.entry, options, (err, bundle) ->
+        cache = bundle
         middleware req, res, next
       return
 
@@ -20,7 +20,7 @@ module.exports = (options={}) ->
     # strip extension from module path
     path = url.pathname.replace /\.\w+$/, ''
 
-    unless (mod = bundle.find path)?
+    unless (mod = cache.find path)?
       return next()
 
     now = new Date().toUTCString()
@@ -36,9 +36,10 @@ module.exports = (options={}) ->
     if req.method != 'GET'
       return next()
 
-    res.writeHead 200
-
-    res.end mod.toString(), 'utf8'
+    require('./bundle') options.entry, options, (err, bundle) ->
+      cache = bundle
+      res.writeHead 200
+      res.end (bundle.find path).toString(), 'utf8'
 
   # Wrap this is a named function to make debugging easier.
   `function requisite(req, res, next) { return middleware(req, res, next); };`
