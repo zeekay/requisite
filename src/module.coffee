@@ -100,14 +100,14 @@ class Module
     options.deep ?= true
 
     if options.force or not @source?
-      return @compile => @parse callback
+      return @compile => @parse options, callback
 
     # parse source to AST
     @ast = utils.parse @source, filename: @normalizedPath
 
     # transform AST to use root-relative paths
     try
-      dependencies = @transform()
+      dependencies = @transform paths: options.paths
     catch err
       return callback err
 
@@ -120,7 +120,7 @@ class Module
     @traverse dependencies, callback, options.deep
 
   # transform require expressions in AST to use root-relative paths
-  transform: ->
+  transform: (options = {}) ->
     dependencies = []
     @walkAst (node) =>
       if node.type == 'CallExpression' and node.callee.name == 'require'
@@ -132,8 +132,8 @@ class Module
             extensions: @extensions
             requiredAs: required.value
             requiredBy: @absolutePath
+            paths:      options.paths
 
-          mod = resolve required.value,
           # transform node
           required.value = mod.requireAs
 

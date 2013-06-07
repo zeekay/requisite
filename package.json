@@ -54,7 +54,7 @@
   "dependencies": {
     "acorn": "~0.1.0",
     "escodegen": "0.0.19",
-    "resolve": "~0.3.0",
+    "resolve": "~0.3.1",
     "async": "~0.2.8"
   },
   "optionalDependencies": {
