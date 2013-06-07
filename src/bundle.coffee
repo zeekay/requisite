@@ -2,16 +2,14 @@ async     = require 'async'
 Module    = require './module'
 {Prelude} = require './wrapper'
 
-addIncludes = (includes, main, callback) ->
-  console.log 'adding includes'
-
-  async.map ([k,v] for k,v of includes), ([requireAs, absolutePath], callback) ->
+addIncludes = (options, main, callback) ->
+  async.map ([k,v] for k,v of options.includes), ([requireAs, absolutePath], callback) ->
     mod = new Module absolutePath,
       absolutePath: absolutePath
       basePath: main.basePath
       requireAs: requireAs
 
-    mod.parse (err) ->
+    mod.parse paths: options.paths, (err) =>
       return callback err if err?
       main.dependencies[requireAs] = mod
       callback()
@@ -35,9 +33,9 @@ module.exports = (entry, options, callback) ->
     bare:    options.bare
     prelude: options.prelude
 
-  main.parse (err) =>
+  main.parse paths: options.paths, (err) =>
     return callback err if err?
 
-    addIncludes options.include, main, ->
+    addIncludes options, main, ->
       main.toplevel = wrapper
       callback null, main

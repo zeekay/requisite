@@ -10,6 +10,9 @@ module.exports = (requiredAs, options = {}) ->
     cache[options.resolveFrom+requiredAs] = options
     return
 
+  options.paths ?= []
+  options.extensions ?= extensions
+
   if (requiredBy = options.requiredBy)?
     # normal dependency
     resolveFrom = path.dirname requiredBy
@@ -23,9 +26,20 @@ module.exports = (requiredAs, options = {}) ->
   # use cached resolution if possible
   return cached if (cached = cache[resolveFrom+requiredAs])?
 
-  absolutePath = resolve.sync requiredAs,
-    basedir:    resolveFrom
-    extensions: options.extensions ? extensions
+  try
+    absolutePath = resolve.sync requiredAs,
+      basedir:    resolveFrom
+      extensions: options.extensions
+  catch err
+
+  while (not absolutePath?) and (nextPath = options.paths.shift())?
+    try
+      absolutePath = resolve.sync requiredAs,
+        basedir:    nextPath
+        extensions: options.extensions
+    catch err
+
+  throw err unless absolutePath?
 
   extension      = path.extname absolutePath
   normalizedPath = path.join './', (absolutePath.replace basePath, '')
