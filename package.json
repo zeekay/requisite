@@ -49,7 +49,7 @@
     "mocha": "~1.8.2",
     "executive": "~0.2.0",
     "express": "~3.1.0",
-    "superagent": "~0.13.0",
+    "superagent": "~0.13.0"
   },
   "dependencies": {
     "acorn": "~0.1.0",
