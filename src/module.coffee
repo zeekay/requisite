@@ -71,7 +71,7 @@ class Module
       @resolve()
 
     fs.stat @absolutePath, (err, stat) =>
-      throw err if err
+      throw err if err?
 
       if @mtime? and @mtime > stat.mtime
         return callback()
@@ -85,7 +85,7 @@ class Module
 
         # call compiler with a reference to this module
         compiler.call @, {source: source, filename: @normalizedPath}, (err, source, sourceMap) =>
-          throw err if err
+          throw err if err?
 
           @source = source
           @sourceMap = sourceMap
@@ -106,7 +106,10 @@ class Module
     @ast = utils.parse @source, filename: @normalizedPath
 
     # transform AST to use root-relative paths
-    dependencies = @transform()
+    try
+      dependencies = @transform()
+    catch err
+      return callback err
 
     # cache ourself
     Module.moduleCache[@requireAs] = @
@@ -130,6 +133,7 @@ class Module
             requiredAs: required.value
             requiredBy: @absolutePath
 
+          mod = resolve required.value,
           # transform node
           required.value = mod.requireAs
 

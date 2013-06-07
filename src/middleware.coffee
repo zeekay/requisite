@@ -1,4 +1,4 @@
-{parse} = require 'url'
+url = require 'url'
 
 module.exports = (options={}) ->
   unless options.entry?
@@ -10,15 +10,16 @@ module.exports = (options={}) ->
   middleware = (req, res, next) ->
     unless cache?
       require('./bundle') options.entry, options, (err, bundle) ->
+        if err?
+          console.error err.stack
+          return next()
+
         cache = bundle
         middleware req, res, next
       return
 
-    # parse url to deal with oddness
-    url  = parse req.url, true, true
-
-    # strip extension from module path
-    path = url.pathname.replace /\.\w+$/, ''
+    # parse url to deal with oddness, strip extension from module path
+    path = (url.parse req.url, true, true).pathname.replace /\.\w+$/, ''
 
     unless (mod = cache.find path)?
       return next()
@@ -37,6 +38,8 @@ module.exports = (options={}) ->
       return next()
 
     require('./bundle') options.entry, options, (err, bundle) ->
+      return next() if err?
+
       cache = bundle
       res.writeHead 200
       res.end (bundle.find path).toString(), 'utf8'
