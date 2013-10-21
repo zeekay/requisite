@@ -3,7 +3,7 @@ Module    = require './module'
 {Prelude} = require './wrapper'
 
 addIncludes = (options, main, callback) ->
-  async.map ([k,v] for k,v of options.includes), ([requireAs, absolutePath], callback) ->
+  async.map ([k,v] for k,v of options.include), ([requireAs, absolutePath], _callback) ->
     mod = new Module absolutePath,
       absolutePath: absolutePath
       basePath: main.basePath
@@ -12,7 +12,7 @@ addIncludes = (options, main, callback) ->
     mod.parse paths: options.paths, (err) =>
       return callback err if err?
       main.dependencies[requireAs] = mod
-      callback()
+      _callback()
 
   , (err) ->
     throw err if err
