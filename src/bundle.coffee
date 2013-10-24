@@ -23,6 +23,8 @@ module.exports = (entry, options, callback) ->
   if typeof options == 'function'
     [callback, options] = [options, {}]
 
+  callback        ?= ->
+  options         ?= {}
   options.include ?= {}
 
   main = new Module entry,

@@ -9,21 +9,6 @@ wrapper   = require './wrapper'
 class Module
   @moduleCache = {}
 
-  @find = (query) ->
-    switch typeof query
-      when 'function'
-        for k,v of Module.moduleCache
-          return v if query v
-      when 'string'
-        requireAs = query.replace /^\//, ''
-        Module.moduleCache[requireAs]
-      else
-        throw new Error 'Invalid query for find'
-
-  @walk = (fn) ->
-    for mod in @moduleCache
-      fn mod
-
   constructor: (requiredAs, options = {}) ->
     # relative or unqualified require to module
     @requiredAs   = requiredAs
@@ -73,9 +58,11 @@ class Module
     fs.stat @absolutePath, (err, stat) =>
       throw err if err?
 
-      if @mtime? and @mtime > stat.mtime
+      if @mtime? and @mtime <= stat.mtime
+        console.log 'not compiling'
         return callback()
 
+      console.log 'compiling', @absolutePath
       @mtime = stat.mtime
       extension = (path.extname @absolutePath).substr 1
 
@@ -97,27 +84,26 @@ class Module
     if typeof options == 'function'
       [callback, options] = [options, {}]
 
-    options.deep ?= true
+    if options.deep
+      Module.moduleCache = {}
 
-    if options.force or not @source?
-      return @compile => @parse options, callback
+    @compile =>
+      # parse source to AST
+      @ast = utils.parse @source, filename: @normalizedPath
 
-    # parse source to AST
-    @ast = utils.parse @source, filename: @normalizedPath
+      # transform AST to use root-relative paths
+      try
+        dependencies = @transform paths: options.paths
+      catch err
+        return callback err
 
-    # transform AST to use root-relative paths
-    try
-      dependencies = @transform paths: options.paths
-    catch err
-      return callback err
+      # cache ourself
+      Module.moduleCache[@requireAs] = @
 
-    # cache ourself
-    Module.moduleCache[@requireAs] = @
+      @dependencies = {}
 
-    @dependencies = {}
-
-    # parse dependencies into fully-fledged modules
-    @traverse dependencies, callback, options.deep
+      # parse dependencies into fully-fledged modules
+      @traverse dependencies, options, callback
 
   # transform require expressions in AST to use root-relative paths
   transform: (options = {}) ->
@@ -146,33 +132,42 @@ class Module
     dependencies
 
   # traverse dependencies recursively, parsing them as well
-  traverse: (dependencies, callback, deep) ->
+  traverse: (dependencies, options, callback) ->
+    if typeof options == 'function'
+      [callback, options] = [options, {}]
+
+    dependencies ?= @dependencies.slice 0
+    options      ?= {}
+    callback     ?= ->
+
     return callback() if dependencies.length == 0
 
-    mod = dependencies.shift()
+    dep = dependencies.shift()
 
-    # already seen this module, or it's excluded, continue
-    if @dependencies[mod.requireAs]? or @exclude? and @exclude.test mod.requireAs
-      return @traverse dependencies, callback, deep
+    # if excluced module, just continue
+    if @exclude? and @exclude.test dep.requireAs
+      return @traverse dependencies, options, callback
+
+    # already seen this module
+    if @dependencies[dep.requireAs]?
+      return @traverse dependencies, options, callback
 
     # use cached module if previously parsed by someone else
-    if (cached = @find mod.requireAs)?
-      @dependencies[mod.requireAs] = cached
+    if (cached = @find dep.requireAs)?
+      @dependencies[cached.requireAs] = cached
       cached.dependents[@requireAs] = @
-      return @traverse dependencies, callback, deep
+      return @traverse dependencies, options, callback
 
     # create module and parse it baby
-    mod = new Module mod.requiredAs, mod
+    mod = new Module dep.requiredAs, dep
     mod.exclude = @exclude
     mod.dependents[@requireAs] = @
     @dependencies[mod.requireAs] = mod
 
-    return callback() unless deep
-
     # parse dependency as well
     mod.parse =>
       # continue parsing deps
-      @traverse dependencies, callback, deep
+      @traverse dependencies, options, callback
 
   append: (mod) ->
     for node in mod.ast?.body ? []
@@ -180,7 +175,15 @@ class Module
     return
 
   find: (query) ->
-    Module.find query
+    switch typeof query
+      when 'function'
+        for k,v of Module.moduleCache
+          return v if query v
+      when 'string'
+        requireAs = query.replace /^\//, ''
+        Module.moduleCache[requireAs]
+      else
+        throw new Error 'Invalid query for find'
 
   wrapped: ->
     define = new wrapper.Define
@@ -196,6 +199,11 @@ class Module
   # walk nodes in ast calling fn
   walkAst: (fn) ->
     utils.walk @ast, fn
+
+  # walk module cache calling fn
+  walkCache: (fn) ->
+    for mod in Module.moduleCache
+      fn mod
 
   # walk dependencies calling fn
   walkDependencies: (mod, fn) ->
@@ -236,11 +244,5 @@ class Module
 
   toString: (options) ->
     utils.codegen @bundle(), options
-
-# for k,v of Module::
-#   do (k,v) ->
-#     Module::[k] = ->
-#       console.log 'Module#' + k, (Array::slice.call arguments, 0).join ','
-#       v.apply @, arguments
 
 module.exports = Module
