@@ -59,10 +59,8 @@ class Module
       throw err if err?
 
       if @mtime? and @mtime <= stat.mtime
-        console.log 'not compiling'
         return callback()
 
-      console.log 'compiling', @absolutePath
       @mtime = stat.mtime
       extension = (path.extname @absolutePath).substr 1
 
@@ -234,7 +232,7 @@ class Module
         for node in mod.wrapped().body
           toplevel.body.push node
       else
-        console.log 'warning: ast missing', mod.requireAs
+        console.error 'warning: ast missing', mod.requireAs
 
     for node in @wrapped().body
       toplevel.body.push node
