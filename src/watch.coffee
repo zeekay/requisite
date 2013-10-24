@@ -7,7 +7,8 @@ module.exports = (entry, options, callback) ->
 
   bundle entry, options, (err, _bundle) ->
     # callback immediately with bundle
-    callback err, _bundle
+    return callback err if err?
+    callback null, _bundle
 
     # add dir to watched Dirs
     watchedDirs[path.dirname _bundle.absolutePath] = true
@@ -27,4 +28,6 @@ module.exports = (entry, options, callback) ->
           return unless fs.existsSync absolutePath
 
           _bundle.parse {deep: true}, (err) ->
-            callback err, _bundle
+            return callback err if err?
+
+            callback null, _bundle
