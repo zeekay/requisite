@@ -23,6 +23,7 @@ class Module
     # async, whether or not to include in bundled modules
     @async        = options.async ? false
     @exclude      = options.exclude
+    @include      = options.include
 
     # what to export module as
     @export       = options.export ? false
@@ -31,17 +32,20 @@ class Module
     @ast          = null
     @source       = null
 
-    # modules that this module depends on
-    @dependencies = {}
-
-    # modules that depend on this one
-    @dependents   = {}
-
     # Optionally passed in if resolved in advance
     @absolutePath   = options.absolutePath
     @basePath       = options.basePath
     @normalizedPath = options.normalizedPath
     @requireAs      = options.requireAs
+
+    unless @absolutePath? and @normalizedPath?
+      @resolve()
+
+    # modules that this module depends on
+    @dependencies = {}
+
+    # modules that depend on this one
+    @dependents   = {}
 
   # resolve paths
   resolve: ->
@@ -52,9 +56,6 @@ class Module
 
   # compile source using appropriately compiler
   compile: (callback) ->
-    unless @absolutePath? and @normalizedPath?
-      @resolve()
-
     fs.stat @absolutePath, (err, stat) =>
       throw err if err?
 
@@ -91,7 +92,7 @@ class Module
 
       # transform AST to use root-relative paths
       try
-        dependencies = @transform paths: options.paths
+        dependencies = @transform()
       catch err
         return callback err
 
@@ -100,11 +101,24 @@ class Module
 
       @dependencies = {}
 
+      # force include dependencies if requested
+      if @include?
+        for k, v of @include
+          mod = resolve v,
+            basePath:   @basePath
+            extensions: @extensions
+            requiredAs: k
+
+          mod.requireAs = k
+
+          # add to list of dependencies
+          dependencies.unshift mod
+
       # parse dependencies into fully-fledged modules
       @traverse dependencies, options, callback
 
   # transform require expressions in AST to use root-relative paths
-  transform: (options = {}) ->
+  transform: ->
     dependencies = []
     @walkAst (node) =>
       if node.type == 'CallExpression' and node.callee.name == 'require'
@@ -116,7 +130,6 @@ class Module
             extensions: @extensions
             requiredAs: required.value
             requiredBy: @absolutePath
-            paths:      options.paths
 
           # transform node
           required.value = mod.requireAs

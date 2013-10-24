@@ -26,6 +26,5 @@ module.exports = (entry, options, callback) ->
           absolutePath = path.join dir, filename
           return unless fs.existsSync absolutePath
 
-          # update bundle
           _bundle.parse {deep: true}, (err) ->
             callback err, _bundle
