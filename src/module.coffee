@@ -57,7 +57,7 @@ class Module
   # compile source using appropriately compiler
   compile: (callback) ->
     fs.stat @absolutePath, (err, stat) =>
-      throw err if err?
+      return callback err if err?
 
       if @mtime? and @mtime <= stat.mtime
         return callback()
@@ -71,7 +71,7 @@ class Module
 
         # call compiler with a reference to this module
         compiler.call @, {source: source, filename: @normalizedPath}, (err, source, sourceMap) =>
-          throw err if err?
+          return callback err if err?
 
           @source = source
           @sourceMap = sourceMap
@@ -86,7 +86,9 @@ class Module
     if options.deep
       Module.moduleCache = {}
 
-    @compile =>
+    @compile (err) =>
+      return callback err if err?
+
       # parse source to AST
       @ast = utils.parse @source, filename: @normalizedPath
 
@@ -176,7 +178,9 @@ class Module
     @dependencies[mod.requireAs] = mod
 
     # parse dependency as well
-    mod.parse =>
+    mod.parse (err) =>
+      return callback err if err?
+
       # continue parsing deps
       @traverse dependencies, options, callback
 
