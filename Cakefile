@@ -15,6 +15,7 @@ task 'test', 'Run tests', ->
 
 task 'publish', 'Publish project', ->
   exec [
+    'cake build'
     'git push'
     'npm publish'
   ]
