@@ -52,12 +52,11 @@
     "superagent": "~0.13.0"
   },
   "dependencies": {
-    "acorn": "~0.1.0",
     "escodegen": "0.0.19",
-    "resolve": "~0.3.1",
-    "async": "~0.2.8"
+    "resolve": "~0.3.1"
   },
   "optionalDependencies": {
+    "acorn": "~0.1.0",
     "esmangle": "0.0.10",
     "uglify-js": "~2.2.5"
   }
