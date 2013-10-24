@@ -1,4 +1,5 @@
-url = require 'url'
+url    = require 'url'
+bundle = require './bundle'
 
 module.exports = (options={}) ->
   unless options.entry?
@@ -9,40 +10,42 @@ module.exports = (options={}) ->
 
   middleware = (req, res, next) ->
     unless cache?
-      require('./bundle') options.entry, options, (err, bundle) ->
+      bundle options.entry, options, (err, _bundle) ->
         if err?
           console.error err.stack
           return next()
 
-        cache = bundle
+        cache = _bundle
         middleware req, res, next
       return
 
-    # parse url to deal with oddness, strip extension from module path
-    path = (url.parse req.url, true, true).pathname.replace /\.\w+$/, ''
+    # reparse in case of changes
+    cache.parse {deep: true}, (err) ->
+      if err?
+        console.error err.stack
+        return next()
 
-    unless (mod = cache.find path)?
-      return next()
+      # parse url to deal with oddness, strip extension from module path
+      path = (url.parse req.url, true, true).pathname.replace /\.\w+$/, ''
 
-    now = new Date().toUTCString()
-    res.setHeader 'Date', now unless res.getHeader 'Date'
-    res.setHeader 'Cache-Control', 'public, max-age=' + (maxAge / 1000) unless res.getHeader 'Cache-Control'
-    res.setHeader 'Last-Modified', now unless res.getHeader 'Last-Modified'
-    res.setHeader 'Content-Type', 'application/javascript'
+      unless (mod = cache.find path)?
+        return next()
 
-    if req.method == 'HEAD'
+      now = new Date().toUTCString()
+      res.setHeader 'Date', now unless res.getHeader 'Date'
+      res.setHeader 'Cache-Control', 'public, max-age=' + (maxAge / 1000) unless res.getHeader 'Cache-Control'
+      res.setHeader 'Last-Modified', now unless res.getHeader 'Last-Modified'
+      res.setHeader 'Content-Type', 'application/javascript'
+
+      if req.method == 'HEAD'
+        res.writeHead 200
+        return res.end()
+
+      if req.method != 'GET'
+        return next()
+
       res.writeHead 200
-      return res.end()
-
-    if req.method != 'GET'
-      return next()
-
-    require('./bundle') options.entry, options, (err, bundle) ->
-      return next() if err?
-
-      cache = bundle
-      res.writeHead 200
-      res.end (bundle.find path).toString(), 'utf8'
+      res.end (cache.find path).toString(), 'utf8'
 
   # Wrap this is a named function to make debugging easier.
   `function requisite(req, res, next) { return middleware(req, res, next); };`

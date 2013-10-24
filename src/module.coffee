@@ -230,8 +230,11 @@ class Module
     toplevel = (@toplevel ? new wrapper.Wrapper()).clone()
 
     @walkDependencies (mod) ->
-      for node in mod.wrapped().body
-        toplevel.body.push node
+      if mod.ast?
+        for node in mod.wrapped().body
+          toplevel.body.push node
+      else
+        console.log 'warning: ast missing', mod.requireAs
 
     for node in @wrapped().body
       toplevel.body.push node
