@@ -111,7 +111,9 @@ class Module
             extensions: @extensions
             requiredAs: k
 
-          mod.requireAs = k
+          mod.requireAs  = k
+          mod.basePath   = @basePath
+          mod.requiredBy = @absolutePath
 
           # add to list of dependencies
           dependencies.unshift mod

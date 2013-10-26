@@ -10,7 +10,7 @@ module.exports = (requiredAs, options = {}) ->
     cache[options.resolveFrom+requiredAs] = options
     return
 
-  options.paths ?= []
+  options.paths      ?= []
   options.extensions ?= extensions
 
   if (requiredBy = options.requiredBy)?
