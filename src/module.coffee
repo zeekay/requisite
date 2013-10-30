@@ -197,7 +197,8 @@ class Module
         for k,v of Module.moduleCache
           return v if query v
       when 'string'
-        requireAs = query.replace /^\//, ''
+        # strip leading dot slash / slash
+        requireAs = query.replace /^\.?\/+/, ''
         Module.moduleCache[requireAs]
       else
         throw new Error 'Invalid query for find'
