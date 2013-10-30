@@ -1,17 +1,22 @@
+path      = require 'path'
+
 Module    = require './module'
 {Prelude} = require './wrapper'
+
 
 module.exports = (entry, options, callback) ->
   if typeof options == 'function'
     [callback, options] = [options, {}]
 
-  callback        ?= ->
-  options         ?= {}
+  callback ?= ->
+  options  ?= {}
 
   main = new Module entry,
-    include: options.include
-    exclude: options.exclude
-    export:  options.export
+    requireAs: path.basename entry
+    include:   options.include
+    exclude:   options.exclude
+    export:    options.export
+    paths:     options.paths ? []
 
   wrapper = new Prelude
     bare:    options.bare

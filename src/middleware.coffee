@@ -1,19 +1,21 @@
 url    = require 'url'
 bundle = require './bundle'
+{join} = require 'path'
 
 module.exports = (options={}) ->
-  unless options.entry?
-    throw new Error 'Entry module unspecified'
-
-  maxAge = options.maxAge or 0
-  cache  = null
+  maxAge   = options.maxAge or 0
+  src      = options.src ? process.cwd()
+  cache    = {}
 
   middleware = (req, res, next) ->
-    unless cache?
-      bundle options.entry, options, (err, _bundle) ->
+    # parse url to deal with oddness, strip extension from module path
+    path = (url.parse req.url, true, true).pathname.replace /\.\w+$/, ''
+
+    unless (cached = cache[path])?
+      bundle (join src, path), options, (err, _bundle) ->
         return next err if err?
 
-        cache = _bundle
+        cache[path] = _bundle
         middleware req, res, next
       return
 
@@ -31,13 +33,11 @@ module.exports = (options={}) ->
       return next()
 
     # reparse in case of changes
-    cache.parse {deep: true}, (err) ->
+    cached.parse {deep: true}, (err) ->
       return next err if err?
 
-      # parse url to deal with oddness, strip extension from module path
-      path = (url.parse req.url, true, true).pathname.replace /\.\w+$/, ''
-
-      unless (mod = cache.find path)?
+      console.log path
+      unless (mod = cached.find path)?
         return next()
 
       res.writeHead 200
