@@ -42,8 +42,15 @@ module.exports = (requiredAs, options = {}) ->
   throw err unless absolutePath?
 
   extension      = path.extname absolutePath
-  normalizedPath = path.join './', (absolutePath.replace basePath, '')
-  requireAs      = options.requireAs ? normalizedPath.replace extension, ''
+  if (absolutePath.indexOf basePath) != -1
+    normalizedPath = absolutePath.replace basePath, ''
+  else
+    start = absolutePath.indexOf 'node_modules'
+    normalizedPath = absolutePath.substring start, absolutePath.length
+
+  normalizedPath = normalizedPath.replace /^\/+/, ''
+
+  requireAs = options.requireAs ? normalizedPath.replace extension, ''
 
   cache[resolveFrom+requiredAs] =
     absolutePath:   absolutePath
