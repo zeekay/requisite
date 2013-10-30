@@ -2,19 +2,21 @@ fs    = require 'fs'
 path  = require 'path'
 
 compilers = require './compilers'
-resolve   = require './resolve'
+resolver  = require './resolver'
 utils     = require './utils'
 wrapper   = require './wrapper'
 
 class Module
-  @moduleCache = {}
-
   constructor: (requiredAs, options = {}) ->
     # relative or unqualified require to module
     @requiredAs   = requiredAs
 
     # absolute path to module requiring us
     @requiredBy   = options.requiredBy
+
+    # cache for modules
+    @moduleCache  = options.moduleCache ? {}
+    @resolver     = options.resolver ? resolver()
 
     # compiler/extension options
     @compilers    = options.compilers ? compilers
@@ -24,6 +26,7 @@ class Module
     @async        = options.async ? false
     @exclude      = options.exclude
     @include      = options.include
+    @paths        = options.paths
 
     # what to export module as
     @export       = options.export ? false
@@ -49,7 +52,8 @@ class Module
 
   # resolve paths
   resolve: ->
-    @[k] = v for k, v of resolve @requiredAs,
+    @[k] = v for k, v of @resolver @requiredAs,
+      paths:      @paths
       requireAs:  @requireAs
       requiredBy: @requiredBy
       basePath:   @basePath
@@ -84,7 +88,8 @@ class Module
       [callback, options] = [options, {}]
 
     if options.deep
-      Module.moduleCache = {}
+      for k,v of @moduleCache
+        delete @moduleCache[k]
 
     @compile (err) =>
       return callback err if err?
@@ -99,14 +104,15 @@ class Module
         return callback err
 
       # cache ourself
-      Module.moduleCache[@requireAs] = @
+      @moduleCache[@requireAs] = @
 
       @dependencies = {}
 
       # force include dependencies if requested
       if @include?
         for k, v of @include
-          mod = resolve v,
+          mod = @resolver v,
+            paths:      @paths
             basePath:   @basePath
             extensions: @extensions
             requiredAs: k
@@ -129,7 +135,7 @@ class Module
         [required, callback] = node.arguments
 
         if required.type == 'Literal' and typeof required.value is 'string'
-          mod = resolve required.value,
+          mod = @resolver required.value,
             basePath:   @basePath
             extensions: @extensions
             requiredAs: required.value
@@ -173,6 +179,10 @@ class Module
       cached.dependents[@requireAs] = @
       return @traverse dependencies, options, callback
 
+    # share our cache, resolver
+    dep.moduleCache = @moduleCache
+    dep.resolver =    @resolver
+
     # create module and parse it baby
     mod = new Module dep.requiredAs, dep
     mod.exclude = @exclude
@@ -194,12 +204,12 @@ class Module
   find: (query) ->
     switch typeof query
       when 'function'
-        for k,v of Module.moduleCache
+        for k,v of @moduleCache
           return v if query v
       when 'string'
         # strip leading dot slash / slash
         requireAs = query.replace /^\.?\/+/, ''
-        Module.moduleCache[requireAs]
+        @moduleCache[requireAs]
       else
         throw new Error 'Invalid query for find'
 
@@ -220,7 +230,7 @@ class Module
 
   # walk module cache calling fn
   walkCache: (fn) ->
-    for mod in Module.moduleCache
+    for mod in @moduleCache
       fn mod
 
   # walk dependencies calling fn

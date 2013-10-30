@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "escodegen": "0.0.19",
-    "resolve": "~0.3.1"
+    "resolve": "~0.5.1"
   },
   "optionalDependencies": {
     "acorn": "~0.1.0",
