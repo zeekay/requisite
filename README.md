@@ -82,7 +82,7 @@ own projects and use it directly.
     require('requisite').bundle({
         entry: __dirname + '/assets/main.js',
     }, function(err, bundle) {
-        fs.writeFileSync('bundle.js', bundle.toString())
+        fs.writeFileSync('main.bundle.js', bundle.toString())
     });
 ```
 
