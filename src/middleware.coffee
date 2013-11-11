@@ -19,7 +19,7 @@ module.exports = (opts = {}) ->
       opts.urlRoot ?= dirname req.originalUrl
 
       # create bundle
-      bundle opts.entry, opts, (err, _bundle) ->
+      bundle opts, (err, _bundle) ->
         return next err if err?
 
         cached = _bundle

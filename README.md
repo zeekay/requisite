@@ -80,14 +80,12 @@ own projects and use it directly.
 
 ```javascript
     require('requisite').bundle({
-        entry: './src/index',
+        entry:   './src/index',
         include: './src/some-module',
         exclude: '',
-        export: 'global-name'
-    }, function(err, bundles) {
-        bundles.forEach(function(bundle, asyncBundles) {
-            bundle.write(bundle);
-        });
+        export:  'global-name'
+    }, function(err, bundle) {
+        fs.writeFileSync('bundle.js', bundle.toString())
     });
 ```
 
