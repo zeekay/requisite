@@ -35,6 +35,26 @@ Example:
 requisite src/entry.coffee > lib/bundle.js
 ```
 
+### Modules
+Requisite supports [CommonJS (node modules)][commonjs_modules]. In addition to
+the normal synchronous API for requiring modules, it also supports asynchronous
+modules, which are required with an additional callback argument which will be
+returned the module after it has been loaded:
+
+```javascript
+// foo.js
+module.exports = 'foo';
+
+// app.js
+console.log(require('./foo'))  // 'foo'
+require('./async-bar', function(bar) {
+    console.log(bar) // 'bar'
+})
+
+// async-bar.js
+module.exports = 'bar'
+```
+
 ### API
 If you want more fine-grained control over requisite you can require it in your
 own projects and use it directly.
@@ -58,7 +78,11 @@ middleware is provided for exactly this purpose. Express example:
 
 ```javascript
   app.use('/js', require('requisite').middleware({
-    entry: __dirname + '/assets/app.js',
+    entry: __dirname + '/assets/app',
     export: 'app'
   }))
 ```
+
+Which would make your bundled module at `__dirname + '/assets/app.<ext>'` available as `/js/app.js`.
+
+[commonjs_modules]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
