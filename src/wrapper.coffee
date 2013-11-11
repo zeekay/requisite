@@ -12,19 +12,19 @@ class Wrapper
   walk: (fn) ->
     utils.walk @ast, fn
 
-  toString: (options) ->
-    utils.codegen @ast, options
+  toString: (opts) ->
+    utils.codegen @ast, opts
 
   clone: ->
     new @constructor @
 
 class Prelude extends Wrapper
-  constructor: (options = {}) ->
+  constructor: (opts = {}) ->
 
-    @async        = options.async ? true
-    @bare         = options.bare ? false
-    @prelude      = options.prelude ? (path.join __dirname, 'prelude.js')
-    @preludeAsync = options.preludeAsync ? (path.join __dirname, 'prelude-async.js')
+    @async        = opts.async        ? true
+    @bare         = opts.bare         ? false
+    @prelude      = opts.prelude      ? (path.join __dirname, 'prelude.js')
+    @preludeAsync = opts.preludeAsync ? (path.join __dirname, 'prelude-async.js')
 
     super()
 
@@ -38,6 +38,7 @@ class Prelude extends Wrapper
       prelude = utils.parse fs.readFileSync @prelude
       for node in prelude.body
         @body.push node
+
       if @async
         preludeAsync = utils.parse fs.readFileSync @preludeAsync
         for node in preludeAsync.body
@@ -47,10 +48,13 @@ class Prelude extends Wrapper
             @body.push node
 
 class Define extends Wrapper
-  constructor: (options) ->
-    requireAs = options.requireAs
-    absolutePath = options.absolutePath ? ''
-    async = options.async ? false
+  constructor: (opts) ->
+    requireAs = opts.requireAs
+    absolutePath = opts.absolutePath ? ''
+    async = opts.async ? false
+
+    if async
+      requireAs = path.join opts.urlRoot, requireAs
 
     @ast = utils.parse """
       // source: #{absolutePath}

@@ -10,6 +10,7 @@ module.exports = (entry, opts = {}, cb = ->) ->
 
   main = new Module entry,
     bare:      opts.bare
+    urlRoot:   opts.urlRoot
     export:    opts.export
     exclude:   opts.exclude
     include:   opts.include
