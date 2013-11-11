@@ -1,6 +1,6 @@
 should  = require('chai').should()
 path    = require 'path'
-resolve = require '../lib/resolve'
+resolver = require '../lib/resolver'
 
 entryPath = path.resolve './test/assets/entry.coffee'
 entryBase = path.dirname entryPath
@@ -63,12 +63,14 @@ tests =
       normalizedPath: 'dir/nested.js'
       requireAs:      'dir/nested'
 
-describe 'resolve', ->
+describe 'resolver', ->
   for name, test of tests
     do (name, test) ->
       describe "#{name} module", ->
         res = null
+
         before ->
+          resolve = resolver()
           res = resolve test.setup.requiredAs,
             requiredBy: test.setup.requiredBy
             basePath:   test.setup.basePath

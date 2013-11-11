@@ -1,15 +1,5 @@
 module.exports = (options, callback) ->
   jade    = require 'jade'
-  path    = require 'path'
-  resolve = require '../resolve'
-
-  # cache runtime resolution
-  resolve 'jade-runtime',
-    absolutePath: path.join __dirname, 'jade-runtime.js'
-    normalizedPath: 'jade-runtime.js'
-    requireAs: 'jade-runtime'
-    resolveFrom: path.dirname @absolutePath
-    cache: true
 
   func = jade.compile options.source,
     client: true
@@ -18,7 +8,6 @@ module.exports = (options, callback) ->
     filename: options.filename
 
   callback null, """
-    jade = require('jade-runtime');
-
+    jade = require('#{__dirname}/jade-runtime.js');
     module.exports = #{func.toString()}
     """
