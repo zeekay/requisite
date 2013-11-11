@@ -51,7 +51,9 @@
     "jade": "~0.35.0",
     "mocha": "~1.8.2",
     "superagent": "~0.13.0",
-    "uglify-js": "~2.4.3"
+    "uglify-js": "~2.4.3",
+    "source-map-support": "~0.2.4",
+    "async": "~0.2.9"
   },
   "dependencies": {
     "acorn": "~0.4.2",
