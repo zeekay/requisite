@@ -45,15 +45,34 @@ returned the module after it has been loaded:
 // foo.js
 module.exports = 'foo';
 
-// app.js
+// async-bar.js
+module.exports = 'bar'
+
+// main.js, entry module
 console.log(require('./foo'))  // 'foo'
 require('./async-bar', function(bar) {
     console.log(bar) // 'bar'
 })
-
-// async-bar.js
-module.exports = 'bar'
 ```
+
+This compiles down to:
+
+```javascript
+// ...prelude, defining require, etc.
+
+require.define('/foo', function (module, exports, __dirname, __filename) {
+    module.exports = 'foo';
+})
+
+require.define('/main', function (module, exports, __dirname, __filename) {
+    console.log(require('/foo'));
+    require('/async-bar', function(bar) {
+        console.log(bar);
+    })
+})
+```
+
+Note how `async-bar.js` is missing from the bundle, as it's loaded at runtime.
 
 ### API
 If you want more fine-grained control over requisite you can require it in your
