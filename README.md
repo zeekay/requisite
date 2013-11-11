@@ -101,6 +101,6 @@ middleware is provided for exactly this purpose. Express example:
   }))
 ```
 
-Which would make your bundle available as `/js/main.js`.
+Which would make your bundle available as `http://host/js/main.js`.
 
 [commonjs_modules]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
