@@ -5,7 +5,8 @@ minify = require '../lib/minify'
 describe 'minify', ->
   describe '#esmangle', ->
     it 'should minify bundle', (done) ->
-      bundle './test/assets/entry',
+      bundle
+        entry: './test/assets/entry'
         exclude: /excluded/
         include: ['./test/assets/included']
         export: 'entry'
@@ -17,7 +18,8 @@ describe 'minify', ->
 
   describe '#uglify', ->
     it 'should minify bundle', (done) ->
-      bundle './test/assets/entry',
+      bundle
+        entry: './test/assets/entry'
         exclude: /excluded/
         include: ['./test/assets/included']
         export: 'entry'

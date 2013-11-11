@@ -6,7 +6,7 @@ should  = require('chai').should()
 
 middleware = require '../lib/middleware'
 
-PORT = 3456
+PORT = 34561
 
 get = (url, callback) ->
   request.get("localhost:#{PORT}#{url}").buffer().end callback
@@ -28,8 +28,7 @@ describe 'middleware', ->
   app = null
   before (done) ->
     app = express()
-    app.use middleware './test/assets/entry',
-      export: 'entry'
+    app.use middleware entry: './test/assets/entry'
     app.listen PORT, -> done()
 
   it 'should serve entry module', (done) ->
