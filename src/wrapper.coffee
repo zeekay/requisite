@@ -4,6 +4,7 @@ path   = require 'path'
 Module = require './module'
 utils  = require './utils'
 
+
 class Wrapper
   constructor: ->
     @ast = utils.parse ''
@@ -18,11 +19,11 @@ class Wrapper
   clone: ->
     new @constructor @
 
+
 class Prelude extends Wrapper
   constructor: (opts = {}) ->
 
     @async        = opts.async        ? true
-    @bare         = opts.bare         ? false
     @prelude      = opts.prelude      ? (path.join __dirname, 'prelude.js')
     @preludeAsync = opts.preludeAsync ? (path.join __dirname, 'prelude-async.js')
 
@@ -43,9 +44,10 @@ class Prelude extends Wrapper
         preludeAsync = utils.parse fs.readFileSync @preludeAsync
         for node in preludeAsync.body
           @body.push node
-        unless @bare
-          for node in (utils.parse "global.require = require").body
-            @body.push node
+
+      for node in (utils.parse "global.require = require").body
+        @body.push node
+
 
 class Define extends Wrapper
   constructor: (opts) ->
@@ -67,7 +69,8 @@ class Define extends Wrapper
       if node.type == 'BlockStatement'
         @body = node.body
 
+
 module.exports =
-  Wrapper: Wrapper
+  Define:  Define
   Prelude: Prelude
-  Define: Define
+  Wrapper: Wrapper
