@@ -1,4 +1,4 @@
-{join}  = require 'path'
+{dirname, join} = require 'path'
 {parse} = require 'url'
 
 bundle = require './bundle'
@@ -15,6 +15,10 @@ module.exports = (opts = {}) ->
     path = url.pathname.replace /\.\w+$/, ''
 
     unless cached?
+      # set urlRoot so async requires work
+      opts.urlRoot ?= dirname req.originalUrl
+
+      # create bundle
       bundle opts.entry, opts, (err, _bundle) ->
         return next err if err?
 
