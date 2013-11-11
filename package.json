@@ -46,19 +46,17 @@
     "brief": "~0.6.0",
     "chai": "~1.5.0",
     "coffee-script": "~1.6.1",
-    "mocha": "~1.8.2",
     "executive": "~0.2.0",
     "express": "~3.1.0",
+    "jade": "~0.35.0",
+    "mocha": "~1.8.2",
     "superagent": "~0.13.0",
-    "jade": "~0.35.0"
+    "uglify-js": "~2.4.3"
   },
   "dependencies": {
-    "escodegen": "0.0.19",
+    "acorn": "~0.4.2",
+    "esmangle": "0.0.17",
+    "escodegen": "0.0.28",
     "resolve": "~0.5.1"
-  },
-  "optionalDependencies": {
-    "acorn": "~0.1.0",
-    "esmangle": "0.0.10",
-    "uglify-js": "~2.2.5"
   }
 }
