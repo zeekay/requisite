@@ -21,7 +21,6 @@ module.exports = ->
     else
       # entry module, all required modules should be resolved relative to it's dir
       resolveFrom = path.dirname path.resolve requiredAs
-      console.log resolveFrom
       basePath    = resolveFrom
       requiredAs  = './' + path.basename requiredAs
 
@@ -54,7 +53,7 @@ module.exports = ->
 
     requireAs = options.requireAs ? normalizedPath.replace extension, ''
 
-    res = cache[resolveFrom+requiredAs] =
+    cache[resolveFrom+requiredAs] =
       absolutePath:   absolutePath
       basePath:       basePath
       extension:      extension
@@ -62,5 +61,3 @@ module.exports = ->
       requireAs:      requireAs
       requiredAs:     requiredAs
       requiredBy:     requiredBy
-    console.log res
-    res

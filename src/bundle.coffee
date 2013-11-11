@@ -4,26 +4,25 @@ Module    = require './module'
 {Prelude} = require './wrapper'
 
 
-module.exports = (entry, options, callback) ->
-  if typeof options == 'function'
-    [callback, options] = [options, {}]
-
-  callback ?= ->
-  options  ?= {}
+module.exports = (entry, opts = {}, cb = ->) ->
+  if typeof opts == 'function'
+    [cb, opts] = [opts, {}]
 
   main = new Module entry,
+    bare:      opts.bare
+    export:    opts.export
+    exclude:   opts.exclude
+    include:   opts.include
+    paths:     opts.paths ? []
     requireAs: path.basename entry
-    include:   options.include
-    exclude:   options.exclude
-    export:    options.export
-    paths:     options.paths ? []
-
-  wrapper = new Prelude
-    bare:    options.bare
-    prelude: options.prelude
 
   main.parse (err) =>
-    return callback err if err?
+    return cb err if err?
 
-    main.toplevel = wrapper
-    callback null, main
+    unless opts.bare
+      wrapper = new Prelude
+        prelude: opts.prelude
+
+      main.toplevel = wrapper
+
+    cb null, main

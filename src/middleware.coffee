@@ -1,21 +1,24 @@
-url    = require 'url'
-bundle = require './bundle'
-{join} = require 'path'
+{join}  = require 'path'
+{parse} = require 'url'
 
-module.exports = (options={}) ->
-  maxAge   = options.maxAge or 0
-  src      = options.src ? process.cwd()
-  cache    = {}
+bundle = require './bundle'
+
+
+module.exports = (opts = {}) ->
+  maxAge = opts.maxAge or 0
+  cached = null
 
   middleware = (req, res, next) ->
-    # parse url to deal with oddness, strip extension from module path
-    path = (url.parse req.url, true, true).pathname.replace /\.\w+$/, ''
+    url = parse req.url, true, true
 
-    unless (cached = cache[path])?
-      bundle (join src, path), options, (err, _bundle) ->
+    # strip extension from module path
+    path = url.pathname.replace /\.\w+$/, ''
+
+    unless cached?
+      bundle opts.entry, opts, (err, _bundle) ->
         return next err if err?
 
-        cache[path] = _bundle
+        cached = _bundle
         middleware req, res, next
       return
 
@@ -36,7 +39,6 @@ module.exports = (options={}) ->
     cached.parse {deep: true}, (err) ->
       return next err if err?
 
-      console.log path
       unless (mod = cached.find path)?
         return next()
 
