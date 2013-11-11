@@ -71,7 +71,7 @@ class Module
     fs.stat @absolutePath, (err, stat) =>
       return callback err if err?
 
-      if @mtime? and @mtime >= stat.mtime
+      if @mtime? and stat.mtime < @mtime
         return callback()
 
       @mtime = stat.mtime
