@@ -280,7 +280,7 @@ class Module
     for node in @wrapped().body
       toplevel.body.push node
 
-    unless @async
+    unless @async or @bare
       if @export
         for node in (utils.parse "global.#{@export} = require('#{@requireAs}');").body
           toplevel.body.push node
