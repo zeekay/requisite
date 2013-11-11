@@ -80,10 +80,7 @@ own projects and use it directly.
 
 ```javascript
     require('requisite').bundle({
-        entry:   './src/index',
-        include: './src/some-module',
-        exclude: '',
-        export:  'global-name'
+        entry: __dirname + '/assets/main.js',
     }, function(err, bundle) {
         fs.writeFileSync('bundle.js', bundle.toString())
     });
