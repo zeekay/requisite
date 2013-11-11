@@ -8,6 +8,6 @@ module.exports = (options, callback) ->
     filename: options.filename
 
   callback null, """
-    jade = require('#{__dirname}/jade-runtime.js');
+    jade = require('requisite/lib/compilers/jade-runtime.js');
     module.exports = #{func.toString()}
     """

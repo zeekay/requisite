@@ -2,6 +2,8 @@ extensions = ('.' + ext for ext of require('./compilers'))
 path       = require 'path'
 resolve    = require 'resolve'
 
+nodePaths = process.env.NODE_PATH.split(':')
+
 module.exports = ->
   cache = {}
 
@@ -11,7 +13,7 @@ module.exports = ->
       cache[options.resolveFrom+requiredAs] = options
       return
 
-    options.paths      ?= []
+    paths = nodePaths.concat options.paths ? []
     options.extensions ?= extensions
 
     if (requiredBy = options.requiredBy)?
@@ -33,7 +35,7 @@ module.exports = ->
         extensions: options.extensions
     catch err
 
-    while (not absolutePath?) and (nextPath = options.paths.shift())?
+    while (not absolutePath?) and (nextPath = paths.shift())?
       try
         absolutePath = resolve.sync requiredAs,
           basedir:    nextPath
