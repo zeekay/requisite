@@ -97,11 +97,10 @@ middleware is provided for exactly this purpose. Express example:
 
 ```javascript
   app.use('/js', require('requisite').middleware({
-    entry: __dirname + '/assets/app',
-    export: 'app'
+    entry: __dirname + '/assets/main.js'
   }))
 ```
 
-Which would make your bundled module at `__dirname + '/assets/app.<ext>'` available as `/js/app.js`.
+Which would make your bundle available as `/js/main.js`.
 
 [commonjs_modules]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
