@@ -1,9 +1,9 @@
 ## Introduction
-Requisite bundles client-side code and templates for the browser using [CommonJS
-modules][commonjs_modules]. It features asynchronous module loading for optimal
-performance of large applications, [CoffeeScript][coffeescript] and [Jade][jade]
-language support out of the box and comes with a
-[connect][connect]/[express][express] middleware for rapid development.
+Requisite bundles client-side code and templates. It features asynchronous
+module loading for optimal performance of large applications,
+[CoffeeScript][coffeescript] and [Jade][jade] language support out of the box
+and comes with a [connect][connect]/[express][express] middleware for rapid
+development.
 
 ## Features
 - CommonJS modules in the browser!
