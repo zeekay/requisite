@@ -1,81 +1,72 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h2>Introduction</h2>
-<p>Requisite is a cosmic JavaScript bundler that allows you to develop JavaScript
-applictions using CommonJS modules in Node.js and in the browser. Requisite
-traces your applications dependencies and bundles your code up.
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h2 id="introduction">Introduction</h2>
+<p>Requisite is an extensible CommonJS bundler for browsers featuring synchronous and
+asynchronous module loading, minfication, and customizable file handlers.</p>
+<h2 id="install">Install</h2>
+<pre><code class="lang-bash">npm install -g requisite</code></pre>
+<h2 id="usage">Usage</h2>
+<h3 id="cli">CLI</h3>
+<pre><code class="lang-bash">$ bin/requisite --help
 
-</p>
-<h2>Features</h2>
-<ul>
-<li>CommonJS modules.</li>
-<li>Resolve relative modules as well as NPM modules.</li>
-<li>Minimal and fast CommonJS module implementation for the browser.</li>
-<li>Asynchronous bundling suitable for use in Node.js applications.</li>
-<li>Access to the AST allowing custom transformations.</li>
-<li>Flexible JavaScript API allowing easy programmatic usage.</li>
-<li>Command line build-tool for simple projects</li>
-<li>Theoretical Windows Support!</li>
-</ul>
-<h2>Command-line</h2>
-<p><code>bash requisite --entry ./app.js --output ./bundle.js --minify </code> Refer to
-<code>requisite --help</code> for additional usage options.
+Usage: requisite path/to/entry-module [options]
 
-</p>
-<h2>JavaScript API</h2>
-<p>The JavaScript API is fully asynchronous, and designed to offer absolute
-control over Requisite&#39;s behavior.
+Options:
+  -b, --bare                   Compile without a top-level function wrapper
+  -e, --export &lt;name>          Export module as &lt;name>
+  -i, --include [module, ...]  Additional modules to include, <span class="keyword">in</span> &lt;require as>:&lt;path to module> format
+  -m, --minify                 Minify output
+  -o, --output &lt;file>          Write bundle to file instead of stdout
+  -p, --prelude &lt;file>         File to use as prelude, or <span class="literal">false</span> to disable
+      --no-prelude             Exclude prelude from bundle
+  -w, --watch                  Write bundle to file and and recompile on file changes
+  -x, --exclude &lt;regex>        Regex to exclude modules from being parsed
 
-</p>
-<p>Example:
+  -v, --version                Display version
+  -h, --help                   Display this help</code></pre>
+<p>Example:</p>
+<pre><code class="lang-bash">requisite src/entry.coffee &gt; lib/bundle.js</code></pre>
+<h3 id="modules">Modules</h3>
+<p>Requisite supports <a href="http://nodejs.org/docs/latest/api/modules.html#modules_modules">CommonJS (node modules)</a>. In addition to
+the normal synchronous API for requiring modules, it also supports asynchronous
+modules, which are required with an additional callback argument which will be
+returned the module after it has been loaded:</p>
+<pre><code class="lang-javascript"><span class="comment">// foo.js</span>
+module.exports = <span class="string">'foo'</span>;
 
-</p>
-<p>```javascript requisite = require(&#39;requisite&#39;)({ entry: &#39;/path/to/app.js&#39; });
+<span class="comment">// async-bar.js</span>
+module.exports = <span class="string">'bar'</span>
 
-</p>
-<p>requisite.bundle(function (err, content) { // Use bundled JavaScript.  }); ```
+<span class="comment">// main.js, entry module</span>
+console.log(require(<span class="string">'./foo'</span>))  <span class="comment">// 'foo'</span>
+require(<span class="string">'./async-bar'</span>, <span class="keyword">function</span>(bar) {
+    console.log(bar) <span class="comment">// 'bar'</span>
+})</code></pre>
+<p>This compiles down to:</p>
+<pre><code class="lang-javascript"><span class="comment">// ...prelude, defining require, etc.</span>
 
-</p>
-<h3>createBundler(options)</h3>
-<ul>
-<li><code>options</code> {Object}</li>
-</ul>
-<p>Creates a bundler which can asynchronously bundle your code. At the very
-minimum <code>options</code> must contain the <code>entry</code> property pointing to your
-application.
+require.define(<span class="string">'/foo'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(module, exports, __dirname, __filename)</span> {</span>
+    module.exports = <span class="string">'foo'</span>;
+})
 
-</p>
-<h4>Options</h4>
-<p>Several options can be passed to <code>createBundler</code> which can influence how your
-code is assembled:
-
-</p>
-<ul>
-<li><code>entry</code> Entry point of your application. Required.</li>
-<li><code>after</code> List of scripts to include after bundled modules.</li>
-<li><code>before</code> List of scripts to include before bundled modules.</li>
-<li><code>minify</code> Whether to minify or not. Defaults to false.</li>
-<li><code>requireEntry</code> Whether to automatically require the entry module. Defaults to
-true.</li>
-<li><code>astTransforms</code> Transformations to apply to each module&#39;s AST.</li>
-<li><code>astWalkers</code> Walkers to apply to each module&#39;s AST.</li>
-<li><code>astFilters</code> Filters to apply to each module&#39;s AST.</li>
-<li><code>wrapper</code> Hook to replace default module wrapper, which wraps each module in
-<code>define</code> call.</li>
-<li><code>prelude</code> Hook to replace default prelude file, which contains basic
-client-side CommonJS implementation.</li>
-<li><code>compilerHooks</code> Whether to inject scripts added by compilers. This allows
-compilers (such as the jade compiler) to automatically inject necessary
-scripts. Defaults true.</li>
-</ul>
-<h3>bundler.bundle(cb)</h3>
-<ul>
-<li><code>cb</code> {Function} Called when an error occurs or you application has been
-bundled<ul>
-<li><code>err</code> {Error | null}</li>
-<li><code>content</code> {String} Your bundled code.</li>
-</ul>
-</li>
-</ul>
-<h2>Development</h2>
-<p>Before you can hack on requisite you need to run <code>npm install &amp;&amp; cake build</code>.
-</p>
+require.define(<span class="string">'/main'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(module, exports, __dirname, __filename)</span> {</span>
+    console.log(require(<span class="string">'/foo'</span>));
+    require(<span class="string">'/async-bar'</span>, <span class="keyword">function</span>(bar) {
+        console.log(bar);
+    })
+})</code></pre>
+<p>Note how <code>async-bar.js</code> is missing from the bundle, as it&#39;s loaded at runtime.</p>
+<h3 id="api">API</h3>
+<p>If you want more fine-grained control over requisite you can require it in your
+own projects and use it directly.</p>
+<pre><code class="lang-javascript">    require(<span class="string">'requisite'</span>).bundle({
+        entry: __dirname + <span class="string">'/assets/main.js'</span>,
+    }, <span class="keyword">function</span>(err, bundle) {
+        fs.writeFileSync(<span class="string">'main.bundle.js'</span>, bundle.toString())
+    });</code></pre>
+<h3 id="middleware">Middleware</h3>
+<p>For development it can be useful to serve bundles up dynamically, and a connect
+middleware is provided for exactly this purpose. Express example:</p>
+<pre><code class="lang-javascript">  app.use(<span class="string">'/js'</span>, require(<span class="string">'requisite'</span>).middleware({
+    entry: __dirname + <span class="string">'/assets/main.js'</span>
+  }))</code></pre>
+<p>Which would make your bundle available as <code>http://host/js/main.js</code>.</p>
 </p></section><footer></footer></div><script src="javascripts/scale.fix.js"></script></body><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script></html>
