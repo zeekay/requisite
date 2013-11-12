@@ -2,10 +2,10 @@ fs     = require 'fs'
 path   = require 'path'
 bundle = require './bundle'
 
-module.exports = (entry, options, callback) ->
+module.exports = (options, callback) ->
   watchedDirs = {}
 
-  bundle entry, options, (err, _bundle) ->
+  bundle options, (err, _bundle) ->
     # callback immediately with bundle
     return callback err if err?
     callback null, _bundle
