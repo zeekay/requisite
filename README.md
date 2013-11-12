@@ -6,10 +6,10 @@ language support out of the box and comes with a
 [connect][connect]/[express][express] middleware for rapid development.
 
 ## Features
-- CommonJS modules int he browser!
-- Customizable compiler supports multiple transpile/template languages.
-- Flexible API for advanced programmatic usage.
-- Lazy asset loading with asynchronous modules.
+- CommonJS modules in the browser!
+- Customizable compiler/preprocessors.
+- Simple API for programmatic usage.
+- Lazy asset loading.
 - Resolves relative as well as npm modules.
 - Command line tool for bundling simple projects.
 
