@@ -1,33 +1,29 @@
 fs     = require 'fs'
 path   = require 'path'
+vigil  = require 'vigil'
+
 bundle = require './bundle'
 
-module.exports = (options, callback) ->
-  watchedDirs = {}
 
+module.exports = (options, cb) ->
   bundle options, (err, _bundle) ->
-    # callback immediately with bundle
-    return callback err if err?
-    callback null, _bundle
+    return cb err if err?
+    cb null, _bundle
 
-    # add dir to watched Dirs
-    watchedDirs[path.dirname _bundle.absolutePath] = true
+    watched = {}
 
-    # find all directories
+    # rebuild bundle
+    rebuildBundle = ->
+      _bundle.parse {deep: true}, (err) ->
+        return cb err if err?
+        cb null, _bundle
+
+    watch = (dir) ->
+      return if watched[dir]
+
+      vigil.watch dir, {recurse: false}, rebuildBundle
+
+    watch path.dirname _bundle.absolutePath
+
     _bundle.walkDependencies (mod) ->
-      dir = path.dirname mod.absolutePath
-      watchedDirs[dir] = true
-
-    # loop through dirs we need to watch
-    for dir of watchedDirs
-      do (dir) ->
-
-        # add watcher on directory
-        fs.watch dir, (event, filename) ->
-          absolutePath = path.join dir, filename
-          return unless fs.existsSync absolutePath
-
-          _bundle.parse {deep: true}, (err) ->
-            return callback err if err?
-
-            callback null, _bundle
+      watch path.dirname mod.absolutePath

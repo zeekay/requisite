@@ -59,6 +59,7 @@
     "acorn": "~0.4.2",
     "esmangle": "0.0.17",
     "escodegen": "0.0.28",
-    "resolve": "~0.5.1"
+    "resolve": "~0.5.1",
+    "vigil": "~0.2.7"
   }
 }
