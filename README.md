@@ -1,45 +1,28 @@
 ## Introduction
+Requisite bundles client-side code and templates for the browser using [CommonJS
+modules][commonjs_modules]. It features asynchronous module loading for optimal
+performance of large applications, [CoffeeScript][coffeescript] and [Jade][jade]
+language support out of the box and comes with a
+[connect][connect]/[express][express] middleware for rapid development.
 
-Requisite is an extensible CommonJS bundler for browsers featuring synchronous and
-asynchronous module loading, minfication, and customizable file handlers.
+## Features
+- CommonJS modules int he browser!
+- Customizable compiler supports multiple transpile/template languages.
+- Flexible API for advanced programmatic usage.
+- Lazy asset loading with asynchronous modules.
+- Resolves relative as well as npm modules.
+- Command line tool for bundling simple projects.
 
 ## Install
 ```bash
 npm install -g requisite
 ```
 
-## Usage
-### CLI
-```bash
-$ bin/requisite --help
-
-Usage: requisite path/to/entry-module [options]
-
-Options:
-  -b, --bare                   Compile without a top-level function wrapper
-  -e, --export <name>          Export module as <name>
-  -i, --include [module, ...]  Additional modules to include, in <require as>:<path to module> format
-  -m, --minify                 Minify output
-  -o, --output <file>          Write bundle to file instead of stdout
-  -p, --prelude <file>         File to use as prelude, or false to disable
-      --no-prelude             Exclude prelude from bundle
-  -w, --watch                  Write bundle to file and and recompile on file changes
-  -x, --exclude <regex>        Regex to exclude modules from being parsed
-
-  -v, --version                Display version
-  -h, --help                   Display this help
-```
-
-Example:
-```bash
-requisite src/entry.coffee > lib/bundle.js
-```
-
-### Modules
-Requisite supports [CommonJS (node modules)][commonjs_modules]. In addition to
-the normal synchronous API for requiring modules, it also supports asynchronous
-modules, which are required with an additional callback argument which will be
-returned the module after it has been loaded:
+## Modules
+Requiste adds support for [CommonJS modules] in the browser. Unlike other
+CommonJS implementations, Requiste's `require` also supports an optional
+callback argument to signify a module should be loaded asynchronously at
+runtime.
 
 ```javascript
 // foo.js
@@ -48,7 +31,7 @@ module.exports = 'foo';
 // async-bar.js
 module.exports = 'bar'
 
-// main.js, entry module
+// entry.js
 console.log(require('./foo'))  // 'foo'
 require('./async-bar', function(bar) {
     console.log(bar) // 'bar'
@@ -74,15 +57,42 @@ require.define('/main', function (module, exports, __dirname, __filename) {
 
 Note how `async-bar.js` is missing from the bundle, as it's loaded at runtime.
 
+## Usage
+### CLI
+```bash
+$ bin/requisite --help
+
+Usage: requisite path/to/entry-module [options]
+
+Options:
+  -b, --bare                   Compile without a top-level function wrapper
+  -e, --export <name>          Export module as <name>
+  -i, --include [module, ...]  Additional modules to include, in <require as>:<path to module> format
+  -m, --minify                 Minify output
+  -o, --output <file>          Write bundle to file instead of stdout
+  -p, --prelude <file>         File to use as prelude, or false to disable
+      --no-prelude             Exclude prelude from bundle
+  -w, --watch                  Write bundle to file and and recompile on file changes
+  -x, --exclude <regex>        Regex to exclude modules from being parsed
+
+  -v, --version                Display version
+  -h, --help                   Display this help
+```
+
+Example:
+```bash
+requisite entry.js > lib/bundle.js
+```
+
 ### API
 If you want more fine-grained control over requisite you can require it in your
 own projects and use it directly.
 
 ```javascript
     require('requisite').bundle({
-        entry: __dirname + '/assets/main.js',
+        entry: __dirname + '/entry.js',
     }, function(err, bundle) {
-        fs.writeFileSync('main.bundle.js', bundle.toString())
+        fs.writeFileSync('app.js', bundle.toString())
     });
 ```
 
@@ -91,11 +101,15 @@ For development it can be useful to serve bundles up dynamically, and a connect
 middleware is provided for exactly this purpose. Express example:
 
 ```javascript
-  app.use('/js', require('requisite').middleware({
-    entry: __dirname + '/assets/main.js'
+  app.use('/js/app.js', require('requisite').middleware({
+    entry: __dirname + '/entry.js'
   }))
 ```
 
 Which would make your bundle available as `http://host/js/main.js`.
 
+[coffeescript]: http://coffeescript.org
 [commonjs_modules]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
+[connect]: http://www.senchalabs.org/connect/
+[express]: http://expressjs.com/
+[jade]: http://jade-lang.com
