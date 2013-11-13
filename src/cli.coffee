@@ -1,15 +1,14 @@
 #!/usr/bin/env coffee
-
-fs = require 'fs'
+fs        = require 'fs'
 requisite = require('../lib')
 
-writeBundle = (bundle, opts) ->
-  if opts.output?
-    fs.writeFileSync opts.output, bundle.toString opts, 'utf8'
-  else
-    console.log bundle.toString opts
 
-help = (code, message) ->
+error = (message) ->
+  console.log message
+  process.exit 1
+
+
+help = ->
   console.log """
 
   Usage: requisite path/to/entry-module [options]
@@ -28,10 +27,19 @@ help = (code, message) ->
     -v, --version                Display version
     -h, --help                   Display this help
   """
-  console.log '\n' + message if message
-  process.exit code
+  process.exit 0
+
+
+version = ->
+  console.log require('../package').version
+  process.exit 0
+
+
+args = process.argv.slice 2
+entry = args.shift()
 
 opts =
+  entry:   entry
   bare:    false
   include: []
   exclude: null
@@ -41,16 +49,11 @@ opts =
   prelude: null
   watch:   false
 
-args = process.argv.slice 2
-
-entry = args.shift()
-
 if (not entry?) or entry.charAt(0) == '-'
   if entry in ['-v', '--version']
-    console.log require('../package').version
-    process.exit 0
+    version()
   else
-    help 1
+    help()
 
 while opt = args.shift()
   switch opt
@@ -76,17 +79,26 @@ while opt = args.shift()
     when '-w', '--watch'
       opts.watch = true
     when '-h', '--help'
-      help 0
+      help()
     else
-      help 1
+      error 'Unknown argument'
+
 
 if opts.watch and not opts.output?
-  help 1, 'Output must be specified when using watch'
+  error 'Output must be specified when using watch'
 
-requisite.bundle entry, opts, (err, bundle) ->
-  writeBundle bundle, opts
+
+writeBundle = (bundle) ->
+  if opts.output?
+    fs.writeFileSync opts.output, bundle.toString opts, 'utf8'
+  else
+    console.log bundle.toString opts
+
+
+requisite.bundle opts, (err, bundle) ->
+  writeBundle bundle
 
   if opts.watch
-    requisite.watch bundle, (event, filename, mod) ->
+    requisite.watch opts, ->
       console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - recompiling, #{filename} changed"
-      writeBundle bundle, opts
+      writeBundle bundle
