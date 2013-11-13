@@ -19,11 +19,11 @@ npm install -g requisite
 ```
 
 ## Modules
-Requiste allows you to use [CommonJS modules (Node.js)][commonjs] in the
-browser. From a given starting point or entry module, requisite will trace all
-your application's dependencies and bundle your modules together for you.
-Requiste's `require` also supports an optional callback argument to signify a
-module which should be loaded asynchronously at runtime.
+Requiste allows you to structure your code into [CommonJS (Node.js) modules].
+From a given starting point or entry module, requisite will trace your
+application's dependencies and bundle all `require`'ed modules together.
+Requiste's `require` supports asynchronous loading of assets/modules when an
+optional callback argument is provided.
 
 ```javascript
 // foo.js
