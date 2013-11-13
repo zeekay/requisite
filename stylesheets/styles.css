@@ -2,7 +2,7 @@
 
 body {
   padding:50px;
-  font:15px/1.2 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font:15px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: .2px;
   color:#777;
   font-weight:300;
@@ -253,12 +253,4 @@ footer {
     font-size:12pt;
     color:#444;
   }
-}
-
-ul {
-  padding: 0px;
-}
-
-ul li {
-  list-style: none;
 }
