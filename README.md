@@ -19,12 +19,11 @@ npm install -g requisite
 ```
 
 ## Modules
-Requiste allows you to structure your code into [CommonJS (Node.js)
-modules][commonjs].
-From a given starting point or entry module, requisite will trace your
-application's dependencies and bundle all `require`'ed modules together.
-Requiste's `require` supports asynchronous loading of assets/modules when an
-optional callback argument is provided.
+Requiste allows you to structure your code using [CommonJS (Node.js)
+modules][commonjs].  From a given starting point or entry module, requisite will
+trace your application's dependencies and bundle all `require`'ed modules
+together.  Requiste's `require` supports asynchronous loading of assets/modules
+when an optional callback argument is provided.
 
 ```javascript
 // foo.js
