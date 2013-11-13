@@ -19,9 +19,11 @@ npm install -g requisite
 ```
 
 ## Modules
-Requiste adds support for [CommonJS modules] in the browser. Unlike other
-CommonJS implementations, Requiste's `require` also supports an optional
-callback argument to signify a module should be loaded asynchronously at
+Requiste allows you to use [CommonJS modules (as popularized by
+Node.js)][commonjs] in the browser. From a given starting point or entry module,
+requisite will trace all of your application's dependencies and bundle your
+modules together for you.  Requiste's `require` also supports an optional
+callback argument to signify a module which should be loaded asynchronously at
 runtime.
 
 ```javascript
@@ -109,7 +111,7 @@ middleware is provided for exactly this purpose. Express example:
 Which would make your bundle available as `http://host/js/main.js`.
 
 [coffeescript]: http://coffeescript.org
-[commonjs_modules]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
+[commonjs]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
 [connect]: http://www.senchalabs.org/connect/
 [express]: http://expressjs.com/
 [jade]: http://jade-lang.com
