@@ -104,6 +104,6 @@ else
     if filename?
       console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - recompiling, #{filename} changed"
     else
-      console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - compiled bundle #{opts.output}"
+      console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - compiled #{opts.output}"
 
     writeBundle bundle
