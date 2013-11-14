@@ -95,10 +95,15 @@ writeBundle = (bundle) ->
     console.log bundle.toString opts
 
 
-requisite.bundle opts, (err, bundle) ->
-  writeBundle bundle
+unless opts.watch
+  requisite.bundle opts, (err, bundle) ->
+    writeBundle bundle
 
-  if opts.watch
-    requisite.watch opts, ->
+else
+  requisite.watch opts, (err, bundle, filename) ->
+    if filename?
       console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - recompiling, #{filename} changed"
-      writeBundle bundle
+    else
+      console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - compiled bundle #{opts.output}"
+
+    writeBundle bundle
