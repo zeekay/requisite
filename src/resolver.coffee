@@ -2,7 +2,7 @@ extensions = ('.' + ext for ext of require('./compilers'))
 path       = require 'path'
 resolve    = require 'resolve'
 
-nodePaths = process.env.NODE_PATH.split(':')
+nodePaths = (process.env.NODE_PATH ? '').split(':')
 
 module.exports = ->
   cache = {}
