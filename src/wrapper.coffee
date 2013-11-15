@@ -22,10 +22,10 @@ class Wrapper
 
 class Prelude extends Wrapper
   constructor: (opts = {}) ->
-
-    @async        = opts.async        ? true
-    @prelude      = opts.prelude      ? (path.join __dirname, 'prelude.js')
-    @preludeAsync = opts.preludeAsync ? (path.join __dirname, 'prelude-async.js')
+    @async         = opts.async         ? true
+    @globalRequire = opts.globalRequire ? false
+    @prelude       = opts.prelude       ? (path.join __dirname, 'prelude.js')
+    @preludeAsync  = opts.preludeAsync  ? (path.join __dirname, 'prelude-async.js')
 
     super()
 
@@ -45,8 +45,9 @@ class Prelude extends Wrapper
         for node in preludeAsync.body
           @body.push node
 
-      for node in (utils.parse "global.require = require").body
-        @body.push node
+      if @globalRequire
+        for node in (utils.parse "global.require = require").body
+          @body.push node
 
 
 class Define extends Wrapper
