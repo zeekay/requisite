@@ -20,9 +20,19 @@ module.exports = (opts = {}, cb = ->) ->
   main.parse (err) =>
     return cb err if err?
 
+    async = false
+
+    for k,v of main.moduleCache
+      if v.async
+        async = true
+        break
+
     unless opts.bare
       wrapper = new Prelude
-        prelude: opts.prelude
+        async:         async
+        globalRequire: opts.globalRequire
+        prelude:       opts.prelude
+        preludeAsync:  opts.preludeAsync
 
       main.toplevel = wrapper
 
