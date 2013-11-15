@@ -1,6 +1,6 @@
 {
   "name": "requisite",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A cosmic javascript bundler.",
   "repository": {
     "type": "git",
