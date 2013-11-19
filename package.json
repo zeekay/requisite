@@ -60,6 +60,6 @@
     "esmangle": "0.0.17",
     "escodegen": "0.0.28",
     "resolve": "~0.5.1",
-    "vigil": "~0.2.7"
+    "vigil": "~0.2.8"
   }
 }
