@@ -2,9 +2,13 @@
   "name": "requisite",
   "version": "1.5.3",
   "description": "A cosmic javascript bundler.",
+  "homepage": "http://requisitejs.org",
   "repository": {
     "type": "git",
     "url": "https://github.com/zeekay/requisite"
+  },
+  "bugs": {
+    "url": "http://github.com/zeekay/mastermind/issues"
   },
   "keywords": [
     "analysis",
@@ -22,10 +26,9 @@
   ],
   "author": {
     "name": "Zach Kelling",
-    "email": "zeekayy@gmail.com",
-    "url": "https://whatit.is"
+    "email": "zk@monoid.io",
+    "url": "http://zeekay.io"
   },
-  "homepage": "http://requisitejs.org",
   "licenses": [
     {
       "type": "MIT",
