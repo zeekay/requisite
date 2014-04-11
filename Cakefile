@@ -1,16 +1,31 @@
 exec = require 'executive'
 
 task 'build', 'compile src/*.coffee to lib/*.js', ->
-  exec './node_modules/.bin/coffee -bc -m -o lib/ src/'
+  exec './node_modules/.bin/coffee -bcm -o lib/ src/'
+  exec 'node_modules/.bin/coffee -bcm -o .test test/'
 
 task 'watch', 'watch for changes and recompile project', ->
-  exec './node_modules/.bin/coffee -bc -m -w -o lib/ src/'
+  exec './node_modules/.bin/coffee -bcmw -o lib/ src/'
+  exec 'node_modules/.bin/coffee -bcmw -o .test test/'
 
 task 'gh-pages', 'Publish github page', ->
-  (require 'brief').update()
+  require('brief').update()
 
-task 'test', 'Run tests', ->
-  exec './node_modules/.bin/mocha test/ --compilers coffee:coffee-script -R spec -t 5000 -c'
+task 'test', 'run tests', (options) ->
+  test = options.test ? '.test'
+  if options.grep?
+    grep = "--grep #{options.grep}"
+  else
+    grep = ''
+
+  exec "NODE_ENV=test ./node_modules/.bin/mocha
+  --colors
+  --reporter spec
+  --timeout 5000
+  --compilers coffee:coffee-script/register
+  --require test/_helper.js
+  #{grep}
+  #{test}"
 
 task 'publish', 'Publish project', ->
   exec [

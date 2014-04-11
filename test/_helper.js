@@ -1,2 +1,1 @@
-require('coffee-script')
-require('source-map-support').install();
+require('source-map-support').install()

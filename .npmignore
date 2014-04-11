@@ -3,3 +3,4 @@ Cakefile
 test/
 src/
 *.map
+.test
