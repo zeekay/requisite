@@ -3,6 +3,7 @@ bundle = require '../lib/bundle'
 
 describe 'bundle', ->
   it 'should bundle all dependencies', (done) ->
+    throw new Error 'eep'
     bundle
       entry: './test/assets/entry',
       exclude: /excluded/
