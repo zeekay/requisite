@@ -1,0 +1,19 @@
+exec   = require('executive').interactive
+fs     = require 'fs'
+{root} = require('./lib').utils
+
+# Simple build function to compile javascript assets
+build = (done = ->) ->
+  require('requisite').bundle
+    export: 'app'
+    entry: root '/assets/js/app'
+  , (err, bundle) ->
+    fs.writeFileSync 'static/js/app.js', bundle.toString()
+    done()
+
+task 'run', 'run server', ->
+  require('./lib').app.listen 3000, ->
+    console.log 'listening on :3000'
+
+task 'build', 'build project', ->
+  build()
