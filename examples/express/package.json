@@ -1,0 +1,19 @@
+{
+  "name": "requisite-express-app",
+  "version": "0.0.1",
+  "description": "Example express app demonstrating requisite usage",
+  "dependencies": {
+    "requisite": "^1.5.4",
+    "express": "^4.0.0",
+    "stylus": "^0.43.1",
+    "jade": "^1.3.1",
+    "connect": "^2.14.4"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "source-map-support": "^0.2.5",
+    "chai": "^1.9.1",
+    "mocha": "^1.18.2",
+    "executive": "^0.4.7"
+  }
+}
