@@ -1,12 +1,10 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h2>Introduction</h2>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h2 id="introduction">Introduction</h2>
 <p>Requisite bundles client-side code and templates. It features asynchronous
 module loading for optimal performance of large applications,
 <a href="http://coffeescript.org">CoffeeScript</a> and <a href="http://jade-lang.com">Jade</a> language support out of the box
 and comes with a <a href="http://www.senchalabs.org/connect/">connect</a>/<a href="http://expressjs.com/">express</a> middleware for rapid
-development.
-
-</p>
-<h2>Features</h2>
+development.</p>
+<h2 id="features">Features</h2>
 <ul>
 <li>CommonJS modules in the browser!</li>
 <li>Customizable compiler/preprocessors.</li>
@@ -15,16 +13,14 @@ development.
 <li>Resolves relative as well as npm modules.</li>
 <li>Command line tool for bundling simple projects.</li>
 </ul>
-<h2>Install</h2>
+<h2 id="install">Install</h2>
 <pre><code class="lang-bash">npm install -g requisite</code></pre>
-<h2>Modules</h2>
+<h2 id="modules">Modules</h2>
 <p>Requiste allows you to structure your code using <a href="http://nodejs.org/docs/latest/api/modules.html#modules_modules">CommonJS (Node.js)
-modules</a>.  From a given starting point or entry module, requisite will
+modules</a>. From a given starting point or entry module, requisite will
 trace your application&#39;s dependencies and bundle all <code>require</code>&#39;ed modules
-together.  Requiste&#39;s <code>require</code> supports asynchronous loading of assets/modules
-when an optional callback argument is provided.
-
-</p>
+together. Requiste&#39;s <code>require</code> supports asynchronous loading of assets/modules
+when an optional callback argument is provided.</p>
 <pre><code class="lang-javascript"><span class="comment">// foo.js</span>
 module.exports = <span class="string">'foo'</span>;
 
@@ -36,9 +32,7 @@ console.log(require(<span class="string">'./foo'</span>))  <span class="comment"
 require(<span class="string">'./async-bar'</span>, <span class="keyword">function</span>(bar) {
     console.log(bar) <span class="comment">// 'bar'</span>
 })</code></pre>
-<p>This compiles down to:
-
-</p>
+<p>This compiles down to:</p>
 <pre><code class="lang-javascript"><span class="comment">// ...prelude, defining require, etc.</span>
 
 require.define(<span class="string">'/foo'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(module, exports, __dirname, __filename)</span> {</span>
@@ -51,11 +45,12 @@ require.define(<span class="string">'/main'</span>, <span class="function"><span
         console.log(bar);
     })
 })</code></pre>
-<p>Note how <code>async-bar.js</code> is missing from the bundle, as it&#39;s loaded at runtime.
-
-</p>
-<h2>Usage</h2>
-<h3>CLI</h3>
+<p>Note how <code>async-bar.js</code> is missing from the bundle, as it&#39;s loaded at runtime.</p>
+<p>If you are writing a module that can be used both client/server side you can
+define the <a href="browser-field"><code>browser</code></a> field in your package.json and finetune which bits will be
+bundled for the client.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="cli">CLI</h3>
 <pre><code class="lang-bash">$ bin/requisite --help
 
 Usage: requisite path/to/entry-module [options]
@@ -73,28 +68,21 @@ Options:
 
   -v, --version                Display version
   -h, --help                   Display this help</code></pre>
-<p>Example:
-</p>
+<p>Example:</p>
 <pre><code class="lang-bash">requisite entry.js &gt; lib/bundle.js</code></pre>
-<h3>API</h3>
+<h3 id="api">API</h3>
 <p>If you want more fine-grained control over requisite you can require it in your
-own projects and use it directly.
-
-</p>
+own projects and use it directly.</p>
 <pre><code class="lang-javascript">    require(<span class="string">'requisite'</span>).bundle({
         entry: __dirname + <span class="string">'/entry.js'</span>,
     }, <span class="keyword">function</span>(err, bundle) {
         fs.writeFileSync(<span class="string">'app.js'</span>, bundle.toString())
     });</code></pre>
-<h3>Middleware</h3>
+<h3 id="middleware">Middleware</h3>
 <p>For development it can be useful to serve bundles up dynamically, and a connect
-middleware is provided for exactly this purpose. Express example:
-
-</p>
+middleware is provided for exactly this purpose. Express example:</p>
 <pre><code class="lang-javascript">  app.use(<span class="string">'/js/app.js'</span>, require(<span class="string">'requisite'</span>).middleware({
     entry: __dirname + <span class="string">'/entry.js'</span>
   }))</code></pre>
-<p>Which would make your bundle available as <code>http://host/js/main.js</code>.
-
-</p>
+<p>Which would make your bundle available as <code>http://host/js/main.js</code>.</p>
 </p></section><footer></footer></div><script src="javascripts/scale.fix.js"></script></body><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script></html>
