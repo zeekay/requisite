@@ -47,23 +47,23 @@
     "node": ">=0.6.0"
   },
   "devDependencies": {
+    "async": "~0.2.9",
     "brief": "~0.6.1",
     "chai": "~1.5.0",
     "coffee-script": "~1.7.1",
     "executive": "~0.4.2",
     "express": "~3.1.0",
     "jade": "~0.35.0",
-    "superagent": "~0.13.0",
-    "uglify-js": "~2.4.3",
+    "mocha": "^1.18.2",
     "source-map-support": "^0.2.5",
-    "async": "~0.2.9",
-    "mocha": "^1.18.2"
+    "superagent": "~0.13.0",
+    "uglify-js": "~2.4.3"
   },
   "dependencies": {
     "acorn": "~0.4.2",
-    "esmangle": "0.0.17",
+    "browser-resolve-sync": "~1.0.0",
     "escodegen": "0.0.28",
-    "resolve": "~0.5.1",
+    "esmangle": "0.0.17",
     "vigil": "~0.2.8"
   }
 }
