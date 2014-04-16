@@ -20,9 +20,9 @@ npm install -g requisite
 
 ## Modules
 Requiste allows you to structure your code using [CommonJS (Node.js)
-modules][commonjs].  From a given starting point or entry module, requisite will
+modules][commonjs]. From a given starting point or entry module, requisite will
 trace your application's dependencies and bundle all `require`'ed modules
-together.  Requiste's `require` supports asynchronous loading of assets/modules
+together. Requiste's `require` supports asynchronous loading of assets/modules
 when an optional callback argument is provided.
 
 ```javascript
@@ -57,6 +57,10 @@ require.define('/main', function (module, exports, __dirname, __filename) {
 ```
 
 Note how `async-bar.js` is missing from the bundle, as it's loaded at runtime.
+
+If you are writing a module that can be used both client/server side you can
+define the [`browser`](browser-field) field in your package.json and finetune which bits will be
+bundled for the client.
 
 ## Usage
 ### CLI
@@ -109,8 +113,9 @@ middleware is provided for exactly this purpose. Express example:
 
 Which would make your bundle available as `http://host/js/main.js`.
 
-[coffeescript]: http://coffeescript.org
-[commonjs]: http://nodejs.org/docs/latest/api/modules.html#modules_modules
-[connect]: http://www.senchalabs.org/connect/
-[express]: http://expressjs.com/
-[jade]: http://jade-lang.com
+[browser-field]: https://gist.github.com/defunctzombie/4339901
+[coffeescript]:  http://coffeescript.org
+[commonjs]:      http://nodejs.org/docs/latest/api/modules.html#modules_modules
+[connect]:       http://www.senchalabs.org/connect/
+[express]:       http://expressjs.com/
+[jade]:          http://jade-lang.com
