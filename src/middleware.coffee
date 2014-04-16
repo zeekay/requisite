@@ -17,6 +17,7 @@ module.exports = (opts = {}) ->
     unless cached?
       # set urlRoot so async requires work
       opts.urlRoot ?= dirname req.originalUrl
+      opts.entry   ?= path
 
       # create bundle
       bundle opts, (err, _bundle) ->
