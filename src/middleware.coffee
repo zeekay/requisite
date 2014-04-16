@@ -31,7 +31,7 @@ module.exports = (opts = {}) ->
     res.setHeader 'Date', now unless res.getHeader 'Date'
     res.setHeader 'Cache-Control', 'public, max-age=' + (maxAge / 1000) unless res.getHeader 'Cache-Control'
     res.setHeader 'Last-Modified', now unless res.getHeader 'Last-Modified'
-    res.setHeader 'Content-Type', 'application/javascript'
+    res.setHeader 'Content-Type', 'application/javascript; charset=UTF-8'
 
     if req.method == 'HEAD'
       res.writeHead 200
