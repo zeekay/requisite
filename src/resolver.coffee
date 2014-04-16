@@ -22,7 +22,7 @@ module.exports = ->
       basePath    = options.basePath
     else
       # entry module, all required modules should be resolved relative to it's dir
-      resolveFrom = path.dirname path.resolve requiredAs
+      resolveFrom = options.basePath ? path.dirname path.resolve requiredAs
       basePath    = resolveFrom
       requiredAs  = './' + path.basename requiredAs
 

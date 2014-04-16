@@ -16,8 +16,9 @@ module.exports = (opts = {}, cb = ->) ->
     include:   opts.include
     paths:     opts.paths ? []
     requireAs: path.basename opts.entry
+    basePath:  opts.src
 
-  main.parse (err) =>
+  main.parse (err) ->
     return cb err if err?
 
     async = false
