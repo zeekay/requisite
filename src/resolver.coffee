@@ -1,8 +1,18 @@
-extensions = ('.' + ext for ext of require('./compilers'))
-path       = require 'path'
-resolve    = require 'resolve'
+path           = require 'path'
+browserResolve = require 'browser-resolve-sync'
 
-nodePaths = (process.env.NODE_PATH ? '').split(':')
+extensions     = ('.' + ext for ext of require('./compilers'))
+
+NODE_PATHS = (process.env.NODE_PATH ? '').split(':')
+
+# Simple wrapper around browser-resolve-sync to deal with oddities in it's API.
+resolve = (pkg, opts) ->
+  browserResolve pkg,
+    # filename is a bit of a hack, browser-resolve-sync uses this as as the
+    # `base` for resolving things, so I append a fake filename which
+    # browser-resolve-sync will lop off with `path.dirname`.
+    filename:   path.join opts.basedir, 'ENOENT'
+    extensions: opts.extensions
 
 module.exports = ->
   cache = {}
@@ -13,7 +23,7 @@ module.exports = ->
       cache[options.resolveFrom+requiredAs] = options
       return
 
-    paths = nodePaths.concat options.paths ? []
+    paths = NODE_PATHS.concat options.paths ? []
     options.extensions ?= extensions
 
     if (requiredBy = options.requiredBy)?
@@ -30,21 +40,23 @@ module.exports = ->
     return cached if (cached = cache[resolveFrom+requiredAs])?
 
     try
-      absolutePath = resolve.sync requiredAs,
+      absolutePath = resolve requiredAs,
         basedir:    resolveFrom
         extensions: options.extensions
     catch err
 
+    # try various paths
     while (not absolutePath?) and (nextPath = paths.shift())?
       try
-        absolutePath = resolve.sync requiredAs,
+        absolutePath = resolve requiredAs,
           basedir:    nextPath
           extensions: options.extensions
       catch err
 
     throw err unless absolutePath?
 
-    extension      = path.extname absolutePath
+    extension = path.extname absolutePath
+
     if (absolutePath.indexOf basePath) != -1
       normalizedPath = absolutePath.replace basePath, ''
     else
