@@ -10,13 +10,13 @@ module.exports = (opts = {}, cb = ->) ->
 
   main = new Module opts.entry,
     bare:      opts.bare
-    urlRoot:   opts.urlRoot
-    export:    opts.export
+    basePath:  opts.src
     exclude:   opts.exclude
+    export:    opts.export
     include:   opts.include
     paths:     opts.paths ? []
     requireAs: path.basename opts.entry
-    basePath:  opts.src
+    urlRoot:   opts.urlRoot
 
   main.parse (err) ->
     return cb err if err?
