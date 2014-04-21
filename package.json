@@ -61,8 +61,8 @@
   },
   "dependencies": {
     "browser-resolve-sync": "~1.0.0",
-    "escodegen": "0.0.28",
-    "esmangle": "0.0.17",
+    "escodegen": "^1.3.2",
+    "esmangle": "^1.0.1",
     "esprima": "^1.1.1",
     "vigil": "~0.2.8"
   }
