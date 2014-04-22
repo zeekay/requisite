@@ -41,7 +41,7 @@
   },
   "scripts": {
     "prepublish": "cake build",
-    "test": "cake test"
+    "test": "cake build && cake test"
   },
   "engines": {
     "node": ">=0.6.0"
