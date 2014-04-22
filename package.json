@@ -56,7 +56,6 @@
     "jade": "~0.35.0",
     "mocha": "^1.18.2",
     "postmortem": "^0.1.6",
-    "should": "^3.3.1",
     "superagent": "^0.17.0",
     "uglify-js": "~2.4.3"
   },

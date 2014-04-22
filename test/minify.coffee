@@ -6,9 +6,9 @@ describe 'minify', ->
   describe '#esmangle', ->
     it 'should minify bundle', (done) ->
       bundle
-        entry: './test/assets/entry'
+        entry: './fixtures/entry'
         exclude: /excluded/
-        include: ['./test/assets/included']
+        include: ['./fixtures/included']
         export: 'entry'
       , (err, bundle) ->
         bundle.toString
@@ -19,9 +19,9 @@ describe 'minify', ->
   describe '#uglify', ->
     it 'should minify bundle', (done) ->
       bundle
-        entry: './test/assets/entry'
+        entry: './fixtures/entry'
         exclude: /excluded/
-        include: ['./test/assets/included']
+        include: ['./fixtures/included']
         export: 'entry'
       , (err, bundle) ->
         bundle.toString

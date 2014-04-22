@@ -2,14 +2,14 @@ should  = require('chai').should()
 path    = require 'path'
 resolver = require '../lib/resolver'
 
-entryPath = path.resolve './test/assets/entry.coffee'
+entryPath = path.resolve './fixtures/entry.coffee'
 entryBase = path.dirname entryPath
 
 tests =
   # test entry module
   entry:
     setup:
-      requiredAs:     './test/assets/entry'
+      requiredAs:     './fixtures/entry'
       requiredBy:     null
       basePath:       null
 
@@ -28,7 +28,7 @@ tests =
       basePath:       entryBase
 
     result:
-      absolutePath:   path.resolve './test/assets/relative.js'
+      absolutePath:   path.resolve './fixtures/relative.js'
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'relative.js'
@@ -43,7 +43,7 @@ tests =
       basePath:       entryBase
 
     result:
-      absolutePath:   path.resolve './test/assets/node_modules/unqualified/index.js'
+      absolutePath:   path.resolve 'node_modules/unqualified/index.js'
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'node_modules/unqualified/index.js'
@@ -53,11 +53,11 @@ tests =
   nested:
     setup:
       requiredAs:     './nested'
-      requiredBy:     path.resolve './test/assets/dir/index.js'
+      requiredBy:     path.resolve './fixtures/dir/index.js'
       basePath:       entryBase
 
     result:
-      absolutePath:   path.resolve './test/assets/dir/nested.js'
+      absolutePath:   path.resolve './fixtures/dir/nested.js'
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'dir/nested.js'

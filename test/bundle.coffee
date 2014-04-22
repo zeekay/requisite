@@ -4,9 +4,9 @@ bundle = require '../lib/bundle'
 describe 'bundle', ->
   it 'should bundle all dependencies', (done) ->
     bundle
-      entry: './test/assets/entry',
+      entry: './fixtures/entry',
       exclude: /excluded/
-      include: ['./test/assets/included']
+      include: ['./fixtures/included']
       export: 'entry'
     , (err, bundle) ->
       done()
