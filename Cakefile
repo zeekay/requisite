@@ -40,24 +40,26 @@ task 'publish', 'Publish project', ->
   ]
 
 task 'test:watch', 'watch for changes and recompile, re-run tests', (options) ->
-  runningTests = false
-  require('vigil').watch __dirname, (filename, stats) ->
-    return if runningTests
+  invoke 'build', ->
+    invoke 'test', ->
+      runningTests = false
 
-    if /\.coffee$/.test filename
-      if /^test/.test filename
-        out = '.test/'
-        options.test = ".test/#{path.basename filename.split '.', 1}.js"
-      else if /^src/.test filename
-        out = 'lib/'
-        options.test = '.test'
-      else
-        console.log 'wut'
-        return
+      require('vigil').watch __dirname, (filename, stats) ->
+        return if runningTests
 
-      runningTests = true
-      exec "node_modules/.bin/coffee -bcm -o #{out} #{filename}", ->
-        console.log "#{(new Date).toLocaleTimeString()} - compiled #{filename}"
-        invoke 'test', ->
-          runningTests = false
+        if /\.coffee$/.test filename
+          if /^test/.test filename
+            out = '.test/'
+            options.test = ".test/#{path.basename filename.split '.', 1}.js"
+          else if /^src/.test filename
+            out = 'lib/'
+            options.test = '.test'
+          else
+            console.log 'wut'
+            return
 
+          runningTests = true
+          exec "node_modules/.bin/coffee -bcm -o #{out} #{filename}", ->
+            console.log "#{(new Date).toLocaleTimeString()} - compiled #{filename}"
+            invoke 'test', ->
+              runningTests = false
