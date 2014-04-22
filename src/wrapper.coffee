@@ -59,6 +59,9 @@ class Define extends Wrapper
     if async
       requireAs = path.join opts.urlRoot, requireAs
 
+    # deal with escaping weirdness
+    requireAs = requireAs.replace /\\/g, '\\\\'
+
     @ast = utils.parse """
       // source: #{absolutePath}
       require.#{if async then 'async' else 'define'}("#{requireAs}", function(module, exports, __dirname, __filename) {
