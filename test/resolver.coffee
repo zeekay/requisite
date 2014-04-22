@@ -43,7 +43,7 @@ tests =
       basePath:       entryBase
 
     result:
-      absolutePath:   path.resolve 'node_modules/unqualified/index.js'
+      absolutePath:   path.resolve './fixtures/node_modules/unqualified/index.js'
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'node_modules/unqualified/index.js'

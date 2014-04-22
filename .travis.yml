@@ -7,9 +7,10 @@ notifications:
     on_failure: always
 script: >
   ./node_modules/.bin/mocha --reporter spec
-                            --compilers coffee:coffee-script/register
-                            --require postmortem/register
-                            .test
+                              --compilers coffee:coffee-script/register
+                              --require postmortem/register
+                              .test
 cache:
   directories:
     - node_modules
+

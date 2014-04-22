@@ -1,4 +1,5 @@
 exec = require('shortcake').exec.interactive
+fs   = require 'fs'
 
 task 'build', 'compile src/*.coffee to lib/*.js', (done) ->
   exec 'node_modules/.bin/coffee -bcm -o lib/ src/', ->
@@ -12,6 +13,10 @@ task 'gh-pages', 'Publish github page', ->
   require('brief').update()
 
 task 'test', 'run tests', (options, done) ->
+  # link npm test module into node_modules
+  if not fs.existsSync 'node_modules/unqualified'
+    fs.symlinkSync '../fixtures/node_modules/unqualified', 'node_modules/unqualified'
+
   invoke 'build', ->
     test = options.test ? '.test'
     if options.grep?
