@@ -1,4 +1,4 @@
-exec = require 'executive'
+exec = require('executive').interactive
 
 task 'build', 'compile src/*.coffee to lib/*.js', ->
   exec './node_modules/.bin/coffee -bcm -o lib/ src/'
