@@ -1,3 +1,5 @@
+# requisite [![Build Status](https://travis-ci.org/zeekay/requisite.svg?branch=master)](https://travis-ci.org/zeekay/requisite)
+
 ## Introduction
 Requisite bundles client-side code and templates. It features asynchronous
 module loading for optimal performance of large applications,
