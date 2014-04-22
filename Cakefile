@@ -52,7 +52,7 @@ task 'test:watch', 'watch for changes and recompile, re-run tests', (options) ->
             out = '.test/'
             options.test = ".test/#{path.basename filename.split '.', 1}.js"
           else if /^src/.test filename
-            out = 'lib/'
+            out = (path.dirname filename).replace /^src/, 'lib'
             options.test = '.test'
           else
             console.log 'wut'

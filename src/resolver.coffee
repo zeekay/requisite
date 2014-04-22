@@ -1,5 +1,6 @@
-path           = require 'path'
 browserResolve = require 'browser-resolve-sync'
+os             = require 'os'
+path           = require 'path'
 
 extensions     = ('.' + ext for ext of require('./compilers'))
 
@@ -63,7 +64,10 @@ module.exports = ->
       start = absolutePath.indexOf 'node_modules'
       normalizedPath = absolutePath.substring start, absolutePath.length
 
-    normalizedPath = normalizedPath.replace /^\/+/, ''
+    if os.platform() == 'win32'
+      normalizedPath = normalizedPath.replace /^\\+/, ''
+    else
+      normalizedPath = normalizedPath.replace /^\/+/, ''
 
     requireAs = options.requireAs ? normalizedPath.replace extension, ''
 
