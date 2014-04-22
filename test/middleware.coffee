@@ -2,14 +2,14 @@ async   = require 'async'
 express = require 'express'
 fs      = require 'fs'
 request = require 'superagent'
-should  = require('chai').should()
+should  = require 'should'
 
 middleware = require '../lib/middleware'
 
 PORT = 34561
 
-get = (url, callback) ->
-  request.get("localhost:#{PORT}#{url}").buffer().end callback
+get = (url, cb) ->
+  request.get "localhost:#{PORT}#{url}", cb
 
 shouldContainModules = (text, files, callback) ->
   async.map files, (file, _callback) ->
@@ -32,10 +32,10 @@ describe 'middleware', ->
     app.listen PORT, -> done()
 
   it 'should serve entry module', (done) ->
-    get '/entry', (res) ->
-      res.ok.should.be.ok
+    get '/entry.js', (res) ->
+      console.log res.text
 
-      # console.log res.text
+      res.ok.should.be.ok
 
       shouldContainModules res.text, [
         './test/assets/relative-prop.js'
@@ -43,7 +43,9 @@ describe 'middleware', ->
       ], -> done()
 
   it 'should serve async modules', (done) ->
-    get '/async-lambda', (res) ->
+    get '/async-lambda.js', (res) ->
+      console.log res.text
+
       res.ok.should.be.ok
 
       # console.log res.text
