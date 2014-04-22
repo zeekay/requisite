@@ -6,10 +6,11 @@ notifications:
     on_success: change
     on_failure: always
 script: >
-  node_modules/.bin/mocha --reporter spec
-                          --compilers coffee:coffee-script/register
-                          --require postmortem/register
-                          .test
+  ./node_modules/.bin/mocha
+  --reporter spec
+  --compilers coffee:coffee-script/register
+  --require postmortem/register
+  .test
 cache:
   directories:
-  - node_modules
+    - node_modules
