@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - 0.10
+script: node_modules/.bin/cake test
+cache:
+    directories:
+        - node_modules
+notifications:
+  email:
+    on_success: change
+    on_failure: always
