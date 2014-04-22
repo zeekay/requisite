@@ -1,5 +1,4 @@
 path      = require 'path'
-
 Module    = require './module'
 {Prelude} = require './wrapper'
 

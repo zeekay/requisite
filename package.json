@@ -58,7 +58,8 @@
     "postmortem": "^0.1.6",
     "shortcake": "^0.1.4",
     "superagent": "^0.17.0",
-    "uglify-js": "~2.4.3"
+    "uglify-js": "~2.4.3",
+    "vigil": "^0.2.11"
   },
   "dependencies": {
     "browser-resolve-sync": "~1.0.0",
