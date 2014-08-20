@@ -15,6 +15,7 @@ module.exports = (opts = {}, cb = ->) ->
     include:   opts.include
     paths:     opts.paths ? []
     requireAs: path.basename opts.entry
+    strict:    opts.strict
     urlRoot:   opts.urlRoot
 
   main.parse (err) ->

@@ -51,21 +51,30 @@ class Prelude extends Wrapper
 
 
 class Define extends Wrapper
-  constructor: (opts) ->
-    requireAs = opts.requireAs
+  constructor: (opts = {}) ->
     absolutePath = opts.absolutePath ? ''
-    async = opts.async ? false
+    requireAs    = opts.requireAs    ? ''
+    async        = opts.async        ? false
+    strict       = opts.strict       ? false
 
     if async
-      requireAs = path.join opts.urlRoot, requireAs
+      defineType = 'async'
+      requireAs  = path.join opts.urlRoot, requireAs
+    else
+      defineType = 'define'
+
+    if strict
+      useStrict = "'use strict';"
+    else
+      useStrict = ''
 
     # deal with escaping weirdness
     requireAs = requireAs.replace /\\/g, '\\\\'
 
     @ast = utils.parse """
       // source: #{absolutePath}
-      require.#{if async then 'async' else 'define'}("#{requireAs}", function(module, exports, __dirname, __filename) {
-        // replaced with source
+      require.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename) {
+        #{useStrict}
       });
       """
 
