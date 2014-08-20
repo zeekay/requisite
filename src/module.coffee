@@ -31,6 +31,7 @@ class Module
 
     # whether to wrap module
     @bare         = opts.bare
+    @strict       = opts.strict
 
     # export or require module
     @export       = opts.export ? false
@@ -192,6 +193,7 @@ class Module
     dep.moduleCache = @moduleCache
     dep.resolver    = @resolver
     dep.urlRoot     = @urlRoot
+    dep.strict      = @strict
 
     # create module and parse it baby
     mod = new Module dep.requiredAs, dep
@@ -229,6 +231,7 @@ class Module
     return @ast if @bare
 
     define = new wrapper.Define
+      strict:       @strict
       absolutePath: @absolutePath
       async:        @async
       urlRoot:      @urlRoot

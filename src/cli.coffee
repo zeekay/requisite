@@ -21,6 +21,7 @@ help = ->
     -o, --output <file>          Write bundle to file instead of stdout
     -p, --prelude <file>         File to use as prelude, or false to disable
         --no-prelude             Exclude prelude from bundle
+    -s, --strict                 Add "use strict" to each bundled module.
     -w, --watch                  Write bundle to file and and recompile on file changes
     -x, --exclude <regex>        Regex to exclude modules from being parsed
 
@@ -39,14 +40,15 @@ args = process.argv.slice 2
 entry = args.shift()
 
 opts =
-  entry:   entry
   bare:    false
-  include: []
+  entry:   entry
   exclude: null
   export:  null
+  include: []
   minify:  false
   output:  null
   prelude: null
+  strict:  false
   watch:   false
 
 if (not entry?) or entry.charAt(0) == '-'
@@ -76,6 +78,8 @@ while opt = args.shift()
       opts.output = args.shift()
     when '-p', '--prelude'
       opts.prelude = args.shift()
+    when '-s', '--strict'
+      opts.strict = true
     when '-w', '--watch'
       opts.watch = true
     when '-h', '--help'
