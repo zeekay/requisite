@@ -1,6 +1,7 @@
 #!/usr/bin/env coffee
 fs        = require 'fs'
-requisite = require('../lib')
+path      = require 'path'
+requisite = require '../lib'
 
 error = (message) ->
   console.log message
@@ -13,24 +14,27 @@ help = ->
 
   Options:
 
-    -h, --help                   Display this help
-    -v, --version                Display version
-    -b, --bare                   Compile without a top-level function wrapper
-    -e, --export <name>          Export module as <name>
-    -i, --include [module, ...]  Additional modules to include, in <require as>:<path to module> format
-    -m, --minify                 Minify output
-    -o, --output <file>          Write bundle to file instead of stdout
-    -p, --prelude <file>         File to use as prelude, or false to disable
-        --no-prelude             Exclude prelude from bundle
-    -s, --strict                 Add "use strict" to each bundled module.
-    -w, --watch                  Write bundle to file and and recompile on file changes
-    -x, --exclude <regex>        Regex to exclude modules from being parsed
+    -h, --help                   display this help
+    -v, --version                display version
+    -b, --bare                   compile without a top-level function wrapper
+    -d, --dedupe                 deduplicate modules (when multiple are specified)
+    -e, --export <name>          export module as <name>
+    -i, --include [module, ...]  additional modules to include, in <require as>:<path to module> format
+    -m, --minify                 minify output
+    -o, --output <file>          write bundle to file instead of stdout, {} can be used as a placeholder.
+    -p, --prelude <file>         file to use as prelude
+        --no-prelude             exclude prelude from bundle
+    -s, --strict                 add "use strict" to each bundled module.
+    -w, --watch                  write bundle to file and and recompile on file changes
+    -x, --exclude <regex>        regex to exclude modules from being parsed
 
   Examples:
 
     # bundle javascript file and all it's dependencies
-    $ requisite module.js
+    $ requisite module.js -o bundle.js
 
+    # bundle several modules, appending .bundle.js to output
+    $ requisite *.js -o {}.bundle.js
   """
   process.exit 0
 
@@ -77,6 +81,8 @@ while opt = args.shift()
       opts.output = args.shift()
     when '-p', '--prelude'
       opts.prelude = args.shift()
+    when '--no-prelude'
+      opts.prelude = false
     when '-s', '--strict'
       opts.strict = true
     when '-w', '--watch'
@@ -89,16 +95,31 @@ unless opts.files.length
   help()
 
 if opts.watch and not opts.output?
-  error 'Output must be specified when using watch'
+  error 'Output must be specified when using watch.'
+
+if opts.files.length > 1 and (opts.output.indexOf '{}') == -1
+  error 'Output filenames overlap, perhaps you meant -o {}.js?'
 
 writeBundle = (bundle) ->
   if opts.output?
-    fs.writeFileSync opts.output, bundle.toString opts, 'utf8'
+    filename = path.basename bundle.requiredAs
+    ext      = path.extname filename
+    extout   = path.extname opts.output
+
+    # Prevent duplicating extension
+    if ext == extout
+      filename = filename.replace ext, ''
+
+    # Handle wildcard output filenames
+    output = opts.output.replace '{}', filename
+
+    fs.writeFileSync output, bundle.toString opts, 'utf8'
   else
     console.log bundle.toString opts
 
 for file in opts.files
-  do (file) ->
+  do (file, opts) ->
+    opts = JSON.parse JSON.stringify opts
     opts.entry = file
 
     unless opts.watch
