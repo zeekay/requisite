@@ -101,6 +101,12 @@ Create several bundles, appending `.bundle.js` to each entry module's name.
 $ requisite *.js -o {}.bundle.js
 ```
 
+Create a single shared library and bundle unique bits for each page on your site
+separately.
+```
+$ requisite --dedupe main.js page1.js page2.js -o {}.bundle.js
+```
+
 ### API
 If you want more fine-grained control over requisite you can require it in your
 own projects and use it directly.
