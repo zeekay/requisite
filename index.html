@@ -1,4 +1,5 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h2 id="introduction">Introduction</h2>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="chrome=1"><title>Requisite by zeekay</title><link rel="stylesheet" href="stylesheets/styles.css"><link rel="stylesheet" href="stylesheets/pygment_trac.css"><link rel="stylesheet" href="stylesheets/code.css"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><!--if lt IE 9--></head><body><div class="wrapper"><header><h1>Requisite</h1><p>A cosmic JavaScript bundler</p><p class="view"><a href="https://github.com/zeekay/requisite">View the Project on GitHub<small>zeekay/requisite</small></a></p><ul><li><a href="https://github.com/zeekay/requisite/zipball/master">Download<strong>ZIP File</strong></a></li><li><a href="https://github.com/zeekay/requisite/tarball/master">Download<strong>TAR Ball</strong></a></li><li><a href="https://github.com/zeekay/requisite">View On<strong>GitHub</strong></a></li></ul></header><section><p><h1 id="requisite-build-status-https-travis-ci-org-zeekay-requisite-svg-branch-master-https-travis-ci-org-zeekay-requisite-">requisite <a href="https://travis-ci.org/zeekay/requisite"><img src="https://travis-ci.org/zeekay/requisite.svg?branch=master" alt="Build Status"></a></h1>
+<h2 id="introduction">Introduction</h2>
 <p>Requisite bundles client-side code and templates. It features asynchronous
 module loading for optimal performance of large applications,
 <a href="http://coffeescript.org">CoffeeScript</a> and <a href="http://jade-lang.com">Jade</a> language support out of the box
@@ -53,23 +54,32 @@ bundled for the client.</p>
 <h3 id="cli">CLI</h3>
 <pre><code class="lang-bash">$ bin/requisite --help
 
-Usage: requisite path/to/entry-module [options]
+Usage: requisite [options] [files]
 
 Options:
-  -b, --bare                   Compile without a top-level function wrapper
-  -e, --export &lt;name>          Export module as &lt;name>
-  -i, --include [module, ...]  Additional modules to include, <span class="keyword">in</span> &lt;require as>:&lt;path to module> format
-  -m, --minify                 Minify output
-  -o, --output &lt;file>          Write bundle to file instead of stdout
-  -p, --prelude &lt;file>         File to use as prelude, or <span class="literal">false</span> to disable
-      --no-prelude             Exclude prelude from bundle
-  -w, --watch                  Write bundle to file and and recompile on file changes
-  -x, --exclude &lt;regex>        Regex to exclude modules from being parsed
 
-  -v, --version                Display version
-  -h, --help                   Display this help</code></pre>
-<p>Example:</p>
-<pre><code class="lang-bash">requisite entry.js &gt; lib/bundle.js</code></pre>
+  -h, --help                   display this help
+  -v, --version                display version
+  -b, --bare                   compile without a top-level function wrapper
+  -d, --dedupe                 deduplicate modules (when multiple are specified)
+  -e, --export &lt;name>          export module as &lt;name>
+  -i, --include [module, ...]  additional modules to include, <span class="keyword">in</span> &lt;require as>:&lt;path to module> format
+  -m, --minify                 minify output
+  -o, --output &lt;file>          write bundle to file instead of stdout, {} may be used as a placeholder.
+  -p, --prelude &lt;file>         file to use as prelude
+      --no-prelude             exclude prelude from bundle
+      --prelude-only           only output prelude
+  -s, --strict                 add <span class="string">"use strict"</span> to each bundled module.
+  -w, --watch                  write bundle to file and and recompile on file changes
+  -x, --exclude &lt;regex>        regex to exclude modules from being parsed</code></pre>
+<h4 id="examples">Examples</h4>
+<p>Bundle a javascript file and all it&#39;s dependencies.</p>
+<pre><code>$ requisite <span class="module"><span class="keyword">module</span>.js -o bundle.js</code></pre>
+<p>Create several bundles, appending <code>.bundle.js</code> to each entry module&#39;s name.</p>
+<pre><code>$ requisite *<span class="variable">.js</span> -o {}<span class="variable">.bundle</span><span class="variable">.js</span></code></pre>
+<p>Create a single shared library and bundle unique bits for each page on your site
+separately.</p>
+<pre><code>$ requisite --dedupe main<span class="variable">.js</span> page1<span class="variable">.js</span> page2<span class="variable">.js</span> -o {}<span class="variable">.bundle</span><span class="variable">.js</span></code></pre>
 <h3 id="api">API</h3>
 <p>If you want more fine-grained control over requisite you can require it in your
 own projects and use it directly.</p>
