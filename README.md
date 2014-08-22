@@ -91,18 +91,18 @@ Options:
 ```
 
 #### Examples
-Bundle a javascript file and all it's dependencies.
+Bundle a javascript file and all it's dependencies:
 ```
 $ requisite module.js -o bundle.js
 ```
 
-Create several bundles, appending `.bundle.js` to each entry module's name.
+Create several bundles, appending `.bundle.js` to each entry module's name:
 ```
 $ requisite *.js -o {}.bundle.js
 ```
 
-Create a single shared bundle and individual bundles for each page containing
-just the additional modules necessary for each.
+Create a single shared bundle (to leverage caching in browser) and individual
+bundles for each page containing just the additional modules necessary for each:
 ```
 $ requisite --dedupe main.js page1.js page2.js -o {}.bundle.js
 ```
@@ -115,11 +115,11 @@ You'd then use the bundle across the pages of your site like so:
 
 // page2.js
 <script src="main.bundle.js">
-<script src="page1.bundle.js">
+<script src="page2.bundle.js">
 
 // page3.js
 <script src="main.bundle.js">
-<script src="page1.bundle.js">
+<script src="page3.bundle.js">
 ```
 
 ### API
