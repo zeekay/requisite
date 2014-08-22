@@ -73,13 +73,25 @@ Options:
   -w, --watch                  write bundle to file and and recompile on file changes
   -x, --exclude &lt;regex>        regex to exclude modules from being parsed</code></pre>
 <h4 id="examples">Examples</h4>
-<p>Bundle a javascript file and all it&#39;s dependencies.</p>
+<p>Bundle a javascript file and all it&#39;s dependencies:</p>
 <pre><code>$ requisite <span class="module"><span class="keyword">module</span>.js -o bundle.js</code></pre>
-<p>Create several bundles, appending <code>.bundle.js</code> to each entry module&#39;s name.</p>
+<p>Create several bundles, appending <code>.bundle.js</code> to each entry module&#39;s name:</p>
 <pre><code>$ requisite *<span class="variable">.js</span> -o {}<span class="variable">.bundle</span><span class="variable">.js</span></code></pre>
-<p>Create a single shared library and bundle unique bits for each page on your site
-separately.</p>
+<p>Create a single shared bundle (to leverage caching in browser) and individual
+bundles for each page containing just the additional modules necessary for each:</p>
 <pre><code>$ requisite --dedupe main<span class="variable">.js</span> page1<span class="variable">.js</span> page2<span class="variable">.js</span> -o {}<span class="variable">.bundle</span><span class="variable">.js</span></code></pre>
+<p>You&#39;d then use the bundle across the pages of your site like so:</p>
+<pre><code class="lang-javascript"><span class="comment">// page1.js</span>
+&lt;script src=<span class="string">"main.bundle.js"</span>>
+&lt;script src=<span class="string">"page1.bundle.js"</span>>
+
+<span class="comment">// page2.js</span>
+&lt;script src=<span class="string">"main.bundle.js"</span>>
+&lt;script src=<span class="string">"page2.bundle.js"</span>>
+
+<span class="comment">// page3.js</span>
+&lt;script src=<span class="string">"main.bundle.js"</span>>
+&lt;script src=<span class="string">"page3.bundle.js"</span>></code></pre>
 <h3 id="api">API</h3>
 <p>If you want more fine-grained control over requisite you can require it in your
 own projects and use it directly.</p>
