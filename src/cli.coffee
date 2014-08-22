@@ -21,7 +21,7 @@ help = ->
     -e, --export <name>          export module as <name>
     -i, --include [module, ...]  additional modules to include, in <require as>:<path to module> format
     -m, --minify                 minify output
-    -o, --output <file>          write bundle to file instead of stdout, {} can be used as a placeholder.
+    -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
     -p, --prelude <file>         file to use as prelude
         --no-prelude             exclude prelude from bundle
     -s, --strict                 add "use strict" to each bundled module.
@@ -44,6 +44,7 @@ version = ->
 
 opts =
   bare:    false
+  dedupe:  false
   exclude: null
   export:  null
   files:   []
@@ -64,6 +65,8 @@ while opt = args.shift()
       version()
     when '-b', '--bare'
       opts.bare = true
+    when '-d', '--dedupe'
+      opts.dedupe = true
     when '-x', '--exclude'
       opts.exclude = new RegExp args.shift()
     when '-e', '--export'
