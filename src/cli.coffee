@@ -2,6 +2,7 @@
 fs        = require 'fs'
 path      = require 'path'
 requisite = require '../lib'
+utils     = require '../lib/utils'
 
 error = (message) ->
   console.log message
@@ -24,6 +25,7 @@ help = ->
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
     -p, --prelude <file>         file to use as prelude
         --no-prelude             exclude prelude from bundle
+        --prelude-only           only output prelude
     -s, --strict                 add "use strict" to each bundled module.
     -w, --watch                  write bundle to file and and recompile on file changes
     -x, --exclude <regex>        regex to exclude modules from being parsed
@@ -86,6 +88,8 @@ while opt = args.shift()
       opts.prelude = args.shift()
     when '--no-prelude'
       opts.prelude = false
+    when '--prelude-only'
+      opts.preludeOnly = true
     when '-s', '--strict'
       opts.strict = true
     when '-w', '--watch'
@@ -94,45 +98,58 @@ while opt = args.shift()
       error 'Unrecognized option' if opt.charAt(0) is '-'
       opts.files.push opt
 
+if opts.preludeOnly
+  utils.outputPrelude opts
+  process.exit 0
+
 unless opts.files.length
   help()
 
 if opts.watch and not opts.output?
   error 'Output must be specified when using watch.'
 
-if opts.files.length > 1 and (opts.output.indexOf '{}') == -1
+if opts.files.length > 1 and (opts.output?.indexOf '{}') == -1
   error 'Output filenames overlap, perhaps you meant -o {}.js?'
 
-writeBundle = (bundle) ->
-  if opts.output?
-    filename = path.basename bundle.requiredAs
-    ext      = path.extname filename
-    extout   = path.extname opts.output
+# If dedupe is chosen, prevent top level modules from being bundled into other
+# top level modules.
+if opts.dedupe
+  excluded = []
+  if opts.exclude?
+    re = opts.exclude + ''
+    re = re.substring 1, re.length - 1
+    excluded.push re
 
-    # Prevent duplicating extension
-    if ext == extout
-      filename = filename.replace ext, ''
+  for file in opts.files
+    extname = path.extname file
+    excluded.push "^#{file.replace extname, ''}$"
 
-    # Handle wildcard output filenames
-    output = opts.output.replace '{}', filename
+  opts.exclude = new RegExp excluded.join '|'
 
-    fs.writeFileSync output, bundle.toString opts, 'utf8'
+bundleFile = (file, moduleCache = {}) ->
+  opts.entry       = file
+  opts.moduleCache = moduleCache
+
+  next = (bundle) ->
+    # Write bundle to stdout or output file
+    utils.outputBundle bundle, opts
+
+    # If output deduped, only output prelude for first module, pass along moduleCache to each bundle.
+    opts.prelude = false if opts.dedupe
+    moduleCache  = if opts.dedupe then bundle.moduleCache else {}
+
+    # Handle next file.
+    bundleFile opts.files.shift(), moduleCache if opts.files.length
+
+  unless opts.watch
+    requisite.bundle opts, (err, bundle) ->
+      next bundle
   else
-    console.log bundle.toString opts
+    requisite.watch opts, (err, bundle, filename) ->
+      if filename?
+        console.log "#{utils.formatDate()} - recompiling, #{filename} changed"
+      else
+        console.log "#{utils.formatDate()} - compiled #{opts.output}"
+      next bundle
 
-for file in opts.files
-  do (file, opts) ->
-    opts = JSON.parse JSON.stringify opts
-    opts.entry = file
-
-    unless opts.watch
-      requisite.bundle opts, (err, bundle) ->
-        writeBundle bundle
-    else
-      requisite.watch opts, (err, bundle, filename) ->
-        if filename?
-          console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - recompiling, #{filename} changed"
-        else
-          console.log "#{/\d{2}:\d{2}:\d{2}/.exec(new Date())[0]} - compiled #{opts.output}"
-
-        writeBundle bundle
+bundleFile opts.files.shift()
