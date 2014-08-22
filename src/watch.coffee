@@ -1,7 +1,6 @@
 fs     = require 'fs'
 path   = require 'path'
 vigil  = require 'vigil'
-
 bundle = require './bundle'
 
 

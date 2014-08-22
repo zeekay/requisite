@@ -1,10 +1,10 @@
-fs    = require 'fs'
-path  = require 'path'
-
+fs        = require 'fs'
+path      = require 'path'
 compilers = require './compilers'
 resolver  = require './resolver'
 utils     = require './utils'
 wrapper   = require './wrapper'
+
 
 class Module
   constructor: (requiredAs, opts = {}) ->
