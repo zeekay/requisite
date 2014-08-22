@@ -169,7 +169,7 @@ class Module
       [callback, opts] = [opts, {}]
 
     dependencies ?= @dependencies.slice 0
-    opts      ?= {}
+    opts         ?= {}
     callback     ?= ->
 
     return callback() if dependencies.length == 0
@@ -178,6 +178,7 @@ class Module
 
     # if excluced module, just continue
     if @exclude? and @exclude.test dep.requireAs
+      console.log 'excluded', dep.requireAs
       return @traverse dependencies, opts, callback
 
     # already seen this module

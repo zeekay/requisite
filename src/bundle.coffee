@@ -8,15 +8,16 @@ module.exports = (opts = {}, cb = ->) ->
     [cb, opts] = [opts, {}]
 
   main = new Module opts.entry,
-    bare:      opts.bare
-    basePath:  opts.src
-    exclude:   opts.exclude
-    export:    opts.export
-    include:   opts.include
-    paths:     opts.paths ? []
-    requireAs: path.basename opts.entry
-    strict:    opts.strict
-    urlRoot:   opts.urlRoot
+    bare:        opts.bare
+    basePath:    opts.src
+    exclude:     opts.exclude
+    export:      opts.export
+    include:     opts.include
+    moduleCache: opts.moduleCache
+    paths:       opts.paths ? []
+    requireAs:   path.basename opts.entry
+    strict:      opts.strict
+    urlRoot:     opts.urlRoot
 
   main.parse (err) ->
     return cb err if err?
