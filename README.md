@@ -69,26 +69,36 @@ bundled for the client.
 ```bash
 $ bin/requisite --help
 
-Usage: requisite path/to/entry-module [options]
+Usage: requisite [options] [files]
 
 Options:
-  -b, --bare                   Compile without a top-level function wrapper
-  -e, --export <name>          Export module as <name>
-  -i, --include [module, ...]  Additional modules to include, in <require as>:<path to module> format
-  -m, --minify                 Minify output
-  -o, --output <file>          Write bundle to file instead of stdout
-  -p, --prelude <file>         File to use as prelude, or false to disable
-      --no-prelude             Exclude prelude from bundle
-  -w, --watch                  Write bundle to file and and recompile on file changes
-  -x, --exclude <regex>        Regex to exclude modules from being parsed
 
-  -v, --version                Display version
-  -h, --help                   Display this help
+  -h, --help                   display this help
+  -v, --version                display version
+  -b, --bare                   compile without a top-level function wrapper
+  -d, --dedupe                 deduplicate modules (when multiple are specified)
+  -e, --export <name>          export module as <name>
+  -i, --include [module, ...]  additional modules to include, in <require as>:<path to module> format
+  -m, --minify                 minify output
+  -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
+  -p, --prelude <file>         file to use as prelude
+      --no-prelude             exclude prelude from bundle
+      --prelude-only           only output prelude
+  -s, --strict                 add "use strict" to each bundled module.
+  -w, --watch                  write bundle to file and and recompile on file changes
+  -x, --exclude <regex>        regex to exclude modules from being parsed
+
 ```
 
-Example:
-```bash
-requisite entry.js > lib/bundle.js
+#### Examples
+Bundle a javascript file and all it's dependencies.
+```
+$ requisite module.js -o bundle.js
+```
+
+Create several bundles, appending `.bundle.js` to each entry module's name.
+```
+$ requisite *.js -o {}.bundle.js
 ```
 
 ### API
