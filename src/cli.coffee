@@ -1,8 +1,9 @@
 #!/usr/bin/env coffee
-fs        = require 'fs'
-path      = require 'path'
-requisite = require '../lib'
-utils     = require '../lib/utils'
+fs         = require 'fs'
+path       = require 'path'
+requisite  = require '../lib'
+utils      = require '../lib/utils'
+postmortem = require 'postmortem'
 
 error = (message) ->
   console.log message
@@ -143,9 +144,13 @@ bundleFile = (file, moduleCache = {}) ->
 
   unless opts.watch
     requisite.bundle opts, (err, bundle) ->
+      return postmortem.prettyPrint err if err?
+
       next bundle
   else
     requisite.watch opts, (err, bundle, filename) ->
+      return postmortem.prettyPrint err if err?
+
       if filename?
         console.log "#{utils.formatDate()} - recompiling, #{filename} changed"
       else
