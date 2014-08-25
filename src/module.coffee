@@ -144,6 +144,10 @@ class Module
         [required, callback] = node.arguments
 
         if required.type == 'Literal' and typeof required.value is 'string'
+          # skip excluded modules
+          if @exclude?.test required.value
+            return true
+
           mod = @resolver required.value,
             basePath:   @basePath
             extensions: @extensions
@@ -177,7 +181,7 @@ class Module
     dep = dependencies.shift()
 
     # if excluced module, just continue
-    if @exclude? and @exclude.test dep.requireAs
+    if @exclude?.test dep.requireAs
       console.log 'excluded', dep.requireAs
       return @traverse dependencies, opts, callback
 

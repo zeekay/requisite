@@ -17,7 +17,7 @@ builtins =
   dgram:                null
   dns:                  null
   domain:               'domain-browser/index.js'
-  events:               'events/index.js'
+  events:               'events/events.js'
   fs:                   null
   http:                 'http-browserify/index.js'
   https:                'https-browserify/index.js'
@@ -40,8 +40,13 @@ builtins =
   vm:                   'vm-browserify/index.js'
   zlib:                 'browserify-zlib/src/index.js'
 
+basePath  = path.join __dirname, '..', 'node_modules'
+emptyPath = path.join __dirname, '..', 'lib/empty.js'
+
 for k,v of builtins
   if v?
-    builtins[k] = path.join __dirname, '..', 'node_modules', v
+    builtins[k] = path.join basePath, v
+  else
+    builtins[k] = emptyPath
 
 module.exports = builtins
