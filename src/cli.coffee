@@ -21,7 +21,7 @@ help = ->
     -b, --bare                   compile without a top-level function wrapper
     -d, --dedupe                 deduplicate modules (when multiple are specified)
     -e, --export <name>          export module as <name>
-    -i, --include [module, ...]  additional modules to include, in <require as>:<path to module> format
+    -i, --include <module>       additional module to include, in <require as>:<path to module> format
     -m, --minify                 minify output
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
     -p, --prelude <file>         file to use as prelude
@@ -48,7 +48,7 @@ version = ->
 opts =
   bare:    false
   dedupe:  false
-  exclude: null
+  exclude: []
   export:  null
   files:   []
   include: []
@@ -71,16 +71,12 @@ while opt = args.shift()
     when '-d', '--dedupe'
       opts.dedupe = true
     when '-x', '--exclude'
-      opts.exclude = new RegExp args.shift()
+      opts.exclude.push args.shift()
     when '-e', '--export'
       opts.export = args.shift()
     when '-i', '--include'
-      while (module = args.shift())? and module.charAt(0) != '-'
-        try
-          [requireAs, absolutePath] = module.split ':'
-          opts.include[requireAs] = absolutePath
-        catch err
-          help 1, 'Invalid argument to include'
+      [requireAs, absolutePath] = args.shift().split ':'
+      opts.include[requireAs] = absolutePath
     when '-m', '--minify'
       opts.minify = true
     when '-o', '--output'
@@ -115,17 +111,12 @@ if opts.files.length > 1 and (opts.output?.indexOf '{}') == -1
 # If dedupe is chosen, prevent top level modules from being bundled into other
 # top level modules.
 if opts.dedupe
-  excluded = []
-  if opts.exclude?
-    re = opts.exclude + ''
-    re = re.substring 1, re.length - 1
-    excluded.push re
-
   for file in opts.files
     extname = path.extname file
-    excluded.push "^#{file.replace extname, ''}$"
+    opts.exclude.push "^#{file.replace extname, ''}$"
 
-  opts.exclude = new RegExp excluded.join '|'
+# Build exclude regex.
+opts.exclude = new RegExp opts.exclude.join '|'
 
 bundleFile = (file, moduleCache = {}) ->
   opts.entry       = file
