@@ -1,19 +1,24 @@
-browserResolve = require 'browser-resolve-sync'
-os             = require 'os'
-path           = require 'path'
+bresolve = require 'browser-resolve-sync'
+builtins = require './builtins'
+os       = require 'os'
+path     = require 'path'
 
-extensions     = ('.' + ext for ext of require('./compilers'))
+extensions = ('.' + ext for ext of require('./compilers'))
 
 NODE_PATHS = (process.env.NODE_PATH ? '').split(':')
 
 # Simple wrapper around browser-resolve-sync to deal with oddities in it's API.
 resolve = (pkg, opts) ->
-  browserResolve pkg,
+  bresolve pkg,
     # filename is a bit of a hack, browser-resolve-sync uses this as as the
     # `base` for resolving things, so I append a fake filename which
     # browser-resolve-sync will lop off with `path.dirname`.
     filename:   path.join opts.basedir, 'ENOENT'
     extensions: opts.extensions
+
+resolveBuiltin = (pkg) ->
+  bresolve pkg,
+    filename: pkg
 
 module.exports = ->
   cache = {}
@@ -40,11 +45,16 @@ module.exports = ->
     # use cached resolution if possible
     return cached if (cached = cache[resolveFrom+requiredAs])?
 
-    try
-      absolutePath = resolve requiredAs,
-        basedir:    resolveFrom
-        extensions: options.extensions
-    catch err
+    # resolve absolute path to module
+    if builtins[requiredAs]?
+      # No need to resolve builtins
+      absolutePath = builtins[requiredAs]
+    else
+      try
+        absolutePath = resolve requiredAs,
+          basedir:    resolveFrom
+          extensions: options.extensions
+      catch err
 
     # try various paths
     while (not absolutePath?) and (nextPath = paths.shift())?

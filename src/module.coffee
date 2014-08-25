@@ -70,7 +70,7 @@ class Module
   # compile source using appropriately compiler
   compile: (callback) ->
     fs.stat @absolutePath, (err, stat) =>
-      return callback err if err?
+      return callback new Error "Unable to find module '#{@absolutePath}'" if err?
 
       if @mtime? and stat.mtime < @mtime
         return callback()
