@@ -1,6 +1,6 @@
-marked = require 'marked'
-
 module.exports = (options, callback) ->
+  marked = require 'marked'
+
   marked.setOptions
     gfm: true
     pedantic: false
