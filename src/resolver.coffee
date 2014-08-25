@@ -9,16 +9,15 @@ NODE_PATHS = (process.env.NODE_PATH ? '').split(':')
 
 # Simple wrapper around browser-resolve-sync to deal with oddities in it's API.
 resolve = (pkg, opts) ->
-  bresolve pkg,
-    # filename is a bit of a hack, browser-resolve-sync uses this as as the
-    # `base` for resolving things, so I append a fake filename which
-    # browser-resolve-sync will lop off with `path.dirname`.
-    filename:   path.join opts.basedir, 'ENOENT'
-    extensions: opts.extensions
-
-resolveBuiltin = (pkg) ->
-  bresolve pkg,
-    filename: pkg
+  try
+    absolutePath = bresolve pkg,
+      # filename is a bit of a hack, browser-resolve-sync uses this as as the
+      # `base` for resolving things, so I append a fake filename which
+      # browser-resolve-sync will lop off with `path.dirname`.
+      filename:   path.join opts.basedir, 'ENOENT'
+      extensions: opts.extensions
+  catch err
+    null
 
 module.exports = ->
   cache = {}
@@ -50,21 +49,18 @@ module.exports = ->
       # No need to resolve builtins
       absolutePath = builtins[requiredAs]
     else
-      try
-        absolutePath = resolve requiredAs,
-          basedir:    resolveFrom
-          extensions: options.extensions
-      catch err
+      absolutePath = resolve requiredAs,
+        basedir:    resolveFrom
+        extensions: options.extensions
 
-    # try various paths
-    while (not absolutePath?) and (nextPath = paths.shift())?
-      try
+      while (not absolutePath?) and (nextPath = paths.shift())?
         absolutePath = resolve requiredAs,
           basedir:    nextPath
           extensions: options.extensions
-      catch err
 
-    throw err unless absolutePath?
+    unless absolutePath?
+      err = "Unable to resolve module '#{requiredAs}' required from '#{requiredBy}'"
+      throw new Error err
 
     extension = path.extname absolutePath
 
