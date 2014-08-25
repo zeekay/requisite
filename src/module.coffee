@@ -57,7 +57,10 @@ class Module
     @dependencies = {}
 
     # modules that depend on this one
-    @dependents   = {}
+    @dependents = {}
+
+    # whether to generate sourceMap
+    @enableSourceMap = opts.sourceMap
 
   # resolve paths
   resolve: ->
@@ -82,11 +85,16 @@ class Module
         unless (compiler = @compilers[extension])?
           throw new Error "No suitable compiler found for #{@absolutePath}"
 
+        opts =
+          source: source
+          filename: @normalizedPath
+          sourceMap: @enableSourceMap
+
         # call compiler with a reference to this module
-        compiler.call @, {source: source, filename: @normalizedPath}, (err, source, sourceMap) =>
+        compiler.call @,  opts, (err, source, sourceMap) =>
           return callback err if err?
 
-          @source = source
+          @source    = source
           @sourceMap = sourceMap
 
           callback()

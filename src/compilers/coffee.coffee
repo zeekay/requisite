@@ -1,3 +1,5 @@
+path = require 'path'
+
 formatErrorMessage = (source, filename, err) ->
   {first_line, last_line, first_column, last_column} = err.location
 
@@ -37,16 +39,17 @@ formatErrorMessage = (source, filename, err) ->
 module.exports = (options, callback) ->
   coffee = require 'coffee-script'
 
-  coffeeOpts =
+  opts =
     bare: true
 
   if options.sourceMap
-    coffeeOpts.sourceMap   = options.sourceMap
-    coffeeOpts.filename    = options.filename
-    coffeeOpts.sourceFiles = [options.filename]
+    opts.sourceMap   = options.sourceMap
+    opts.filename    = options.filename
+    opts.sourceFiles = [options.filename]
+    opts.sourceRoot  = ''
 
   try
-    res = coffee.compile options.source, coffeeOpts
+    res = coffee.compile options.source, opts
   catch err
     if err.location?
       err.formattedMessage = formatErrorMessage options.source, options.filename, err
