@@ -1,5 +1,7 @@
+{requireTry} = require '../utils'
+
 module.exports = (options, callback) ->
-  jade    = require 'jade'
+  jade = requireTry 'jade'
 
   func = jade.compile options.source,
     client: true

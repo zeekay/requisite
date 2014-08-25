@@ -1,5 +1,7 @@
+{requireTry} = require '../utils'
+
 module.exports = (options, callback) ->
-  marked = require 'marked'
+  marked = requireTry 'marked'
 
   marked.setOptions
     gfm: true

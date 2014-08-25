@@ -129,6 +129,14 @@ outputPrelude = (opts) ->
   else
     console.log prelude
 
+# Nice error message when missing compiler.
+requireTry = (pkg) ->
+  try
+    require pkg
+  catch err
+    console.error "Unable to require '#{pkg}'. Try `npm install -g #{pkg}`."
+    throw new Error "Missing compiler"
+
 module.exports =
   clone:         clone
   codegen:       codegen
@@ -137,4 +145,5 @@ module.exports =
   outputBundle:  outputBundle
   outputPrelude: outputPrelude
   parse:         parse
+  requireTry:    requireTry
   walk:          walk
