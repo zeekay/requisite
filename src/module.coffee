@@ -134,7 +134,8 @@ class Module
           dependencies.unshift mod
 
       # parse dependencies into fully-fledged modules
-      @traverse dependencies, opts, callback
+      @traverse dependencies, opts, (err) =>
+        callback err, @
 
   # transform require expressions in AST to use root-relative paths
   transform: ->
