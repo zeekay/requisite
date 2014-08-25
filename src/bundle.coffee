@@ -18,6 +18,7 @@ module.exports = (opts = {}, cb = ->) ->
     requireAs:   path.basename opts.entry
     strict:      opts.strict
     urlRoot:     opts.urlRoot
+    sourceMap:   opts.sourceMap ? true
 
   main.parse (err) ->
     return cb err if err?
