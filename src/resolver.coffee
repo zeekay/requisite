@@ -1,7 +1,9 @@
 bresolve = require 'browser-resolve-sync'
-builtins = require './builtins'
 os       = require 'os'
 path     = require 'path'
+
+builtins        = require './builtins'
+{normalizePath} = require './utils'
 
 extensions = ('.' + ext for ext of require('./compilers'))
 
@@ -22,24 +24,24 @@ resolve = (pkg, opts) ->
 module.exports = ->
   cache = {}
 
-  (requiredAs, options = {}) ->
+  (requiredAs, opts = {}) ->
     # asked to cache lookup in advance
-    if options.cache?
-      cache[options.resolveFrom+requiredAs] = options
+    if opts.cache?
+      cache[opts.resolveFrom+requiredAs] = opts
       return
 
-    paths = NODE_PATHS.concat options.paths ? []
-    options.extensions ?= extensions
+    paths = NODE_PATHS.concat opts.paths ? []
+    opts.extensions ?= extensions
 
-    if (requiredBy = options.requiredBy)?
+    if (requiredBy = opts.requiredBy)?
       # normal dependency
       resolveFrom = path.dirname requiredBy
-      basePath    = options.basePath
+      basePath    = opts.basePath
     else
       # entry module, all required modules should be resolved relative to it's dir
-      resolveFrom = options.basePath ? path.dirname path.resolve requiredAs
-      basePath    = resolveFrom
-      requiredAs  = './' + path.basename requiredAs
+      base = opts.basePath ? (path.dirname path.resolve requiredAs)
+      basePath = resolveFrom = path.resolve base
+      requiredAs = './' + (path.resolve requiredAs).replace basePath, ''
 
     # use cached resolution if possible
     return cached if (cached = cache[resolveFrom+requiredAs])?
@@ -51,12 +53,12 @@ module.exports = ->
     else
       absolutePath = resolve requiredAs,
         basedir:    resolveFrom
-        extensions: options.extensions
+        extensions: opts.extensions
 
       while (not absolutePath?) and (nextPath = paths.shift())?
         absolutePath = resolve requiredAs,
           basedir:    nextPath
-          extensions: options.extensions
+          extensions: opts.extensions
 
     unless absolutePath?
       err = "Unable to resolve module '#{requiredAs}' required from '#{requiredBy}'"
@@ -64,18 +66,8 @@ module.exports = ->
 
     extension = path.extname absolutePath
 
-    if (absolutePath.indexOf basePath) != -1
-      normalizedPath = absolutePath.replace basePath, ''
-    else
-      start = absolutePath.indexOf 'node_modules'
-      normalizedPath = absolutePath.substring start, absolutePath.length
-
-    if os.platform() == 'win32'
-      normalizedPath = normalizedPath.replace /^\\+/, ''
-    else
-      normalizedPath = normalizedPath.replace /^\/+/, ''
-
-    requireAs = options.requireAs ? normalizedPath.replace extension, ''
+    normalizedPath = normalizePath absolutePath, basePath
+    requireAs      = normalizedPath.replace extension, ''
 
     cache[resolveFrom+requiredAs] =
       absolutePath:   absolutePath

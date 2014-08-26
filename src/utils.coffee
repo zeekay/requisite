@@ -1,12 +1,13 @@
 fs   = require 'fs'
 path = require 'path'
+os   = require 'os'
 
 # Pretty print Date object.
-formatDate = (date = new Date) ->
+exports.formatDate = (date = new Date) ->
   (/\d{2}:\d{2}:\d{2}/.exec date)[0]
 
 # clone ast
-clone = (obj) ->
+exports.clone = clone = (obj) ->
   if not obj? or typeof obj isnt 'object'
     return obj
 
@@ -18,7 +19,7 @@ clone = (obj) ->
   return inst
 
 # generate string from ast, optionally minify
-codegen = (ast, options = {}) ->
+exports.codegen = (ast, options = {}) ->
   unless options.minify
     options =
       comment: yes
@@ -38,7 +39,7 @@ codegen = (ast, options = {}) ->
     minify[minifier] ast, options
 
 # parse source into ast
-parse = (source, options = {}) ->
+exports.parse = (source, options = {}) ->
   parser = require 'esprima'
   ast = parser.parse source,
     comment: true
@@ -48,7 +49,7 @@ parse = (source, options = {}) ->
   ast = require('escodegen').attachComments ast, ast.comments, ast.tokens
 
 # walk ast
-walk = (node, visitor) ->
+exports.walk = walk = (node, visitor) ->
   if node? and typeof node == 'object'
     unless visitor node
       for k,v of node
@@ -59,7 +60,7 @@ walk = (node, visitor) ->
       walk el, visitor
 
 # draw simple graph of dependencies
-graph = (mod) ->
+exports.graph = (mod) ->
   # walk dependencies
   seen = {}
   walkdeps = (mod, fn, depth = 0) ->
@@ -101,18 +102,22 @@ graph = (mod) ->
   console.log (line[0] for line in lines).join '\n'
 
 # Nice error message when missing compiler.
-requireTry = (pkg) ->
+exports.requireTry = (pkg) ->
   try
     require pkg
   catch err
     console.error "Unable to require '#{pkg}'. Try `npm install -g #{pkg}`."
     throw new Error "Missing compiler"
 
-module.exports =
-  clone:         clone
-  codegen:       codegen
-  formatDate:    formatDate
-  graph:         graph
-  parse:         parse
-  requireTry:    requireTry
-  walk:          walk
+# Gets path relative to basePath and normalizes it.
+exports.normalizePath = (absolutePath, basePath) ->
+  if (absolutePath.indexOf basePath) != -1
+    normalizedPath = absolutePath.replace basePath, ''
+  else
+    start = absolutePath.indexOf 'node_modules'
+    normalizedPath = absolutePath.substring start, absolutePath.length
+
+  if os.platform() == 'win32'
+    normalizedPath.replace /^\\+/, ''
+  else
+    normalizedPath.replace /^\/+/, ''
