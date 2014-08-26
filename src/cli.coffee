@@ -31,6 +31,7 @@ help = ->
     -s, --strict                 add "use strict" to each bundled module.
     -w, --watch                  write bundle to file and and recompile on file changes
     -x, --exclude <regex>        regex to exclude modules from being parsed
+        --base                   path all requires should be relative to
 
   Examples:
 
@@ -49,6 +50,7 @@ version = ->
 opts =
   async:   false
   bare:    false
+  base:    null
   dedupe:  false
   exclude: []
   export:  null
@@ -95,6 +97,8 @@ while opt = args.shift()
       opts.strict = true
     when '-w', '--watch'
       opts.watch = true
+    when '--base'
+      opts.base = args.shift()
     else
       error 'Unrecognized option' if opt.charAt(0) is '-'
       opts.files.push opt
