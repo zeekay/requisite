@@ -1,9 +1,9 @@
 #!/usr/bin/env coffee
-fs         = require 'fs'
-path       = require 'path'
-requisite  = require '../lib'
-utils      = require '../lib/utils'
-postmortem = require 'postmortem'
+fs           = require 'fs'
+path         = require 'path'
+postmortem   = require 'postmortem'
+requisite    = require '../lib'
+{formatDate} = require '../lib/utils'
 
 error = (message) ->
   console.log message
@@ -18,6 +18,7 @@ help = ->
 
     -h, --help                   display this help
     -v, --version                display version
+    -a, --async                  prelude should support async requires
     -b, --bare                   compile without a top-level function wrapper
     -d, --dedupe                 deduplicate modules (when multiple are specified)
     -e, --export <name>          export module as <name>
@@ -46,6 +47,7 @@ version = ->
   process.exit 0
 
 opts =
+  async:   false
   bare:    false
   dedupe:  false
   exclude: []
@@ -66,6 +68,8 @@ while opt = args.shift()
       help()
     when '-v', '--version'
       version()
+    when '-a', '--async'
+      opts.async = true
     when '-b', '--bare'
       opts.bare = true
     when '-d', '--dedupe'
@@ -95,11 +99,7 @@ while opt = args.shift()
       error 'Unrecognized option' if opt.charAt(0) is '-'
       opts.files.push opt
 
-if opts.preludeOnly
-  utils.outputPrelude opts
-  process.exit 0
-
-unless opts.files.length
+unless (opts.files.length or opts.preludeOnly)
   help()
 
 if opts.watch and not opts.output?
@@ -118,13 +118,33 @@ if opts.dedupe
 # Build exclude regex.
 opts.exclude = new RegExp opts.exclude.join '|'
 
+outputName = (requiredAs, opts) ->
+    # Build output filename
+    filename = path.basename bundle.requiredAs
+    ext      = path.extname filename
+    extout   = path.extname opts.output
+
+    # Prevent duplicating extension
+    if ext == extout
+      filename = filename.replace ext, ''
+
+    # Handle wildcard output filenames
+    opts.output.replace '{}', filename
+
+outputBundle = (bundle, opts) ->
+  if opts.output?
+    output = outputName bundle.requiredAs, opts
+    fs.writeFileSync output, bundle.toString opts, 'utf8'
+  else
+    console.log bundle.toString opts
+
 bundleFile = (file, moduleCache = {}) ->
   opts.entry       = file
   opts.moduleCache = moduleCache
 
   next = (bundle) ->
     # Write bundle to stdout or output file
-    utils.outputBundle bundle, opts
+    outputBundle bundle, opts
 
     # If output deduped, only output prelude for first module, pass along moduleCache to each bundle.
     opts.prelude = false if opts.dedupe
@@ -143,9 +163,9 @@ bundleFile = (file, moduleCache = {}) ->
       return postmortem.prettyPrint err if err?
 
       if filename?
-        console.log "#{utils.formatDate()} - recompiling, #{filename} changed"
+        console.log "#{formatDate()} - recompiling, #{filename} changed"
       else
-        console.log "#{utils.formatDate()} - compiled #{opts.output}"
+        console.log "#{formatDate()} - compiled #{opts.output}"
       next bundle
 
 bundleFile opts.files.shift()

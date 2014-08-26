@@ -2,12 +2,25 @@ path      = require 'path'
 Module    = require './module'
 {Prelude} = require './wrapper'
 
+createWrapper = (opts) ->
+  new Prelude
+    async:         opts.async
+    bare:          opts.bare
+    globalRequire: opts.globalRequire
+    prelude:       opts.prelude
+    preludeAsync:  opts.preludeAsync
 
 module.exports = (opts = {}, cb = ->) ->
   if typeof opts == 'function'
     [cb, opts] = [opts, {}]
 
-  main = new Module opts.entry,
+  if opts.preludeOnly
+    unless opts.bare
+      opts.globalRequire = true
+    return cb null, createWrapper opts
+
+  # Build module
+  mod = new Module opts.entry,
     bare:        opts.bare
     basePath:    opts.src
     exclude:     opts.exclude
@@ -20,23 +33,18 @@ module.exports = (opts = {}, cb = ->) ->
     urlRoot:     opts.urlRoot
     sourceMap:   opts.sourceMap ? true
 
-  main.parse (err) ->
+  mod.parse (err) ->
     return cb err if err?
 
-    async = false
+    # Detect async
+    unless opts.async
+      for k,v of mod.moduleCache
+        if v.async
+          opts.async = true
+          break
 
-    for k,v of main.moduleCache
-      if v.async
-        async = true
-        break
-
+    # Add wrapper
     unless opts.bare
-      wrapper = new Prelude
-        async:         async
-        globalRequire: opts.globalRequire
-        prelude:       opts.prelude
-        preludeAsync:  opts.preludeAsync
+      mod.toplevel = createWrapper opts
 
-      main.toplevel = wrapper
-
-    cb null, main
+    cb null, mod
