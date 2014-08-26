@@ -190,7 +190,6 @@ class Module
 
     # if excluced module, just continue
     if @exclude?.test dep.requireAs
-      console.log 'excluded', dep.requireAs
       return @traverse dependencies, opts, callback
 
     # already seen this module
@@ -199,8 +198,9 @@ class Module
 
     # use cached module if previously parsed by someone else
     if (cached = @find dep.requireAs)?
-      @dependencies[cached.requireAs] = cached
-      cached.dependents[@requireAs] = @
+      unless cached.external
+        @dependencies[cached.requireAs] = cached
+        cached.dependents[@requireAs] = @
       return @traverse dependencies, opts, callback
 
     dep.moduleCache = @moduleCache
@@ -208,7 +208,7 @@ class Module
     dep.urlRoot     = @urlRoot
     dep.strict      = @strict
 
-    # create module and parse it baby
+    # create module and parse it
     mod = new Module dep.requiredAs, dep
     mod.exclude = @exclude
     mod.dependents[@requireAs] = @
@@ -289,7 +289,10 @@ class Module
     toplevel = (@toplevel ? new wrapper.Wrapper()).clone()
 
     @walkDependencies (mod) ->
-      if mod.ast? and not mod.async
+      if mod.async or mod.external
+        return
+
+      if mod.ast?
         for node in mod.wrapped().body
           toplevel.body.push node
 
