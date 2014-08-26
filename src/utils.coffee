@@ -100,35 +100,6 @@ graph = (mod) ->
 
   console.log (line[0] for line in lines).join '\n'
 
-outputName = (requiredAs, opts) ->
-    # Build output filename
-    filename = path.basename bundle.requiredAs
-    ext      = path.extname filename
-    extout   = path.extname opts.output
-
-    # Prevent duplicating extension
-    if ext == extout
-      filename = filename.replace ext, ''
-
-    # Handle wildcard output filenames
-    opts.output.replace '{}', filename
-
-outputBundle = (bundle, opts) ->
-  if opts.output?
-    output = outputName bundle.requiredAs, opts
-    fs.writeFileSync output, bundle.toString opts, 'utf8'
-  else
-    console.log bundle.toString opts
-
-outputPrelude = (opts) ->
-  prelude = path.resolve (path.join __dirname, '..', 'lib', 'prelude.js')
-  prelude = fs.readFileSync prelude, 'utf8'
-
-  if opts.output?
-    fs.writeFileSync output, prelude, 'utf8'
-  else
-    console.log prelude
-
 # Nice error message when missing compiler.
 requireTry = (pkg) ->
   try
@@ -142,8 +113,6 @@ module.exports =
   codegen:       codegen
   formatDate:    formatDate
   graph:         graph
-  outputBundle:  outputBundle
-  outputPrelude: outputPrelude
   parse:         parse
   requireTry:    requireTry
   walk:          walk
