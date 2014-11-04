@@ -129,22 +129,14 @@ else
   opts.exclude = null
 
 outputName = (filename, output) ->
-  # Build output filename
-  filename = path.basename filename
-  ext      = path.extname filename
-  extout   = path.extname output
-
-  # Prevent duplicating extension
-  if ext == extout
-    filename = filename.replace ext, ''
-
   # Handle wildcard output filenames
   output.replace '{}', filename
+        .replace /\.\w+$/, '.js'
         .replace /\.\/\//, ''
 
 outputBundle = (bundle, opts) ->
   if opts.output?
-    fs.writeFileSync (outputName opts.output, bundle.normalizedPath), bundle.toString opts, 'utf8'
+    fs.writeFileSync (outputName bundle.normalizedPath, opts.output), bundle.toString opts, 'utf8'
   else
     console.log bundle.toString opts
 
@@ -175,7 +167,7 @@ bundleFile = (file, moduleCache = {}) ->
       if filename?
         console.log "#{formatDate()} - recompiling, #{filename} changed"
       else
-        console.log "#{formatDate()} - compiled #{outputName opts.output, bundle.normalizedPath}"
+        console.log "#{formatDate()} - compiled #{outputName bundle.normalizedPath, opts.output}"
       next bundle
 
 bundleFile opts.files.shift()
