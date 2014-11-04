@@ -234,9 +234,20 @@ class Module
       when 'string'
         # strip leading dot slash / slash
         requireAs = query.replace /^\.?\/+/, ''
+
         # return top level module if query is empty
-        requireAs = @requireAs if requireAs == ''
-        @moduleCache[requireAs]
+        return @moduleCache[@requireAs] if requireAs == ''
+
+        # try to find as relative module
+        relative = @moduleCache['./' + requireAs]
+        return relative if relative?
+
+        # try to find node_module
+        nodeModule = @moduleCache[requireAs]
+        return nodeModule if nodeModule?
+
+        # this behavior is probably bad?
+        # throw new Error "Unable to find module #{requireAs}"
       else
         throw new Error 'Invalid query for find'
 
