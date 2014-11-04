@@ -112,7 +112,7 @@ exports.requireTry = (pkg) ->
 # Gets path relative to basePath and normalizes it.
 exports.normalizePath = (absolutePath, basePath) ->
   if (absolutePath.indexOf basePath) != -1
-    normalizedPath = absolutePath.replace basePath, ''
+    normalizedPath = '.' + absolutePath.replace basePath, ''
   else
     start = absolutePath.indexOf 'node_modules'
     normalizedPath = absolutePath.substring start, absolutePath.length
