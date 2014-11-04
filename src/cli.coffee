@@ -23,6 +23,7 @@ help = ->
     -d, --dedupe                 deduplicate modules (when multiple are specified)
     -e, --export <name>          export module as <name>
     -i, --include <module>       additional module to include, in <require as>:<path to module> format
+    -g, --global                 global require
     -m, --minify                 minify output
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
     -p, --prelude <file>         file to use as prelude
@@ -76,6 +77,8 @@ while opt = args.shift()
       opts.bare = true
     when '-d', '--dedupe'
       opts.dedupe = true
+    when '-g', '--global'
+      opts.globalRequire = true
     when '-x', '--exclude'
       opts.exclude.push args.shift()
     when '-e', '--export'
