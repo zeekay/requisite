@@ -1,6 +1,6 @@
 {
   "name": "requisite",
-  "version": "1.6.10",
+  "version": "1.7.0",
   "description": "A cosmic javascript bundler.",
   "homepage": "http://requisitejs.org",
   "repository": {
