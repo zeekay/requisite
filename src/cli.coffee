@@ -120,7 +120,10 @@ if opts.dedupe
     opts.exclude.push "^#{file.replace extname, ''}$"
 
 # Build exclude regex.
-opts.exclude = new RegExp opts.exclude.join '|'
+if opts.exclude.length > 0
+  opts.exclude = new RegExp opts.exclude.join '|'
+else
+  opts.exclude = null
 
 outputName = (requiredAs, opts) ->
     # Build output filename
