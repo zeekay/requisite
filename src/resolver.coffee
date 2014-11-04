@@ -68,6 +68,11 @@ module.exports = ->
 
     normalizedPath = normalizePath absolutePath, basePath
     requireAs      = normalizedPath.replace extension, ''
+                                   .replace /^node_modules\//, ''
+                                   .replace /\/index$/, ''
+
+    unless /^node_modules/.test normalizedPath
+      requireAs = './' + requireAs
 
     cache[resolveFrom+requiredAs] =
       absolutePath:   absolutePath
