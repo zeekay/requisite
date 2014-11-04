@@ -128,23 +128,23 @@ if opts.exclude.length > 0
 else
   opts.exclude = null
 
-outputName = (requiredAs, opts) ->
-    # Build output filename
-    filename = path.basename requiredAs
-    ext      = path.extname filename
-    extout   = path.extname opts.output
+outputName = (filename, output) ->
+  # Build output filename
+  filename = path.basename filename
+  ext      = path.extname filename
+  extout   = path.extname output
 
-    # Prevent duplicating extension
-    if ext == extout
-      filename = filename.replace ext, ''
+  # Prevent duplicating extension
+  if ext == extout
+    filename = filename.replace ext, ''
 
-    # Handle wildcard output filenames
-    opts.output.replace '{}', filename
+  # Handle wildcard output filenames
+  output.replace '{}', filename
+        .replace /\.\/\//, ''
 
 outputBundle = (bundle, opts) ->
   if opts.output?
-    output = outputName bundle.requiredAs, opts
-    fs.writeFileSync output, bundle.toString opts, 'utf8'
+    fs.writeFileSync (outputName opts.output, bundle.normalizedPath), bundle.toString opts, 'utf8'
   else
     console.log bundle.toString opts
 
@@ -175,7 +175,7 @@ bundleFile = (file, moduleCache = {}) ->
       if filename?
         console.log "#{formatDate()} - recompiling, #{filename} changed"
       else
-        console.log "#{formatDate()} - compiled #{opts.output}"
+        console.log "#{formatDate()} - compiled #{outputName opts.output, bundle.normalizedPath}"
       next bundle
 
 bundleFile opts.files.shift()
