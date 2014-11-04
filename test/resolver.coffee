@@ -18,7 +18,7 @@ tests =
       basePath:       entryBase
       extension:      '.coffee'
       normalizedPath: 'entry.coffee'
-      requireAs:      'entry'
+      requireAs:      './entry'
 
   # test relative required module
   relative:
@@ -32,7 +32,7 @@ tests =
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'relative.js'
-      requireAs:      'relative'
+      requireAs:      './relative'
       requiredAs:     './relative'
 
   # test uqualified require module
@@ -47,7 +47,7 @@ tests =
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'node_modules/unqualified/index.js'
-      requireAs:      'node_modules/unqualified/index'
+      requireAs:      'unqualified'
 
   # test a nested module
   nested:
@@ -61,7 +61,7 @@ tests =
       basePath:       entryBase
       extension:      '.js'
       normalizedPath: 'dir/nested.js'
-      requireAs:      'dir/nested'
+      requireAs:      './dir/nested'
 
 describe 'resolver', ->
   for name, test of tests
