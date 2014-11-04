@@ -124,7 +124,7 @@ opts.exclude = new RegExp opts.exclude.join '|'
 
 outputName = (requiredAs, opts) ->
     # Build output filename
-    filename = path.basename bundle.requiredAs
+    filename = path.basename requiredAs
     ext      = path.extname filename
     extout   = path.extname opts.output
 
