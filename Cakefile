@@ -1,9 +1,9 @@
 exec = require('shortcake').exec.interactive
 fs   = require 'fs'
 
-task 'build', 'compile src/*.coffee to lib/*.js', (done) ->
-  exec 'node_modules/.bin/coffee -bcm -o lib/ src/', ->
-    exec 'node_modules/.bin/coffee -bcm -o .test test/', done
+task 'build', 'compile src/*.coffee to lib/*.js', ->
+  exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
+  exec 'node_modules/.bin/coffee -bcm -o .test test/'
 
 task 'watch', 'watch for changes and recompile project', ->
   exec 'node_modules/.bin/coffee -bcmw -o lib/ src/'
