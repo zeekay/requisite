@@ -8,6 +8,7 @@ builtins        = require './builtins'
 extensions = ('.' + ext for ext of require('./compilers'))
 
 NODE_PATHS = (process.env.NODE_PATH ? '').split(':')
+NODE_PATHS.push process.cwd()
 
 # Simple wrapper around browser-resolve-sync to deal with oddities in it's API.
 resolve = (pkg, opts) ->
