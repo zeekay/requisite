@@ -3,7 +3,7 @@ fs           = require 'fs'
 path         = require 'path'
 postmortem   = require 'postmortem'
 requisite    = require '../lib'
-{formatDate} = require '../lib/utils'
+{clone, formatDate} = require '../lib/utils'
 
 error = (message) ->
   console.log message
@@ -58,7 +58,7 @@ opts =
   files:   []
   include: []
   minify:  false
-  output:  null
+  output:  []
   prelude: null
   strict:  false
   watch:   false
@@ -89,7 +89,7 @@ while opt = args.shift()
     when '-m', '--minify'
       opts.minify = true
     when '-o', '--output'
-      opts.output = args.shift()
+      opts.output.push args.shift()
     when '-p', '--prelude'
       opts.prelude = args.shift()
     when '--no-prelude'
@@ -109,11 +109,16 @@ while opt = args.shift()
 unless (opts.files.length or opts.preludeOnly)
   help()
 
-if opts.watch and not opts.output?
+if opts.watch and not opts.output.length
   error 'Output must be specified when using watch.'
 
-if opts.files.length > 1 and (opts.output?.indexOf '{}') == -1
-  error 'Output filenames overlap, perhaps you meant -o {}.js?'
+# check that we have distinct outputs
+if opts.files.length > 1 and (opts.output.indexOf '{}') == -1
+  seen = {}
+  for out in opts.output
+    if seen[out]?
+      error 'Output filenames overlap, perhaps you meant -o {}.js?'
+    seen[out] = true
 
 # If dedupe is chosen, prevent top level modules from being bundled into other
 # top level modules.
@@ -141,33 +146,32 @@ outputBundle = (bundle, opts) ->
     console.log bundle.toString opts
 
 bundleFile = (file, moduleCache = {}) ->
-  opts.entry       = file
-  opts.moduleCache = moduleCache
+  return unless file?
 
-  next = (bundle) ->
-    # Write bundle to stdout or output file
-    outputBundle bundle, opts
-
-    # If output deduped, only output prelude for first module, pass along moduleCache to each bundle.
-    opts.prelude = false if opts.dedupe
-    moduleCache  = if opts.dedupe then bundle.moduleCache else {}
-
-    # Handle next file.
-    bundleFile opts.files.shift(), moduleCache if opts.files.length
+  _opts = clone opts
+  _opts.entry       = file
+  _opts.moduleCache = moduleCache
+  _opts.output      = opts.output.shift()
+  _opts.prelude     = false if _opts.dedupe
 
   unless opts.watch
-    requisite.bundle opts, (err, bundle) ->
+    requisite.bundle _opts, (err, bundle) ->
       return postmortem.prettyPrint err if err?
 
-      next bundle
+      outputBundle bundle, _opts
+      moduleCache = if opts.dedupe then bundle.moduleCache else {}
+      bundleFile opts.files.shift(), moduleCache
   else
-    requisite.watch opts, (err, bundle, filename) ->
+    requisite.watch _opts, (err, bundle, filename) ->
       return postmortem.prettyPrint err if err?
 
       if filename?
         console.log "#{formatDate()} - recompiling, #{filename} changed"
       else
-        console.log "#{formatDate()} - compiled #{outputName bundle.normalizedPath, opts.output}"
-      next bundle
+        console.log "#{formatDate()} - compiled #{outputName bundle.normalizedPath, _opts.output}"
+
+      outputBundle bundle, _opts
+      moduleCache = if opts.dedupe then bundle.moduleCache else {}
+      bundleFile opts.files.shift(), moduleCache
 
 bundleFile opts.files.shift()
