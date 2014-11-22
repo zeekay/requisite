@@ -25,7 +25,7 @@ module.exports = (options, cb) ->
     watch = (dir) ->
       return if watched[dir]
 
-      vigil.watch dir, {recurse: false}, rebuildBundle
+      vigil.watch dir, {recurse: true}, rebuildBundle
 
     watch dir
 
