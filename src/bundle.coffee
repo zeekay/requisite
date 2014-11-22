@@ -19,18 +19,23 @@ module.exports = (opts = {}, cb = ->) ->
       opts.globalRequire = true
     return cb null, createWrapper opts
 
+  # Base paths
+  basePath      = opts.base ? opts.src
+  sourceMapRoot = basePath ? ('/' + path.dirname opts.entry)
+
   # Build module
   mod = new Module opts.entry,
-    bare:        opts.bare
-    basePath:    opts.base ? opts.src
-    exclude:     opts.exclude
-    export:      opts.export
-    include:     opts.include
-    moduleCache: opts.moduleCache
-    paths:       opts.paths ? []
-    sourceMap:   opts.sourceMap ? true
-    strict:      opts.strict
-    urlRoot:     opts.urlRoot
+    bare:          opts.bare
+    basePath:      basePath
+    exclude:       opts.exclude
+    export:        opts.export
+    include:       opts.include
+    moduleCache:   opts.moduleCache
+    paths:         opts.paths ? []
+    sourceMap:     opts.sourceMap ? true
+    sourceMapRoot: opts.sourceMapRoot ? sourceMapRoot
+    strict:        opts.strict
+    urlRoot:       opts.urlRoot
 
   mod.parse (err) ->
     return cb err if err?
