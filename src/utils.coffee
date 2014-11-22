@@ -1,7 +1,6 @@
 fs        = require 'fs'
 path      = require 'path'
 os        = require 'os'
-
 acorn     = require 'acorn'
 escodegen = require 'escodegen'
 
@@ -21,35 +20,56 @@ exports.clone = clone = (obj) ->
 
   return inst
 
-# generate string from ast, optionally minify
-exports.codegen = (ast, options = {}) ->
-  unless options.minify
-    options =
-      comment: yes
-      format:
-        indent:
-          style: '  '
-          base: 0
-        quotes: 'auto'
-        escapeless: yes
-        parentheses: no
-        compact: no
-        semicolons: no
-    escodegen.generate ast, options
-  else
-    minifier = options.minifier ? 'uglify'
-    minify = require './minify'
-    minify[minifier] ast, options
-
 # parse source into ast
-exports.parse = (source, options = {}) ->
+exports.parse = (source, opts = {}) ->
   comments = []
   tokens   = []
-  ast = acorn.parse source,
-    ranges:    true
-    onComment: comments
-    onToken:   tokens
+
+  _opts =
+    locations:  true
+    ranges:     true
+    onComment:  comments
+    onToken:    tokens
+    sourceFile: opts.filename
+
+  ast = acorn.parse source, _opts
   ast = escodegen.attachComments ast, comments, tokens
+
+# generate string from ast, optionally minify
+exports.codegen = (ast, opts = {}) ->
+  # Minified
+  if opts.minify
+    minifier = opts.minifier ? 'uglify'
+    minify = require './minify'
+    return minify[minifier] ast, opts
+
+  _opts =
+    comment: yes
+    format:
+      indent:
+        style: '  '
+        base: 0
+      quotes: 'auto'
+      escapeless: yes
+      parentheses: no
+      compact: no
+      semicolons: no
+
+  # No source map
+  unless opts.sourceMap
+    return escodegen.generate ast, _opts
+
+  # Source maps
+  _opts.sourceMap         = true
+  _opts.sourceMapWithCode = true
+  _opts.sourceMapRoot     = opts.sourceMapRoot ? "/"
+
+  output = escodegen.generate ast, _opts
+  code   = output.code
+  map    = output.map
+
+  convert = require 'convert-source-map'
+  code + convert.fromObject(map).toComment()
 
 # walk ast
 exports.walk = walk = (node, visitor) ->

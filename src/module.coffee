@@ -61,6 +61,7 @@ class Module
 
     # whether to generate sourceMap
     @enableSourceMap = opts.sourceMap
+    @sourceMapRoot   = opts.sourceMapRoot
 
   # resolve paths
   resolve: ->
@@ -86,8 +87,9 @@ class Module
 
         opts =
           source: source
-          filename: @normalizedPath
-          sourceMap: @enableSourceMap
+          filename:      @normalizedPath
+          sourceMap:     @enableSourceMap
+          sourceMapRoot: @sourceMapRoot
 
         # call compiler with a reference to this module
         compiler.call @,  opts, (err, source, sourceMap) =>
@@ -321,7 +323,9 @@ class Module
 
     toplevel.ast
 
-  toString: (opts) ->
+  toString: (opts = {}) ->
+    opts.sourceMap     ?= @enableSourceMap
+    opts.sourceMapRoot ?= @sourceMapRoot
     utils.codegen @bundle(), opts
 
 module.exports = Module
