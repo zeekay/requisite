@@ -14,6 +14,7 @@ development.
 - Lazy asset loading.
 - Resolves relative as well as npm modules.
 - Command line tool for bundling simple projects.
+- Good Source map support.
 
 ## Install
 ```bash
