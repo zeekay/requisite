@@ -1,6 +1,9 @@
-fs   = require 'fs'
-path = require 'path'
-os   = require 'os'
+fs        = require 'fs'
+path      = require 'path'
+os        = require 'os'
+
+acorn     = require 'acorn'
+escodegen = require 'escodegen'
 
 # Pretty print Date object.
 exports.formatDate = (date = new Date) ->
@@ -32,7 +35,7 @@ exports.codegen = (ast, options = {}) ->
         parentheses: no
         compact: no
         semicolons: no
-    require('escodegen').generate ast, options
+    escodegen.generate ast, options
   else
     minifier = options.minifier ? 'uglify'
     minify = require './minify'
@@ -40,13 +43,13 @@ exports.codegen = (ast, options = {}) ->
 
 # parse source into ast
 exports.parse = (source, options = {}) ->
-  parser = require 'esprima'
-  ast = parser.parse source,
-    comment: true
-    range: true
-    raw: true
-    tokens: true
-  ast = require('escodegen').attachComments ast, ast.comments, ast.tokens
+  comments = []
+  tokens   = []
+  ast = acorn.parse source,
+    ranges:    true
+    onComment: comments
+    onToken:   tokens
+  ast = escodegen.attachComments ast, comments, tokens
 
 # walk ast
 exports.walk = walk = (node, visitor) ->
