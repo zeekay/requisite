@@ -25,11 +25,12 @@ help = ->
     -i, --include <module>       additional module to include, in <require as>:<path to module> format
     -g, --global                 global require
     -m, --minify                 minify output
-    -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
+    -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder
     -p, --prelude <file>         file to use as prelude
         --no-prelude             exclude prelude from bundle
         --prelude-only           only output prelude
-    -s, --strict                 add "use strict" to each bundled module.
+    -s, --strict                 add "use strict" to each bundled module
+        --strip-debug            strip `alert`, `console`, `debugger` statements
     -w, --watch                  write bundle to file and and recompile on file changes
     -x, --exclude <regex>        regex to exclude modules from being parsed
         --base                   path all requires should be relative to
@@ -49,19 +50,20 @@ version = ->
   process.exit 0
 
 opts =
-  async:   false
-  bare:    false
-  base:    null
-  dedupe:  false
-  exclude: []
-  export:  null
-  files:   []
-  include: []
-  minify:  false
-  output:  []
-  prelude: null
-  strict:  false
-  watch:   false
+  async:      false
+  bare:       false
+  base:       null
+  dedupe:     false
+  exclude:    []
+  export:     null
+  files:      []
+  include:    []
+  minify:     false
+  output:     []
+  prelude:    null
+  strict:     false
+  stripDebug: false
+  watch:      false
 
 args = process.argv.slice 2
 
@@ -98,6 +100,8 @@ while opt = args.shift()
       opts.preludeOnly = true
     when '-s', '--strict'
       opts.strict = true
+    when '--strip-debug'
+      opts.stripDebug = true
     when '-w', '--watch'
       opts.watch = true
     when '--base'
