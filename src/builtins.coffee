@@ -35,7 +35,7 @@ builtins =
   timers:               'timers-browserify/main.js'
   tls:                  null
   tty:                  'tty-browserify/index.js'
-  url:                  'url/'
+  url:                  'url/url.js'
   util:                 'util/util.js'
   vm:                   'vm-browserify/index.js'
   zlib:                 'browserify-zlib/src/index.js'
