@@ -25,7 +25,7 @@ builtins =
   net:                  null
   os:                   'os-browserify/browser.js'
   path:                 'path-browserify/index.js'
-  punycode:             'punycode/index.js'
+  punycode:             'punycode/punycode.js'
   querystring:          'querystring-es3/index.js'
   readline:             null
   repl:                 null
