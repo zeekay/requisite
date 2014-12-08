@@ -29,6 +29,7 @@ builtins =
   querystring:          'querystring-es3/index.js'
   readline:             null
   repl:                 null
+  request:              'browser-request/index.js'
   stream:               'stream-browserify/index.js'
   string_decoder:       'string_decoder/index.js'
   sys:                  'util/util.js'
