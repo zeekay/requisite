@@ -26,14 +26,18 @@ exports.parse = (source, opts = {}) ->
   tokens   = []
 
   _opts =
-    locations:  true
+    # for preserving comments
     ranges:     true
     onComment:  comments
     onToken:    tokens
+
+    # for source maps
+    locations:  true
     sourceFile: opts.filename
 
   ast = acorn.parse source, _opts
-  ast = escodegen.attachComments ast, comments, tokens
+  escodegen.attachComments ast, comments, tokens
+  ast
 
 # generate string from ast, optionally minify
 exports.codegen = (ast, opts = {}) ->
