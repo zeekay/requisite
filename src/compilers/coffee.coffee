@@ -55,9 +55,6 @@ module.exports = (options, callback) ->
       err.formattedMessage = formatErrorMessage options.source, options.filename, err
     return callback err
 
-  if res.v3SourceMap?
-    {js, v3SourceMap} = res
-  else
-    [js, v3SourceMap] = [res, undefined]
+  {js, v3SourceMap} = res
 
   callback null, js, v3SourceMap

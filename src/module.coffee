@@ -1,6 +1,8 @@
-fs         = require 'fs'
-path       = require 'path'
-stripDebug = require 'strip-debug'
+fs             = require 'fs'
+path           = require 'path'
+
+stripDebug     = require 'strip-debug'
+sourceMapToAst = require 'sourcemap-to-ast'
 
 compilers  = require './compilers'
 resolver   = require './resolver'
@@ -116,6 +118,9 @@ class Module
 
       # parse source to AST
       @ast = utils.parse @source, filename: @normalizedPath
+
+      if @sourceMap?
+        sourceMapToAst @ast, @sourceMap
 
       # transform AST to use root-relative paths
       try
