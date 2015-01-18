@@ -66,7 +66,7 @@ exports.codegen = (ast, opts = {}) ->
   # Source maps
   _opts.sourceMap         = true
   _opts.sourceMapWithCode = true
-  _opts.sourceMapRoot     = opts.sourceMapRoot ? "/"
+  _opts.sourceMapRoot     = opts.sourceMapRoot ? ""
 
   output = escodegen.generate ast, _opts
   code   = output.code
