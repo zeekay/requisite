@@ -8,7 +8,7 @@ and comes with a [connect][connect]/[express][express] middleware for rapid
 development.
 
 ## Features
-- CommonJS modules in the browser!
+- Use CommonJS modules in the browser.
 - Customizable compiler/preprocessors.
 - Simple API for programmatic usage.
 - Lazy asset loading.
