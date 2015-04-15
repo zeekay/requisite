@@ -28,7 +28,7 @@ shouldContainModules = (text, files, done) ->
 
 describe 'middleware', ->
   it 'should serve entry module', (done) ->
-    get '/js/entry.js', (res) ->
+    get '/js/entry.js', (err, res) ->
       res.ok.should.be.ok
 
       shouldContainModules res.text, [
@@ -37,7 +37,7 @@ describe 'middleware', ->
       ], done
 
   it.skip 'should serve async modules', (done) ->
-    get '/js/async-lambda.js', (res) ->
+    get '/js/async-lambda.js', (err, res) ->
       res.ok.should.be.ok
 
       shouldContainModules res.text, [
