@@ -14,10 +14,11 @@ module.exports = (opts = {}) ->
 
     # was a map requested?
     isMap = /\.map$/.test path
-    console.log 'ismap?', isMap
 
     # strip extension from module path
-    path = url.pathname.replace /\.\w+$/, ''
+    path = path.replace /\.\w+$/, ''
+    if isMap
+      path = path.replace /\.\w+$/, ''
 
     unless cached?
       # set urlRoot so async requires work
@@ -53,13 +54,7 @@ module.exports = (opts = {}) ->
         return next()
 
       res.writeHead 200
-
-      if isMap
-        fs.readFile mod.absolutePath, 'utf8', (err, data) ->
-          res.end 'utf8'
-        return
-
-      res.end mod.toString(), 'utf8'
+      res.end (mod.toString sourceMapOnly: isMap), 'utf8'
 
   # Wrap this is a named function to make debugging easier.
   `function requisite(req, res, next) { return middleware(req, res, next); };`
