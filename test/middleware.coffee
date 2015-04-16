@@ -3,6 +3,7 @@ express = require 'express'
 fs      = require 'fs'
 request = require 'superagent'
 should  = require('chai').should()
+require('chai').config.includeStack = true
 
 requisite = require '../'
 
