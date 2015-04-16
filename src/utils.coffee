@@ -1,8 +1,9 @@
-fs        = require 'fs'
-path      = require 'path'
-os        = require 'os'
 acorn     = require 'acorn'
+convert   = require 'convert-source-map'
 escodegen = require 'escodegen'
+fs        = require 'fs'
+os        = require 'os'
+path      = require 'path'
 
 # Pretty print Date object.
 exports.formatDate = (date = new Date) ->
@@ -72,8 +73,10 @@ exports.codegen = (ast, opts = {}) ->
   code   = output.code
   map    = output.map
 
-  convert = require 'convert-source-map'
-  code + convert.fromObject(map).toComment()
+  if opts.onlySourceMap
+    convert.fromObject(map).toJSON()
+  else
+    code + convert.fromObject(map).toComment()
 
 # walk ast
 exports.walk = walk = (node, visitor) ->

@@ -5,5 +5,7 @@ module.exports =
   jade:     require './jade'
   js:       require './js'
   json:     require './json'
+  map:      require './map'
   markdown: require './markdown'
   md:       require './markdown'
+  mkd:      require './markdown'
