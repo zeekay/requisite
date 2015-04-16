@@ -1,5 +1,6 @@
+fs = require 'fs'
+url = require 'url'
 {dirname, join} = require 'path'
-{parse} = require 'url'
 
 bundle = require './bundle'
 
@@ -9,7 +10,11 @@ module.exports = (opts = {}) ->
   cached = null
 
   middleware = (req, res, next) ->
-    url = parse req.url, true, true
+    path = url.parse(req.url, true, true).pathname
+
+    # was a map requested?
+    isMap = /\.map$/.test path
+    console.log 'ismap?', isMap
 
     # strip extension from module path
     path = url.pathname.replace /\.\w+$/, ''
@@ -48,6 +53,12 @@ module.exports = (opts = {}) ->
         return next()
 
       res.writeHead 200
+
+      if isMap
+        fs.readFile mod.absolutePath, 'utf8', (err, data) ->
+          res.end 'utf8'
+        return
+
       res.end mod.toString(), 'utf8'
 
   # Wrap this is a named function to make debugging easier.
