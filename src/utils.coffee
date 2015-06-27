@@ -44,10 +44,7 @@ exports.parse = (source, opts = {}) ->
 exports.codegen = (ast, opts = {}) ->
   # Minified
   if opts.minify
-    if typeof opts.minify == 'string'
-      minifier = opts.minify
-    else
-      minifier = opts.minifier ? 'esmangle'
+    minifier = opts.minifier ? 'esmangle'
     minify = require './minify'
     return minify[minifier] ast, opts
 

@@ -25,6 +25,7 @@ help = ->
     -i, --include <module>       additional module to include, in <require as>:<path to module> format
     -g, --global                 global require
     -m, --minify                 minify output
+        --minifier               minifier to use
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder
     -p, --prelude <file>         file to use as prelude
         --no-prelude             exclude prelude from bundle
@@ -92,6 +93,8 @@ while opt = args.shift()
       opts.include[requireAs] = absolutePath
     when '-m', '--minify'
       opts.minify = true
+    when '--minifier'
+      opts.minifier = args.shift
     when '-o', '--output'
       opts.output.push args.shift()
     when '-p', '--prelude'
