@@ -57,10 +57,10 @@ exports.codegen = (ast, opts = {}) ->
       indent:
         style: '  '
         base: 0
-      quotes: 'auto'
+      compact: no
       escapeless: yes
       parentheses: no
-      compact: no
+      quotes: 'auto'
       semicolons: no
 
   # No source map
