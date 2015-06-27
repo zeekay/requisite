@@ -28,6 +28,7 @@ help = ->
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder
     -p, --prelude <file>         file to use as prelude
         --no-prelude             exclude prelude from bundle
+        --no-source-map          disable source maps
         --prelude-only           only output prelude
     -s, --strict                 add "use strict" to each bundled module
         --strip-debug            strip `alert`, `console`, `debugger` statements
@@ -61,6 +62,7 @@ opts =
   minify:     false
   output:     []
   prelude:    null
+  sourceMap:  true
   strict:     false
   stripDebug: false
   watch:      false
@@ -96,6 +98,8 @@ while opt = args.shift()
       opts.prelude = args.shift()
     when '--no-prelude'
       opts.prelude = false
+    when '--no-source-map'
+      opts.sourceMap = false
     when '--prelude-only'
       opts.preludeOnly = true
     when '-s', '--strict'
