@@ -7,7 +7,7 @@ module.exports =
     mangled   = esmangle.mangle optimized,
       destructive: yes
 
-    escodegen.generate compressed,
+    escodegen.generate mangled,
       comment: no
       format:
         indent:
