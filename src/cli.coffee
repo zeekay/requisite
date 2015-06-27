@@ -94,7 +94,7 @@ while opt = args.shift()
     when '-m', '--minify'
       opts.minify = true
     when '--minifier'
-      opts.minifier = args.shift
+      opts.minifier = args.shift()
     when '-o', '--output'
       opts.output.push args.shift()
     when '-p', '--prelude'
