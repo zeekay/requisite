@@ -3,7 +3,8 @@ module.exports =
     esmangle  = require 'esmangle'
     escodegen = require 'escodegen'
 
-    compressed = esmangle.mangle (esmangle.optimize ast),
+    optimized = esmangle.optimize ast, null, destructive: yes
+    mangled   = esmangle.mangle optimized,
       destructive: yes
 
     escodegen.generate compressed,
@@ -12,12 +13,12 @@ module.exports =
         indent:
           style: ''
           base: 0
-        renumber: yes
-        hexadecimal: yes
-        quotes: 'auto'
-        escapeless: yes
         compact: yes
+        escapeless: yes
+        hexadecimal: yes
         parentheses: no
+        quotes: 'auto'
+        renumber: yes
         semicolons: no
 
   uglify: (ast) ->
