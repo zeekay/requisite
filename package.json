@@ -76,11 +76,11 @@
     "strip-debug": "^1.0.1",
     "timers-browserify": "^1.4.0",
     "tty-browserify": "0.0.0",
+    "uglify-js": "^2.4.23",
     "url": "^0.10.3",
     "util": "^0.10.3",
     "vigil": "^0.3.8",
-    "vm-browserify": "0.0.4",
-    "uglify-js": "~2.4.23"
+    "vm-browserify": "0.0.4"
   },
   "devDependencies": {
     "async": "^0.9.0",
@@ -92,7 +92,6 @@
     "jade": "^1.9.2",
     "mocha": "^2.1.0",
     "shortcake": "^0.2.0",
-    "superagent": "^1.2.0",
-    "uglify-js": "~2.4.23"
+    "superagent": "^1.2.0"
   }
 }
