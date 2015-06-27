@@ -92,6 +92,6 @@
     "mocha": "^2.1.0",
     "shortcake": "^0.2.0",
     "superagent": "^1.2.0",
-    "uglify-js": "~2.4.3"
+    "uglify-js": "~2.4.23"
   }
 }
