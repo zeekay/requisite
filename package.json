@@ -85,11 +85,13 @@
     "brief": "^1.1.0",
     "chai": "^2.2.0",
     "coffee-script": "^1.9.2",
+    "esmangle": "^1.0.1",
     "executive": "^0.4.7",
     "express": "~3.1.0",
     "jade": "^1.9.2",
     "mocha": "^2.1.0",
     "shortcake": "^0.2.0",
-    "superagent": "^1.2.0"
+    "superagent": "^1.2.0",
+    "uglify-js": "^2.4.23"
   }
 }
