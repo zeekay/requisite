@@ -40,11 +40,22 @@ exports.parse = (source, opts = {}) ->
   escodegen.attachComments ast, comments, tokens
   ast
 
+guessMinifier = ->
+  try
+    require.resolve 'uglify'
+    return 'uglify'
+  catch err
+    try
+      require.resolve 'esmangle'
+      return 'esmangle'
+    catch err
+      throw new Error('Unable to determine minifier to use')
+
 # generate string from ast, optionally minify
 exports.codegen = (ast, opts = {}) ->
   # Minified
   if opts.minify
-    minifier = opts.minifier ? 'esmangle'
+    minifier = opts.minifier ? guessMinifier()
     minify = require './minify'
     return minify[minifier] ast, opts
 
