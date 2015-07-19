@@ -156,32 +156,37 @@ class Module
   # transform require expressions in AST to use root-relative paths
   transform: ->
     dependencies = []
-    @walkAst (node) =>
-      if node.type == 'CallExpression' and node.callee.name == 'require'
-        [required, callback] = node.arguments
+    try
+      @walkAst (node) =>
+        if node.type == 'CallExpression' and node.callee.name == 'require'
+          [required, callback] = node.arguments
 
-        if required.type == 'Literal' and typeof required.value is 'string'
-          # skip excluded modules
-          if @exclude?.test required.value
-            return true
+          if required.type == 'Literal' and typeof required.value is 'string'
+            # skip excluded modules
+            if @exclude?.test required.value
+              return true
 
-          mod = @resolver required.value,
-            basePath:   @basePath
-            extensions: @extensions
-            requiredAs: required.value
-            requiredBy: @absolutePath
+            mod = @resolver required.value,
+              basePath:   @basePath
+              extensions: @extensions
+              requiredAs: required.value
+              requiredBy: @absolutePath
 
-          # is async?
-          if mod.async = callback?
-            required.value = path.join @urlRoot, mod.requireAs
+            # is async?
+            if mod.async = callback?
+              required.value = path.join @urlRoot, mod.requireAs
 
-          else
-            # transform node
-            required.value = mod.requireAs
+            else
+              # transform node
+              required.value = mod.requireAs
 
-          # add to list of dependencies
-          dependencies.push mod
-        return true
+            # add to list of dependencies
+            dependencies.push mod
+          return true
+    catch err
+      # Warn if unable to resolve all dependencies, most likely this is a
+      # previously bundled js file...
+      console.warn err.toString().replace /^Error:/, 'Warning:'
     dependencies
 
   # traverse dependencies recursively, parsing them as well
