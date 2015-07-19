@@ -42,7 +42,7 @@ exports.parse = (source, opts = {}) ->
 
 guessMinifier = ->
   try
-    return 'uglify-js' if require.resolve 'uglify-js'
+    return 'uglifyjs' if require.resolve 'uglify-js'
   catch err
 
   try
@@ -57,6 +57,8 @@ exports.codegen = (ast, opts = {}) ->
   # Minified
   if opts.minify
     minifier = opts.minifier ? guessMinifier()
+    if /uglify/.test minifier
+      minifier = 'uglifyjs'
     minify = require './minify'
     return minify[minifier] ast, opts
 
