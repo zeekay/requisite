@@ -26,5 +26,5 @@ describe 'minify', ->
       , (err, bundle) ->
         bundle.toString
           minify: true
-          minifier: 'uglify'
+          minifier: 'uglify-js'
         done()

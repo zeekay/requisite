@@ -21,7 +21,7 @@ module.exports =
         renumber: yes
         semicolons: no
 
-  'uglify-js': (ast) ->
+  uglifyjs: (ast) ->
     uglify = require 'uglify-js'
     uglified = uglify.AST_Node.from_mozilla_ast ast
     uglified.figure_out_scope()
