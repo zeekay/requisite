@@ -42,14 +42,15 @@ exports.parse = (source, opts = {}) ->
 
 guessMinifier = ->
   try
-    require.resolve 'uglify'
-    return 'uglify'
+    return 'uglify-js' if require.resolve 'uglify-js'
   catch err
-    try
-      require.resolve 'esmangle'
-      return 'esmangle'
-    catch err
-      throw new Error('Unable to determine minifier to use')
+
+  try
+    require.resolve 'esmangle'
+  catch err
+    throw new Error('Unable to determine minifier to use')
+
+  'esmangle'
 
 # generate string from ast, optionally minify
 exports.codegen = (ast, opts = {}) ->
