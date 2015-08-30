@@ -10,6 +10,8 @@ extensions = ('.' + ext for ext of require('./compilers'))
 NODE_PATHS = (process.env.NODE_PATH ? '').split(':')
 NODE_PATHS.push process.cwd()
 
+cwd = process.cwd()
+
 # Simple wrapper around browser-resolve-sync to deal with oddities in it's API.
 resolve = (pkg, opts) ->
   try
@@ -68,6 +70,7 @@ module.exports = ->
     extension = path.extname absolutePath
 
     normalizedPath = normalizePath absolutePath, basePath
+    relativePath   = normalizePath absolutePath, cwd
     requireAs      = normalizedPath.replace extension, ''
                                    .replace /^node_modules\//, ''
                                    .replace /\/index$/, ''
@@ -80,6 +83,7 @@ module.exports = ->
       basePath:       basePath
       extension:      extension
       normalizedPath: normalizedPath
+      relativePath:   relativePath
       requireAs:      requireAs
       requiredAs:     requiredAs
       requiredBy:     requiredBy

@@ -52,6 +52,7 @@ class Module
     @absolutePath   = opts.absolutePath
     @basePath       = opts.basePath
     @normalizedPath = opts.normalizedPath
+    @relativePath   = opts.relativePath
     @requireAs      = opts.requireAs
 
     unless @absolutePath? and @normalizedPath?
@@ -269,12 +270,14 @@ class Module
     return @ast if @bare
 
     define = new wrapper.Define
-      strict:       @strict
-      absolutePath: @absolutePath
-      async:        @async
-      urlRoot:      @urlRoot
-      requireAs:    @requireAs
-      mtime:        @mtime
+      absolutePath:   @absolutePath
+      async:          @async
+      mtime:          @mtime
+      normalizedPath: @normalizedPath
+      relativePath:   @relativePath
+      requireAs:      @requireAs
+      strict:         @strict
+      urlRoot:        @urlRoot
 
     for node in @ast.body
       define.body.push node
