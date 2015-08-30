@@ -53,10 +53,12 @@ class Prelude extends Wrapper
 
 class Define extends Wrapper
   constructor: (opts = {}) ->
-    absolutePath = opts.absolutePath ? ''
-    requireAs    = opts.requireAs    ? ''
-    async        = opts.async        ? false
-    strict       = opts.strict       ? false
+    absolutePath   = opts.absolutePath ? ''
+    normalizedPath = opts.normalizedPath
+    relativePath   = opts.relativePath
+    requireAs      = opts.requireAs    ? ''
+    async          = opts.async        ? false
+    strict         = opts.strict       ? false
 
     if async
       defineType = 'async'
@@ -72,8 +74,10 @@ class Define extends Wrapper
     # deal with escaping weirdness
     requireAs = requireAs.replace /\\/g, '\\\\'
 
+    sourcePath = relativePath ? normalizedPath ? absolutePath
+
     @ast = utils.parse """
-      // source: #{absolutePath}
+      // source: #{sourcePath}
       require.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename) {
         #{useStrict}
       });
