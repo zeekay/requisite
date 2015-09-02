@@ -84,7 +84,7 @@
     "async": "^0.9.0",
     "brief": "^1.1.0",
     "chai": "^2.2.0",
-    "coffee-script": "^1.9.2",
+    "coffee-script": "^1.9.3",
     "esmangle": "^1.0.1",
     "executive": "^0.4.7",
     "express": "~3.1.0",
