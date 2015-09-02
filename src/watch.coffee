@@ -5,15 +5,17 @@ bundle = require './bundle'
 
 
 module.exports = (options, cb) ->
+  watched = {}
+
   bundle options, (err, _bundle) ->
     return cb err if err?
     cb null, _bundle
 
     dir = path.dirname _bundle.absolutePath
-    watched = {}
 
     # rebuild bundle if module has changed
     rebuildBundle = (filename, stats) ->
+      console.log 'must rebuild all the things'
       requireAs = filename.replace /\.\w+$/, ''
       unless (mod = _bundle.find requireAs)? and mod.absolutePath == path.join dir, filename
         return
@@ -24,7 +26,7 @@ module.exports = (options, cb) ->
 
     watch = (dir) ->
       return if watched[dir]
-
+      watched[dir] = true
       vigil.watch dir, {recurse: true}, rebuildBundle
 
     watch dir
