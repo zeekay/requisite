@@ -15,9 +15,14 @@ module.exports = (options, cb) ->
 
     # rebuild bundle if module has changed
     rebuildBundle = (filename, stats) ->
-      console.log 'must rebuild all the things'
-      requireAs = filename.replace /\.\w+$/, ''
-      unless (mod = _bundle.find requireAs)? and mod.absolutePath == path.join dir, filename
+      absPath = path.resolve (path.join dir, filename)
+
+      # Try to be too smart
+      mod = _bundle.find (mod) ->
+        return absPath == mod.absolutePath
+
+      unless mod?
+        console.warn filename, 'not found in bundle'
         return
 
       _bundle.parse {deep: true}, (err) ->
