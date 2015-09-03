@@ -68,7 +68,7 @@ bundled for the client.
 ## Usage
 ### CLI
 ```bash
-$ bin/requisite --help
+› requisite
 
 Usage: requisite [options] [files]
 
@@ -76,19 +76,32 @@ Options:
 
   -h, --help                   display this help
   -v, --version                display version
+  -a, --async                  prelude should support async requires
   -b, --bare                   compile without a top-level function wrapper
   -d, --dedupe                 deduplicate modules (when multiple are specified)
   -e, --export <name>          export module as <name>
-  -i, --include [module, ...]  additional modules to include, in <require as>:<path to module> format
+  -i, --include <module>       additional module to include, in <require as>:<path to module> format
+  -g, --global                 global require
   -m, --minify                 minify output
-  -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder.
+      --minifier               minifier to use
+  -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder
   -p, --prelude <file>         file to use as prelude
       --no-prelude             exclude prelude from bundle
+      --no-source-map          disable source maps
       --prelude-only           only output prelude
-  -s, --strict                 add "use strict" to each bundled module.
+  -s, --strict                 add "use strict" to each bundled module
+      --strip-debug            strip `alert`, `console`, `debugger` statements
   -w, --watch                  write bundle to file and and recompile on file changes
   -x, --exclude <regex>        regex to exclude modules from being parsed
+      --base                   path all requires should be relative to
 
+Examples:
+
+  # bundle javascript file and all it's dependencies
+  $ requisite module.js -o bundle.js
+
+  # bundle several modules, appending .bundle.js to output
+  $ requisite *.js -o {}.bundle.js
 ```
 
 #### Examples
