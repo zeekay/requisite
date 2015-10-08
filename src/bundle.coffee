@@ -27,6 +27,7 @@ module.exports = (opts = {}, cb = ->) ->
   mod = new Module opts.entry,
     bare:          opts.bare
     basePath:      basePath
+    compilers:     opts.compilers
     exclude:       opts.exclude
     export:        opts.export
     include:       opts.include
