@@ -24,8 +24,11 @@ class Module
     @resolver     = opts.resolver ? resolver()
 
     # compiler/extension opts
-    @compilers    = opts.compilers ? compilers
-    @extensions   = ('.' + ext for ext of compilers)
+    @compilers = compilers
+    for k,v of opts.compilers
+      @compilers[k] = v
+
+    @extensions = ('.' + ext for ext of @compilers)
 
     # async, whether or not to include in bundled modules
     @async        = opts.async ? false
