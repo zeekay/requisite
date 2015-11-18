@@ -9,18 +9,6 @@ path      = require 'path'
 exports.formatDate = (date = new Date) ->
   (/\d{2}:\d{2}:\d{2}/.exec date)[0]
 
-# clone ast
-exports.clone = clone = (obj) ->
-  if not obj? or typeof obj isnt 'object'
-    return obj
-
-  inst = new obj.constructor()
-
-  for key of obj
-    inst[key] = clone obj[key]
-
-  return inst
-
 # parse source into ast
 exports.parse = (source, opts = {}) ->
   comments = []

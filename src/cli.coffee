@@ -3,7 +3,8 @@ fs           = require 'fs'
 path         = require 'path'
 postmortem   = require 'postmortem'
 requisite    = require '../lib'
-{clone, formatDate} = require '../lib/utils'
+{formatDate} = require '../lib/utils'
+clone        = require 'clone'
 
 error = (message) ->
   console.log message
