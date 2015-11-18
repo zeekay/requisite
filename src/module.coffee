@@ -205,9 +205,10 @@ class Module
 
     dep = dependencies.shift()
 
-    # if excluced module, just continue
-    if @exclude?.test dep.requireAs
-      return @traverse dependencies, opts, callback
+    # TODO: figure out if this is needed
+    # if @exclude?.test dep.requireAs
+    #   # if excluced module, just continue
+    #   return @traverse dependencies, opts, callback
 
     # already seen this module
     if @dependencies[dep.requireAs]?
