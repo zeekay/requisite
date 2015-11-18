@@ -1,4 +1,4 @@
-bresolve = require 'browser-resolve-sync'
+bresolve = (require 'browser-resolve').sync
 os       = require 'os'
 path     = require 'path'
 
