@@ -3,9 +3,8 @@ module.exports =
     esmangle  = require 'esmangle'
     escodegen = require 'escodegen'
 
-    optimized = esmangle.optimize ast, null, destructive: yes
-    mangled   = esmangle.mangle optimized,
-      destructive: yes
+    optimized = esmangle.optimize ast, null
+    mangled   = esmangle.mangle optimized
 
     escodegen.generate mangled,
       comment: no
@@ -13,13 +12,13 @@ module.exports =
         indent:
           style: ''
           base: 0
-        compact: yes
-        escapeless: yes
-        hexadecimal: yes
-        parentheses: no
-        quotes: 'auto'
-        renumber: yes
-        semicolons: no
+        compact:     true
+        escapeless:  true
+        hexadecimal: true
+        parentheses: false
+        quotes:      'auto'
+        renumber:    true
+        semicolons:  false
 
   uglifyjs: (ast) ->
     uglify = require 'uglify-js'
