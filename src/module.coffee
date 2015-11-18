@@ -1,6 +1,5 @@
 fs             = require 'fs'
 path           = require 'path'
-
 stripDebug     = require 'strip-debug'
 sourceMapToAst = require 'sourcemap-to-ast'
 
