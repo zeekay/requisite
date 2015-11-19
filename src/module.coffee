@@ -36,7 +36,7 @@ class Module
     @include = opts.include
 
     # modules only to be included from provided path
-    if opts.resolveAs?
+    if (opts.resolveAs ? opts.resolve)?
       @include ?= {}
       exclude   = []
 
