@@ -24,15 +24,16 @@ module.exports = (opts = {}, cb = ->) ->
   basePath      = opts.base ? opts.src
   sourceMapRoot = basePath ? ('/' + path.dirname opts.entry)
 
-  # Make sure we have a regular expression
+  # Make sure we have sane exclude, include, resolveAs to pass to modules
   exclude   = toRegex opts.exclude
-  include   = null
-  resolveAs = null
+  include   = opts.include   ? {}
+  resolveAs = opts.resolveAs ? opts.resolve ? {}
 
-  if (Object.keys opts.include ? {}).length
-    include   = opts.include
-  if (Object.keys (opts.resolveAs ? opts.resolve ? {})).length
-    resolveAs = opts.resolveAs
+  # Do not pass empty objects
+  unless (Object.keys include).length
+    include = null
+  unless (Object.keys resolveAs).length
+    resolveAs = null
 
   # Build module
   mod = new Module opts.entry,
