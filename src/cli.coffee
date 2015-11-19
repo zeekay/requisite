@@ -24,7 +24,7 @@ help = ->
     -b, --bare                   compile without a top-level function wrapper
     -d, --dedupe                 deduplicate modules (when multiple are specified)
     -e, --export <name>          export module as <name>
-    -i, --include <module>       additional module to include, in <require as>:<path to module> format
+    -i, --include <module:path>  force inclusion of module found at path
     -g, --global                 global require
     -m, --minify                 minify output
         --minifier               minifier to use
@@ -33,10 +33,11 @@ help = ->
         --no-prelude             exclude prelude from bundle
         --no-source-map          disable source maps
         --prelude-only           only output prelude
+    -r, --resolve <module:path>  do not automatically resolve module, use provided path
     -s, --strict                 add "use strict" to each bundled module
         --strip-debug            strip `alert`, `console`, `debugger` statements
     -w, --watch                  write bundle to file and and recompile on file changes
-    -x, --exclude <regex>        regex to exclude modules from being parsed
+    -x, --exclude <glob|regex>   exclude modules matching glob or regex from being automatically parsed
         --base                   path all requires should be relative to
 
   Examples:
@@ -65,6 +66,7 @@ opts =
   minify:     false
   output:     []
   prelude:    null
+  resolve:    []
   sourceMap:  true
   strict:     false
   stripDebug: false
@@ -107,6 +109,9 @@ while opt = args.shift()
       opts.sourceMap = false
     when '--prelude-only'
       opts.preludeOnly = true
+    when '-r', '--resolve'
+      [requireAs, absolutePath] = args.shift().split ':'
+      opts.resolve[requireAs] = absolutePath
     when '-s', '--strict'
       opts.strict = true
     when '--strip-debug'
