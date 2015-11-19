@@ -7,7 +7,6 @@ resolver   = require './resolver'
 utils      = require './utils'
 wrapper    = require './wrapper'
 
-
 class Module
   constructor: (requiredAs, opts = {}) ->
     # cache for modules
@@ -19,6 +18,7 @@ class Module
     # absolute path to module requiring us
     @requiredBy   = opts.requiredBy
 
+    @resolved     = opts.resolve  ? opts.resolved
     @resolver     = opts.resolver ? resolver()
 
     # compiler/extension opts
@@ -68,6 +68,19 @@ class Module
     # whether to generate sourceMap
     @enableSourceMap = opts.sourceMap
     @sourceMapRoot   = opts.sourceMapRoot
+
+  findMod: (requireAs, modulePath) ->
+    mod = @resolver modulePath,
+      paths:      @paths
+      basePath:   @basePath
+      extensions: @extensions
+      requiredAs: requireAs
+
+    mod.requireAs  = requireAs
+    mod.basePath   = @basePath
+    mod.requiredBy = @absolutePath
+
+    mod
 
   # resolve paths
   resolve: ->
@@ -137,18 +150,13 @@ class Module
 
       # force include dependencies if requested
       if @include?
-        for k, v of @include
-          mod = @resolver v,
-            paths:      @paths
-            basePath:   @basePath
-            extensions: @extensions
-            requiredAs: k
+        for k,v of @include
+          mod = @findMod k, v
+          dependencies.unshift mod
 
-          mod.requireAs  = k
-          mod.basePath   = @basePath
-          mod.requiredBy = @absolutePath
-
-          # add to list of dependencies
+      if @resolved?
+        for k,v of @resolved
+          mod = @findMod k, v
           dependencies.unshift mod
 
       # parse dependencies into fully-fledged modules
