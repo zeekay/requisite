@@ -5,24 +5,9 @@ path      = require 'path'
 acorn     = require 'acorn'
 convert   = require 'convert-source-map'
 escodegen = require 'escodegen'
-isRegex   = require 'is-regex'
-isString  = require 'is-string'
 
 {SourceMapConsumer} = require 'source-map'
 {traverse}          = require 'estraverse'
-
-
-exports.toRegex = (r) ->
-  return r if isRegex r
-
-  if isString r
-    return new RegExp "^#{r}"
-
-  if Array.isArray r
-    return new RegExp r '|'
-
-  throw new Error 'Unable to create regex from ' + r
-
 
 # Pretty print Date object.
 exports.formatDate = (date = new Date) ->
