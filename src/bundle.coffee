@@ -37,7 +37,7 @@ module.exports = (opts = {}, cb = ->) ->
     include:       opts.include
     moduleCache:   opts.moduleCache
     paths:         opts.paths ? []
-    resolve:       opts.resolve
+    resolveAs:     opts.resolveAs ? opts.resolve ? opts.resolved
     sourceMap:     opts.sourceMap ? true
     sourceMapRoot: opts.sourceMapRoot ? sourceMapRoot
     strict:        opts.strict

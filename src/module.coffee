@@ -18,7 +18,6 @@ class Module
     # absolute path to module requiring us
     @requiredBy   = opts.requiredBy
 
-    @resolved     = opts.resolve  ? opts.resolved
     @resolver     = opts.resolver ? resolver()
 
     # compiler/extension opts
@@ -30,8 +29,13 @@ class Module
 
     # async, whether or not to include in bundled modules
     @async        = opts.async ? false
+
+    # excluded modules, force included modules, and expliclity mapped modules
     @exclude      = opts.exclude
     @include      = opts.include
+    @resolveAs    = opts.resolveAs ? opts.resolve ? opts.resolved
+
+    # paths to search for modules
     @paths        = opts.paths
 
     # whether to wrap module
@@ -154,8 +158,8 @@ class Module
           mod = @findMod k, v
           dependencies.unshift mod
 
-      if @resolved?
-        for k,v of @resolved
+      if @resolveAs?
+        for k,v of @resolveAs
           mod = @findMod k, v
           dependencies.unshift mod
 
