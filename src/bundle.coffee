@@ -25,7 +25,14 @@ module.exports = (opts = {}, cb = ->) ->
   sourceMapRoot = basePath ? ('/' + path.dirname opts.entry)
 
   # Make sure we have a regular expression
-  exclude = toRegex opts.exclude
+  exclude   = toRegex opts.exclude
+  include   = null
+  resolveAs = null
+
+  if (Object.keys opts.include ? {}).length
+    include   = opts.include
+  if (Object.keys (opts.resolveAs ? opts.resolve ? {})).length
+    resolveAs = opts.resolveAs
 
   # Build module
   mod = new Module opts.entry,
@@ -34,10 +41,10 @@ module.exports = (opts = {}, cb = ->) ->
     compilers:     opts.compilers
     exclude:       exclude
     export:        opts.export
-    include:       opts.include
+    include:       include
     moduleCache:   opts.moduleCache
     paths:         opts.paths ? []
-    resolveAs:     opts.resolveAs ? opts.resolve
+    resolveAs:     resolveAs
     sourceMap:     opts.sourceMap ? true
     sourceMapRoot: opts.sourceMapRoot ? sourceMapRoot
     strict:        opts.strict

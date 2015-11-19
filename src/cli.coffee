@@ -62,11 +62,11 @@ opts =
   exclude:    []
   export:     null
   files:      []
-  include:    []
+  include:    {}
   minify:     false
   output:     []
   prelude:    null
-  resolve:    []
+  resolveAs:  {}
   sourceMap:  true
   strict:     false
   stripDebug: false
@@ -93,6 +93,7 @@ while opt = args.shift()
     when '-e', '--export'
       opts.export = args.shift()
     when '-i', '--include'
+      opts.include ?= {}
       [requireAs, absolutePath] = args.shift().split ':'
       opts.include[requireAs] = absolutePath
     when '-m', '--minify'
@@ -109,9 +110,10 @@ while opt = args.shift()
       opts.sourceMap = false
     when '--prelude-only'
       opts.preludeOnly = true
-    when '-r', '--resolve'
+    when '-r', '--resolve', '--resolve-as'
+      opts.resolveAs ?= {}
       [requireAs, absolutePath] = args.shift().split ':'
-      opts.resolve[requireAs] = absolutePath
+      opts.resolveAs[requireAs] = absolutePath
     when '-s', '--strict'
       opts.strict = true
     when '--strip-debug'
@@ -148,8 +150,6 @@ if opts.dedupe
 # Build exclude regex.
 if opts.exclude.length > 0
   opts.exclude = toRegex opts.exclude
-else
-  opts.exclude = null
 
 outputName = (filename, output) ->
   # Handle wildcard output filenames

@@ -72,7 +72,7 @@
     "string_decoder": "^0.10.31",
     "strip-debug": "^1.1.1",
     "timers-browserify": "^1.4.1",
-    "to-regexp": "^0.1.2",
+    "to-regexp": "^0.1.5",
     "tty-browserify": "^0.0.0",
     "url": "^0.11.0",
     "util": "^0.10.3",
