@@ -1,7 +1,6 @@
 #!/usr/bin/env coffee
 fs           = require 'fs'
 path         = require 'path'
-postmortem   = require 'postmortem'
 requisite    = require '../lib'
 {formatDate} = require '../lib/utils'
 clone        = require 'clone'
@@ -174,14 +173,14 @@ bundleFile = (file, moduleCache = {}) ->
 
   unless opts.watch
     requisite.bundle _opts, (err, bundle) ->
-      return postmortem.prettyPrint err if err?
+      return log.error err if err?
 
       outputBundle bundle, _opts
       moduleCache = if opts.dedupe then bundle.moduleCache else {}
       bundleFile opts.files.shift(), moduleCache
   else
     requisite.watch _opts, (err, bundle, filename) ->
-      return postmortem.prettyPrint err if err?
+      return log.error err if err?
 
       if filename?
         console.log "#{formatDate()} - recompiling, #{filename} changed"
