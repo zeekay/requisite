@@ -5,6 +5,7 @@ postmortem   = require 'postmortem'
 requisite    = require '../lib'
 {formatDate} = require '../lib/utils'
 clone        = require 'clone'
+toRegExp     = require 'to-regexp'
 
 error = (message) ->
   console.log message
@@ -141,7 +142,7 @@ if opts.dedupe
 
 # Build exclude regex.
 if opts.exclude.length > 0
-  opts.exclude = new RegExp opts.exclude.join '|'
+  opts.exclude = toRegExp opts.exclude
 else
   opts.exclude = null
 

@@ -75,11 +75,11 @@
     "string_decoder": "^0.10.31",
     "strip-debug": "^1.1.1",
     "timers-browserify": "^1.4.1",
-    "to-regexp": "0.0.3",
+    "to-regexp": "^0.1.2",
     "tty-browserify": "^0.0.0",
     "url": "^0.11.0",
     "util": "^0.10.3",
-    "vigil": "^0.5.2",
+    "vigil": "^0.5.3",
     "vm-browserify": "^0.0.4"
   },
   "devDependencies": {
