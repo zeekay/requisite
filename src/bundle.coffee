@@ -1,7 +1,7 @@
 Module    = require './module'
 {Prelude} = require './wrapper'
 path      = require 'path'
-toRegExp  = require 'to-regexp'
+toRegex   = require 'to-regexp'
 
 createWrapper = (opts) ->
   new Prelude
@@ -25,7 +25,7 @@ module.exports = (opts = {}, cb = ->) ->
   sourceMapRoot = basePath ? ('/' + path.dirname opts.entry)
 
   # Make sure we have a regular expression
-  exclude = toRegExp opts.exclude
+  exclude = toRegex opts.exclude
 
   # Build module
   mod = new Module opts.entry,
