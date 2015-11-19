@@ -115,7 +115,7 @@ while opt = args.shift()
     when '--base'
       opts.base = args.shift()
     else
-      error 'Unrecognized option' if opt.charAt(0) is '-'
+      error "Unrecognized option: #{opt}" if opt.charAt(0) is '-'
       opts.files.push opt
 
 unless (opts.files.length or opts.preludeOnly)
