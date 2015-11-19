@@ -3,21 +3,16 @@ fs   = require 'fs'
 
 task 'build', 'compile src/*.coffee to lib/*.js', ->
   exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
-  exec 'node_modules/.bin/coffee -bcm -o .test test/'
 
 task 'watch', 'watch for changes and recompile project', ->
   exec 'node_modules/.bin/coffee -bcmw -o lib/ src/'
-  exec 'node_modules/.bin/coffee -bcmw -o .test test/'
-
-task 'gh-pages', 'Publish github page', ->
-  require('brief').update()
 
 task 'test', 'run tests', (options, done) ->
   # link npm test module into node_modules
   if not fs.existsSync 'node_modules/unqualified'
     fs.symlinkSync '../fixtures/node_modules/unqualified', 'node_modules/unqualified'
 
-  test = options.test ? '.test'
+  test = options.test ? 'test'
   if options.grep?
     grep = "--grep #{options.grep}"
   else
@@ -28,16 +23,9 @@ task 'test', 'run tests', (options, done) ->
         --reporter spec
         --timeout 5000
         --compilers coffee:coffee-script/register
-        --require postmortem/register
+        --require source-map-support/register
         #{grep}
         #{test}", done
-
-task 'publish', 'Publish project', ->
-  exec [
-    'cake build'
-    'git push'
-    'npm publish'
-  ]
 
 task 'test:watch', 'watch for changes and recompile, re-run tests', (options) ->
   invoke 'build', ->
@@ -63,3 +51,13 @@ task 'test:watch', 'watch for changes and recompile, re-run tests', (options) ->
             console.log "#{(new Date).toLocaleTimeString()} - compiled #{filename}"
             invoke 'test', ->
               runningTests = false
+
+task 'gh-pages', 'Publish github page', ->
+  require('brief').update()
+
+task 'publish', 'Publish project', ->
+  exec [
+    'git push'
+    'git push --tags'
+    'npm publish'
+  ]
