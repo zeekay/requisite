@@ -3,11 +3,8 @@ language: node_js
 node_js:
   - 4
   - 5
-script: >
-  ./node_modules/.bin/mocha --reporter spec \
-                              --compilers coffee:coffee-script/register \
-                              --require postmortem/register \
-                              .test
+script:
+  - cake test
 cache:
   directories:
     - node_modules
