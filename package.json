@@ -64,6 +64,7 @@
     "http-browserify": "^1.7.0",
     "https-browserify": "^0.0.1",
     "inherits": "^2.0.1",
+    "lodash.escaperegexp": "^3.0.1",
     "os-browserify": "^0.1.2",
     "path-browserify": "^0.0.0",
     "postmortem": "^0.1.8",
