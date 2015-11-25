@@ -1,14 +1,11 @@
-expose =
-  Module:     -> require './module'
-  Wrapper:    -> require './wrapper'
-  bundle:     -> require './bundle'
-  cli:        -> require './cli'
-  compilers:  -> require './compilers'
-  middleware: -> require './middleware'
-  minify:     -> require './minify'
-  resolve:    -> require './resolve'
-  utils:      -> require './utils'
-  watch:      -> require './watch'
-
-for k,v of expose
-  Object.defineProperty module.exports, k, enumerable: true, get: v
+Object.defineProperties module.exports,
+  Module:     enumerable: true, get: -> require './module'
+  Wrapper:    enumerable: true, get: -> require './wrapper'
+  bundle:     enumerable: true, get: -> require './bundle'
+  cli:        enumerable: true, get: -> require './cli'
+  compilers:  enumerable: true, get: -> require './compilers'
+  middleware: enumerable: true, get: -> require './middleware'
+  minify:     enumerable: true, get: -> require './minify'
+  resolve:    enumerable: true, get: -> require './resolve'
+  utils:      enumerable: true, get: -> require './utils'
+  watch:      enumerable: true, get: -> require './watch'
