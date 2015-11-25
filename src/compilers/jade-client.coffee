@@ -3,14 +3,12 @@
 module.exports = (opts, cb) ->
   jade = requireTry 'jade'
 
-  fn = jade.compile opts.source,
+  fn = jade.compileClient opts.source,
     compileDebug: false
     debug:        false
     filename:     opts.filename
     pretty:       false
 
-  source = JSON.stringify fn()
-
   cb null, """
-  module.exports = #{source};
+  module.exports = #{fn.toString()}"
   """

@@ -1,5 +1,3 @@
-path = require 'path'
-
 builtins =
   _process:             'process/browser.js'
   _stream_duplex:       'readable-stream/duplex.js'
@@ -12,7 +10,7 @@ builtins =
   child_process:        null
   cluster:              null
   console:              'console-browserify/index.js'
-  constants:            'constants-browserify/index.js'
+  constants:            'constants-browserify/constants.json'
   crypto:               'crypto-browserify/index.js'
   dgram:                null
   dns:                  null
@@ -41,13 +39,10 @@ builtins =
   vm:                   'vm-browserify/index.js'
   zlib:                 'browserify-zlib/src/index.js'
 
-basePath  = path.join __dirname, '..', 'node_modules'
-emptyPath = path.join __dirname, '..', 'lib/empty.js'
-
 for k,v of builtins
   if v?
-    builtins[k] = path.join basePath, v
+    builtins[k] = require.resolve v
   else
-    builtins[k] = emptyPath
+    builtins[k] = require.resolve './empty'
 
 module.exports = builtins

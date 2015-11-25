@@ -28,31 +28,18 @@ exports.parse = (source, opts = {}) ->
     locations:  true
     sourceFile: opts.filename
 
-  ast = acorn.parse source, _opts
+  try
+    ast = acorn.parse source, _opts
+  catch err
+    throw new Error "Failed to parse '#{opts.filename}': #{err.message}"
+
   escodegen.attachComments ast, comments, tokens
   ast
 
-guessMinifier = ->
-  try
-    return 'uglifyjs' if require.resolve 'uglify-js'
-  catch err
-
-  try
-    require.resolve 'esmangle'
-  catch err
-    throw new Error('Unable to determine minifier to use')
-
-  'esmangle'
-
-# generate string from ast, optionally minify
+# generate string from ast
 exports.codegen = (ast, opts = {}) ->
-  # Minified
   if opts.minify
-    minifier = opts.minifier ? guessMinifier()
-    if /uglify/.test minifier
-      minifier = 'uglifyjs'
-    minify = require './minify'
-    return minify[minifier] ast, opts
+    return (require './minify') ast, opts
 
   _opts =
     comment: yes

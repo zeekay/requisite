@@ -1,3 +1,6 @@
-module.exports = (options, callback) ->
-  source = JSON.stringify options.source
-  callback null, "module.exports = #{source}"
+module.exports = (opts, cb) ->
+  source = JSON.stringify opts.source
+
+  cb null, """
+  module.exports = #{source};
+  """
