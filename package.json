@@ -54,7 +54,7 @@
     "convert-source-map": "^1.1.2",
     "crypto-browserify": "^3.11.0",
     "domain-browser": "^1.1.4",
-    "escodegen": "^1.7.0",
+    "escodegen": "^1.7.1",
     "estraverse": "^4.1.1",
     "events": "^1.1.0",
     "http-browserify": "^1.7.0",
@@ -72,7 +72,7 @@
     "string_decoder": "^0.10.31",
     "strip-debug": "^1.1.1",
     "timers-browserify": "^1.4.1",
-    "to-regexp": "^0.1.5",
+    "to-regexp": "^0.1.6",
     "tty-browserify": "^0.0.0",
     "url": "^0.11.0",
     "util": "^0.10.3",
@@ -90,10 +90,9 @@
     "jade": "^1.11.0",
     "jade-runtime": "^2.0.0",
     "mocha": "^2.3.4",
-    "shortcake": "^0.3.0",
+    "shortcake": "^0.5.1",
     "source-map-support": "^0.3.3",
     "superagent": "^1.4.0",
-    "uglify-js": "^2.6.1",
-    "vm-browserify": "0.0.4"
+    "uglify-js": "^2.6.1"
   }
 }
