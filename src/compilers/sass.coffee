@@ -31,18 +31,27 @@ resolveNpm = do ->
     return
 
 
-module.exports = (src, dst, cb) ->
+module.exports = (opts, cb) ->
   sass = requireTry 'node-sass'
 
+  includePaths = [
+    path.join process.cwd(), 'node_modules'
+    path.join path.dirname opts.filename
+  ]
+
+  try
+    bourbon = require 'node-bourbon'
+    includePaths.push bourbon.includePaths
+  catch err
+
   sass.render
-    file: src
-    # importer: resolveNpm
-    includePaths: [path.join process.cwd(), 'node_modules' ]
+    data:         opts.source
+    importer:     resolveNpm
+    includePaths: includePaths
     outputStyle: 'nested'
   , (err, res) ->
     throw err if err?
 
-    fs.writeFile dst, res.css, (err) ->
-      throw err if err?
-
-      cb null, true
+    cb null, """
+    module.exports = #{JSON.stringify res.css}
+    """
