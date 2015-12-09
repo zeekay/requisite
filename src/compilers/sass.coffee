@@ -1,7 +1,7 @@
 fs   = require 'fs'
 path = require 'path'
 
-{requireLocal} = require '../utils'
+{requireTry} = require '../utils'
 
 
 findNpm = (url) ->
@@ -32,7 +32,7 @@ resolveNpm = do ->
 
 
 module.exports = (src, dst, cb) ->
-  sass = requireLocal 'node-sass'
+  sass = requireTry 'node-sass'
 
   sass.render
     file: src
