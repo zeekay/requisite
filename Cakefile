@@ -1,5 +1,9 @@
-exec = require('shortcake').exec.interactive
-fs   = require 'fs'
+require 'shortcake'
+
+use 'cake-version'
+use 'cake-publish'
+
+fs = require 'fs'
 
 task 'build', 'compile src/*.coffee to lib/*.js', ->
   exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
@@ -54,10 +58,3 @@ task 'test:watch', 'watch for changes and recompile, re-run tests', (options) ->
 
 task 'gh-pages', 'Publish github page', ->
   require('brief').update()
-
-task 'publish', 'Publish project', ->
-  exec [
-    'git push'
-    'git push --tags'
-    'npm publish'
-  ]
