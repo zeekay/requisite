@@ -1,4 +1,4 @@
-# requisite [![Build Status](https://travis-ci.org/zeekay/requisite.svg?branch=master)](https://travis-ci.org/zeekay/requisite)
+# requisite [![NPM version][npm-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependency Status][dependency-img]][dependency-url] [![Gitter chat][gitter-img]][gitter-url]
 
 ## Introduction
 Requisite bundles client-side code and templates. It features asynchronous
@@ -166,3 +166,20 @@ Which would make your bundle available as `http://host/js/main.js`.
 [connect]:       http://www.senchalabs.org/connect/
 [express]:       http://expressjs.com/
 [jade]:          http://jade-lang.com
+
+[travis-img]:     https://img.shields.io/travis/zeekay/requisite.svg
+[travis-url]:     https://travis-ci.org/zeekay/requisite
+[coveralls-img]:  https://coveralls.io/repos/zeekay/requisite/badge.svg?branch=master&service=github
+[coveralls-url]:  https://coveralls.io/github/zeekay/requisite?branch=master
+[dependency-url]: https://david-dm.org/zeekay/requisite
+[dependency-img]: https://david-dm.org/zeekay/requisite.svg
+[npm-img]:        https://img.shields.io/npm/v/requisite.svg
+[npm-url]:        https://www.npmjs.com/package/requisite
+[gitter-img]:     https://badges.gitter.im/join-chat.svg
+[gitter-url]:     https://gitter.im/zeekay/hi
+
+<!-- not used -->
+[downloads-img]:     https://img.shields.io/npm/dm/requisite.svg
+[downloads-url]:     http://badge.fury.io/js/requisite
+[devdependency-img]: https://david-dm.org/zeekay/requisite/dev-status.svg
+[devdependency-url]: https://david-dm.org/zeekay/requisite#info=devDependencies
