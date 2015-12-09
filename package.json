@@ -82,6 +82,8 @@
   "devDependencies": {
     "async": "^1.5.0",
     "brief": "^1.1.0",
+    "cake-publish": "^0.1.1",
+    "cake-version": "^0.1.3",
     "chai": "^3.4.1",
     "coffee-script": "^1.10.0",
     "esmangle": "^1.0.1",
@@ -90,7 +92,7 @@
     "jade": "^1.11.0",
     "jade-runtime": "^2.0.0",
     "mocha": "^2.3.4",
-    "shortcake": "^0.5.1",
+    "shortcake": "^1.1.11",
     "source-map-support": "^0.3.3",
     "superagent": "^1.4.0",
     "uglify-js": "^2.6.1"
