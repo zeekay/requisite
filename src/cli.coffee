@@ -30,7 +30,7 @@ help = ->
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder
     -p, --prelude <file>         file to use as prelude
         --no-prelude             exclude prelude from bundle
-        --no-source-map          disable source maps
+        --source-map             enable source maps
         --prelude-only           only output prelude
     -r, --resolve <module:path>  do not automatically resolve module, use provided path
     -s, --strict                 add "use strict" to each bundled module
@@ -66,7 +66,7 @@ opts =
   output:     []
   prelude:    null
   resolveAs:  {}
-  sourceMap:  true
+  sourceMap:  false
   strict:     false
   stripDebug: false
   watch:      false
@@ -105,8 +105,8 @@ while opt = args.shift()
       opts.prelude = args.shift()
     when '--no-prelude'
       opts.prelude = false
-    when '--no-source-map'
-      opts.sourceMap = false
+    when '--source-map'
+      opts.sourceMap = true
     when '--prelude-only'
       opts.preludeOnly = true
     when '-r', '--resolve', '--resolve-as'
