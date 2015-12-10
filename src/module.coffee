@@ -126,8 +126,9 @@ class Module
           throw new Error "No suitable compiler found for #{@absolutePath}"
 
         opts =
-          source: source
+          source:        source
           filename:      @normalizedPath
+          absolutePath:  @absolutePath
           sourceMap:     @enableSourceMap
           sourceMapRoot: @sourceMapRoot
 
