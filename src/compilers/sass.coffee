@@ -36,12 +36,12 @@ module.exports = (opts, cb) ->
 
   includePaths = [
     path.join process.cwd(), 'node_modules'
-    path.join path.dirname opts.filename
+    path.dirname opts.filename
   ]
 
   try
     bourbon = require 'node-bourbon'
-    includePaths.push bourbon.includePaths
+    includePaths = includePaths.concat bourbon.includePaths
   catch err
 
   sass.render
