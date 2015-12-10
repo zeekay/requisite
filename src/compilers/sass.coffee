@@ -2,32 +2,23 @@ path = require 'path'
 
 {requireTry} = require '../utils'
 
-findNpm = (url) ->
-  try
-    path.relative process.cwd(), require.resolve url
-  catch err
-    path.relative process.cwd(), require.resolve url
-
-
 # look for .scss|sass files inside the node_modules folder
 resolveNpm = do ->
   cache = {}
 
   (url, file, cb) ->
-    # check if the path was already found and cached
-    return cb file: cache[url] if cache[url]?
+    if cache[url]?
+      return cb file: cache[url]
+
+    cache[url] = url
 
     # look for modules installed through npm
     try
-      newPath = findNpm url
-      cache[url] = newPath # cache request
-      return cb file: newPath
-    catch e
-      # if your module could not be found, just return the original url
-      cache[url] = url
-      return cb file: url
-    return
+      cache[url] = path.relative process.cwd(), require.resolve url
+    catch err
+      console.error err
 
+    cb file: cache[url]
 
 module.exports = (opts, cb) ->
   sass = requireTry 'node-sass'
