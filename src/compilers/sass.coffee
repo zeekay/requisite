@@ -53,5 +53,5 @@ module.exports = (opts, cb) ->
     throw err if err?
 
     cb null, """
-    module.exports = #{JSON.stringify res.css}
+    module.exports = #{JSON.stringify res.css.toString()}
     """
