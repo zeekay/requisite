@@ -2,7 +2,7 @@ path = require 'path'
 
 {requireTry} = require '../utils'
 
-# look for .scss|sass files inside the node_modules folder
+# Look for .scss|sass files inside the node_modules folder
 resolveNpm = do ->
   cache = {}
 
@@ -20,6 +20,21 @@ resolveNpm = do ->
 
     cb file: cache[url]
 
+# Add bourbon to include paths
+addBourbon = do ->
+  bourbonPath = null
+
+  (includePaths) ->
+    unless bourbonPath?
+      try
+        bourbonPath = path.dirname require.resolve 'bourbon'
+      catch err
+
+    if bourbonPath
+      includePaths.concat bourbonPath
+    else
+      includePaths
+
 module.exports = (opts, cb) ->
   sass = requireTry 'node-sass'
 
@@ -28,14 +43,12 @@ module.exports = (opts, cb) ->
     path.dirname opts.absolutePath
   ]
 
-  try
-    bourbon = require 'node-bourbon'
-    includePaths = includePaths.concat bourbon.includePaths
-  catch err
+  # Try to include path to Bourbon
+  includePaths = addBourbon includePaths
 
   sass.render
+    # importer:     resolveNpm
     data:         opts.source
-    importer:     resolveNpm
     includePaths: includePaths
     outputStyle: 'nested'
   , (err, res) ->
