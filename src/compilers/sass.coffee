@@ -1,8 +1,6 @@
-fs   = require 'fs'
 path = require 'path'
 
 {requireTry} = require '../utils'
-
 
 findNpm = (url) ->
   try
@@ -50,7 +48,7 @@ module.exports = (opts, cb) ->
     includePaths: includePaths
     outputStyle: 'nested'
   , (err, res) ->
-    throw err if err?
+    return cb err if err?
 
     cb null, """
     module.exports = #{JSON.stringify res.css.toString()}
