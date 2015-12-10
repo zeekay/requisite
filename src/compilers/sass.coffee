@@ -36,7 +36,7 @@ module.exports = (opts, cb) ->
 
   includePaths = [
     path.join process.cwd(), 'node_modules'
-    path.dirname opts.filename
+    path.dirname opts.absolutePath
   ]
 
   try
