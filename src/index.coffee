@@ -9,3 +9,4 @@ Object.defineProperties module.exports,
   resolve:    enumerable: true, get: -> require './resolve'
   utils:      enumerable: true, get: -> require './utils'
   watch:      enumerable: true, get: -> require './watch'
+  version:    enumerable: true, get: -> (require '../package.json').version
