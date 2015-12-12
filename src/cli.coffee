@@ -1,10 +1,11 @@
 #!/usr/bin/env coffee
+clone        = require 'clone'
 fs           = require 'fs'
 path         = require 'path'
+toRegex      = require 'to-regexp'
+
 requisite    = require '../lib'
 {formatDate} = require '../lib/utils'
-clone        = require 'clone'
-toRegex      = require 'to-regexp'
 
 error = (message) ->
   console.log message
@@ -173,14 +174,14 @@ bundleFile = (file, moduleCache = {}) ->
 
   unless opts.watch
     requisite.bundle _opts, (err, bundle) ->
-      return log.error err if err?
+      return console.error err.stack if err?
 
       outputBundle bundle, _opts
       moduleCache = if opts.dedupe then bundle.moduleCache else {}
       bundleFile opts.files.shift(), moduleCache
   else
     requisite.watch _opts, (err, bundle, filename) ->
-      return log.error err if err?
+      return console.error err.stack if err?
 
       if filename?
         console.log "#{formatDate()} - recompiling, #{filename} changed"
