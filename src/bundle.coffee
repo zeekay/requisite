@@ -22,7 +22,7 @@ module.exports = (opts = {}, cb = ->) ->
 
   # Base paths
   basePath      = opts.base ? opts.src
-  sourceMapRoot = basePath ? ('/' + path.dirname opts.entry)
+  sourceMapRoot = basePath ? '/' + (path.relative process.cwd(), path.dirname opts.entry)
 
   # Make sure we have sane exclude, include, resolveAs to pass to modules
   exclude   = toRegex opts.exclude

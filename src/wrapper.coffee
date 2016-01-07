@@ -1,20 +1,22 @@
 fs     = require 'fs'
 path   = require 'path'
 
-Module = require './module'
-utils  = require './utils'
+Module  = require './module'
+codegen = require './codegen'
+parse   = require './parse'
+walk    = require './walk'
 
 
 class Wrapper
   constructor: ->
-    @ast = utils.parse ''
+    @ast = parse ''
     @body = @ast.body
 
   walk: (fn) ->
-    utils.walk @ast, fn
+    walk @ast, fn
 
   toString: (opts) ->
-    utils.codegen @ast, opts
+    codegen @ast, opts
 
   clone: ->
     new @constructor @
@@ -31,23 +33,23 @@ class Prelude extends Wrapper
     super()
 
     unless @bare
-      @ast = utils.parse '(function (global){}.call(this, this))'
+      @ast = parse '(function (global){}.call(this, this))'
       @walk (node) =>
         if node.type == 'BlockStatement'
           @body = node.body
 
     if @prelude
-      prelude = utils.parse fs.readFileSync @prelude
+      prelude = parse fs.readFileSync @prelude
       for node in prelude.body
         @body.push node
 
       if @async
-        preludeAsync = utils.parse fs.readFileSync @preludeAsync
+        preludeAsync = parse fs.readFileSync @preludeAsync
         for node in preludeAsync.body
           @body.push node
 
       if @globalRequire
-        for node in (utils.parse "global.require = require").body
+        for node in (parse "global.require = require").body
           @body.push node
 
 
@@ -76,7 +78,7 @@ class Define extends Wrapper
 
     sourcePath = relativePath ? normalizedPath ? absolutePath
 
-    @ast = utils.parse """
+    @ast = parse """
       // source: #{sourcePath}
       require.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename) {
         #{useStrict}
