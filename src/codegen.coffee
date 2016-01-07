@@ -1,6 +1,8 @@
 convert   = require 'convert-source-map'
 escodegen = require 'escodegen'
 
+minify    = require './minify'
+
 convertOpts = (opts) ->
   esopts =
     comment: true
@@ -52,9 +54,7 @@ module.exports = (ast, opts = {}) ->
 
   # Minify
   if opts.minify
-    esmangle  = require 'esmangle'
-    optimized = esmangle.optimize ast, null
-    ast       = esmangle.mangle optimized
+    ast = minify ast, opts
 
   # Generate code, optionally source map
   if opts.sourceMap
