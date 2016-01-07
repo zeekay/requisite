@@ -1,42 +1,52 @@
-detectMinifier = (minifier = 'esmangle') ->
+detectMinifier = (minifier) ->
   return 'uglify' if /^uglify/.test minifier
 
-  try
-    return 'uglify' if require.resolve 'uglify-js'
-  catch err
+  unless minifier?
+    try
+      return 'uglify' if require.resolve 'uglify-js'
+    catch err
 
-  try
-    require.resolve 'esmangle'
-  catch err
-    throw new Error 'Unable to determine minifier to use'
+    try
+      return 'esmangle' if require.resolve 'esmangle'
+    catch err
+      throw new Error 'Unable to determine minifier to use'
 
   minifier
 
 minifiers =
-  esmangle: (ast) ->
+  esmangle: (ast, opts = {}) ->
     esmangle  = require 'esmangle'
 
-    optimized = esmangle.optimize ast, null
-    mangled   = esmangle.mangle optimized
-    mangled
+    # Compress
+    ast = esmangle.optimize ast, null
 
-  uglify: (ast) ->
+    # Optionally mangle
+    if opts.mangle
+      ast = esmangle.mangle ast
+
+    ast
+
+  uglify: (ast, opts = {}) ->
     uglify = require 'uglify-js'
 
-    uglified = uglify.AST_Node.from_mozilla_ast ast
-    uglified.figure_out_scope()
+    uast = uglify.AST_Node.from_mozilla_ast ast
+    uast.figure_out_scope()
 
-    compressor = uglify.Compressor
+    # Compress
+    uast = uast.transform uglify.Compressor
       warnings: false
 
-    compressed = uglified.transform compressor
-    compressed.figure_out_scope()
-    compressed.compute_char_frequency()
-    compressed.mangle_names()
-    compressed.to_mozilla_ast()
+    # Optionally mangle
+    if opts.mangle
+      uast.figure_out_scope()
+      uast.compute_char_frequency()
+      uast.mangle_names()
+
+    uast.to_mozilla_ast()
 
 auto = (ast, opts) ->
   minifier = detectMinifier opts.minifier
+  console.log minifier
   minifiers[minifier] ast, opts
 
 wrapper           = auto
