@@ -1,86 +1,10 @@
-fs        = require 'fs'
-os        = require 'os'
-path      = require 'path'
-
-acorn     = require 'acorn'
-convert   = require 'convert-source-map'
-escodegen = require 'escodegen'
-
-{SourceMapConsumer} = require 'source-map'
-{traverse}          = require 'estraverse'
+fs   = require 'fs'
+os   = require 'os'
+path = require 'path'
 
 # Pretty print Date object.
 exports.formatDate = (date = new Date) ->
   (/\d{2}:\d{2}:\d{2}/.exec date)[0]
-
-# parse source into ast
-exports.parse = (source, opts = {}) ->
-  comments = []
-  tokens   = []
-
-  _opts =
-    # for preserving comments
-    ranges:     true
-    onComment:  comments
-    onToken:    tokens
-
-    # for source maps
-    locations:  true
-    sourceFile: opts.filename
-
-  try
-    ast = acorn.parse source, _opts
-  catch err
-    throw new Error "Failed to parse '#{opts.filename}': #{err.message}"
-
-  escodegen.attachComments ast, comments, tokens
-  ast
-
-# generate string from ast
-exports.codegen = (ast, opts = {}) ->
-  if opts.minify
-    return (require './minify') ast, opts
-
-  _opts =
-    comment: yes
-    format:
-      indent:
-        style: '  '
-        base: 0
-      compact: no
-      escapeless: yes
-      parentheses: no
-      quotes: 'auto'
-      semicolons: no
-
-  # No source map
-  unless opts.sourceMap
-    return escodegen.generate ast, _opts
-
-  # Source maps
-  _opts.sourceMap         = true
-  _opts.sourceMapWithCode = true
-  _opts.sourceMapRoot     = opts.sourceMapRoot ? ""
-
-  output = escodegen.generate ast, _opts
-  code   = output.code
-  map    = output.map
-
-  if opts.onlySourceMap
-    convert.fromObject(map).toJSON()
-  else
-    code + convert.fromObject(map).toComment()
-
-# walk ast
-exports.walk = walk = (node, visitor) ->
-  if node? and typeof node == 'object'
-    unless visitor node
-      for k,v of node
-        walk v, visitor
-
-  else if Array.isArray node
-    for el in node
-      walk el, visitor
 
 # draw simple graph of dependencies
 exports.graph = (mod) ->
@@ -144,36 +68,3 @@ exports.normalizePath = (absolutePath, basePath) ->
     normalizedPath.replace /^\\+/, ''
   else
     normalizedPath.replace /^\/+/, ''
-
-exports.sourceMapToAst = (ast, map) ->
-  map = new SourceMapConsumer(map)
-
-  traverse ast, enter: (node) ->
-    unless node.type and node.loc
-      return
-
-    origStart = map.originalPositionFor node.loc.start
-
-    if !origStart.line
-      delete node.loc
-      return
-
-    origEnd = map.originalPositionFor node.loc.end
-
-    if origEnd.line and (origEnd.line < origStart.line or origEnd.column < origStart.column)
-      origEnd.line = null
-
-    node.loc =
-      start:
-        line: origStart.line
-        column: origStart.column
-      source: origStart.source
-      name: origStart.name
-
-    if origEnd.line
-      node.loc.end =
-        line: origEnd.line
-        column: origEnd.column
-
-    return
-  ast
