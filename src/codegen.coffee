@@ -32,20 +32,17 @@ module.exports = (ast, opts = {}) ->
   # Set up default opts
   opts = Object.assign (defaults opts), opts
 
-  # No source map
-  unless opts.sourceMap
-    return escodegen.generate ast, opts
-
-  # Sourcemap wanted
-  opts.sourceMap         ?= true
-  opts.sourceMapWithCode ?= true
-  opts.sourceMapRoot     ?= opts.sourceRoot ? ''
-
   # Minify
   if opts.minify?
     esmangle  = require 'esmangle'
     optimized = esmangle.optimize ast, null
     ast       = esmangle.mangle optimized
+
+  # Source maps
+  if opts.sourceMap
+    opts.sourceMap         ?= true
+    opts.sourceMapWithCode ?= true
+    opts.sourceMapRoot     ?= opts.sourceRoot ? ''
 
   # Generate code, source maps
   {code, map} = escodegen.generate ast, opts
@@ -56,9 +53,17 @@ module.exports = (ast, opts = {}) ->
     # libraries used by strip-debug, so we pass in the generated code instead
     code = require('strip-debug')(code).toString()
 
+  # Return generated code without source map
+  unless opts.sourceMap
+    return code
+
+  # Return generated code with source map as comment
+  unless opts.externalSourceMap
+    return code + convert.fromObject(map).toComment()
+
   # Return object if external source map requested
-  if opts.externalSourceMap
-    code: code
-    map:  convert.fromObject(map).toJSON()
-  else
-    code + convert.fromObject(map).toComment()
+  if opts.sourceMapURL?
+    code += '\n//# sourceMappingURL=' + opts.sourceMapURL
+
+  code: code
+  map:  convert.fromObject(map).toJSON()
