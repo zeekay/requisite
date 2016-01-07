@@ -1,21 +1,8 @@
 convert   = require 'convert-source-map'
 escodegen = require 'escodegen'
 
-defaults = (opts) ->
-  if opts.minify?
-    comment: no
-    format:
-      indent:
-        style: ''
-        base: 0
-      compact:     true
-      escapeless:  true
-      hexadecimal: true
-      parentheses: false
-      quotes:      'auto'
-      renumber:    true
-      semicolons:  false
-  else
+convertOpts = (opts) ->
+  esopts =
     comment: true
     format:
       indent:
@@ -27,25 +14,53 @@ defaults = (opts) ->
       quotes:      'auto'
       semicolons:  false
 
+  if opts.minify
+    esopts =
+      comment: false
+      format:
+        indent:
+          style: ''
+          base: 0
+        compact:     true
+        escapeless:  true
+        hexadecimal: true
+        parentheses: false
+        quotes:      'auto'
+        renumber:    true
+        semicolons:  false
+
+  # Source maps
+  if opts.sourceMap
+    esopts.sourceMap         = true
+    esopts.sourceMapWithCode = true
+    esopts.sourceMapRoot     = opts.sourceMapRoot ? opts.sourceRoot ? ''
+
+  # Custom format options
+  if opts.format?
+    esopts.format = opts.format
+
+  # Allow comments override
+  if opts.comment?
+    esopts.comment = opts.comment
+
+  esopts
+
 # Generate source code (and optionally source map) from AST
 module.exports = (ast, opts = {}) ->
-  # Set up default opts
-  opts = Object.assign (defaults opts), opts
+  # Get options for escodegen
+  esopts = convertOpts opts
 
   # Minify
-  if opts.minify?
+  if opts.minify
     esmangle  = require 'esmangle'
     optimized = esmangle.optimize ast, null
     ast       = esmangle.mangle optimized
 
-  # Source maps
+  # Generate code, optionally source map
   if opts.sourceMap
-    opts.sourceMap         ?= true
-    opts.sourceMapWithCode ?= true
-    opts.sourceMapRoot     ?= opts.sourceRoot ? ''
-
-  # Generate code, source maps
-  {code, map} = escodegen.generate ast, opts
+    {code, map} = escodegen.generate ast, esopts
+  else
+    code = escodegen.generate ast, esopts
 
   # Strip debug comments
   if opts.stripDebug
@@ -65,5 +80,6 @@ module.exports = (ast, opts = {}) ->
   if opts.sourceMapURL?
     code += '\n//# sourceMappingURL=' + opts.sourceMapURL
 
+  # Return code, JSON-stringifed map
   code: code
   map:  convert.fromObject(map).toJSON()

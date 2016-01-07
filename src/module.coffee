@@ -327,7 +327,7 @@ class Module
     # maintain a reference of modules seen to prevent infinite recursion (and for efficiency)
     seen = {}
 
-    walk = (mod, fn) ->
+    walkDeps = (mod, fn) ->
       return if seen[mod.requireAs]
 
       seen[mod.requireAs] = true
@@ -336,9 +336,9 @@ class Module
         continue if seen[k]
 
         unless (fn v) == false
-          walk v, fn
+          walkDeps v, fn
 
-    walk mod, fn
+    walkDeps mod, fn
 
   bundle: ->
     toplevel = (@toplevel ? new wrapper.Wrapper()).clone()
