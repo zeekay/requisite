@@ -84,10 +84,12 @@ module.exports = ->
     normalizedPath = normalizePath absolutePath, basePath
     relativePath   = normalizePath absolutePath, cwd
     requireAs      = normalizedPath.replace extension, ''
-                                   .replace /^node_modules\//, ''
                                    .replace /\/index$/, ''
 
-    unless /^node_modules/.test normalizedPath
+    # Strip off any leading node_modules paths (we flatten modules)
+    if (match = /(.*node_modules\/)([/._-\w])+$/.exec requireAs)
+      requireAs = requireAs.replace match[1], ''
+    else
       requireAs = './' + requireAs
 
     cache resolveFrom, requiredAs,
