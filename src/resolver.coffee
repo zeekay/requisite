@@ -25,12 +25,24 @@ resolve = (pkg, opts) ->
     null
 
 module.exports = ->
-  cache = {}
+  cache = do ->
+    _cache = {}
+
+    (resolveFrom, requiredAs, mod) ->
+      if requiredAs.charAt(0) == '.'
+        key = resolveFrom+requiredAs
+      else
+        key = requiredAs
+
+      if mod?
+        _cache[key] = mod
+      else
+        _cache[key]
 
   (requiredAs, opts = {}) ->
     # asked to cache lookup in advance
     if opts.cache?
-      cache[opts.resolveFrom+requiredAs] = opts
+      cache opts.resolveFrom, requiredAs, opts
       return
 
     paths = NODE_PATHS.concat opts.paths ? []
@@ -47,7 +59,7 @@ module.exports = ->
       requiredAs = './' + (path.resolve requiredAs).replace basePath, ''
 
     # use cached resolution if possible
-    return cached if (cached = cache[resolveFrom+requiredAs])?
+    return cached if (cached = cache resolveFrom, requiredAs)?
 
     # resolve absolute path to module
     if builtins[requiredAs]?
@@ -78,7 +90,7 @@ module.exports = ->
     unless /^node_modules/.test normalizedPath
       requireAs = './' + requireAs
 
-    cache[resolveFrom+requiredAs] =
+    cache resolveFrom, requiredAs,
       absolutePath:   absolutePath
       basePath:       basePath
       extension:      extension
