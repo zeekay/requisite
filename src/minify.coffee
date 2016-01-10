@@ -46,7 +46,6 @@ minifiers =
 
 auto = (ast, opts) ->
   minifier = detectMinifier opts.minifier
-  console.log minifier
   minifiers[minifier] ast, opts
 
 wrapper           = auto
