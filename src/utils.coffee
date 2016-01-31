@@ -68,3 +68,9 @@ exports.normalizePath = (absolutePath, basePath) ->
     normalizedPath.replace /^\\+/, ''
   else
     normalizedPath.replace /^\/+/, ''
+
+exports.isFunction = (fn) ->
+  typeof fn is 'function'
+
+exports.isString = (s) ->
+  typeof s is 'string'

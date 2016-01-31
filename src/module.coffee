@@ -2,12 +2,16 @@ fs          = require 'fs'
 path        = require 'path'
 escapeRegex = require 'lodash.escaperegexp'
 
+Promise = require 'broken'
+
 codegen        = require './codegen'
 compilers      = require './compilers'
 parse          = require './parse'
 resolver       = require './resolver'
 walk           = require './walk'
 wrapper        = require './wrapper'
+
+{isFunction, isString} = require './utils'
 
 class Module
   constructor: (requiredAs, opts = {}) ->
@@ -112,73 +116,81 @@ class Module
       requiredBy: @requiredBy
 
   # compile source using appropriately compiler
-  compile: (callback) ->
-    fs.stat @absolutePath, (err, stat) =>
-      return callback new Error "Unable to find module '#{@absolutePath}'" if err?
+  compile: (cb) ->
+    p = new Promise (resolve, reject) =>
+      fs.stat @absolutePath, (err, stat) =>
+        return reject new Error "Unable to find module '#{@absolutePath}': #{err}" if err?
 
-      if @mtime? and stat.mtime < @mtime
-        return callback()
+        if @mtime? and stat.mtime < @mtime
+          return resolve()
 
-      @mtime = stat.mtime
-      extension = (path.extname @absolutePath).substr 1
+        @mtime = stat.mtime
+        extension = (path.extname @absolutePath).substr 1
 
-      fs.readFile @absolutePath, 'utf8', (err, source) =>
-        unless (compiler = @compilers[extension])?
-          throw new Error "No suitable compiler found for #{@absolutePath}"
+        fs.readFile @absolutePath, 'utf8', (err, source) =>
+          unless (compiler = @compilers[extension])?
+            throw new Error "No suitable compiler found for #{@absolutePath}"
 
-        opts =
-          source:        source
-          filename:      @normalizedPath
-          absolutePath:  @absolutePath
-          sourceMap:     @enableSourceMap
-          sourceMapRoot: @sourceMapRoot
+          opts =
+            source:        source
+            filename:      @normalizedPath
+            absolutePath:  @absolutePath
+            sourceMap:     @enableSourceMap
+            sourceMapRoot: @sourceMapRoot
 
-        # call compiler with a reference to this module
-        compiler.call @,  opts, (err, source, sourceMap) =>
-          return callback err if err?
+          # call compiler with a reference to this module
+          compiler.call @,  opts, (err, source, sourceMap) =>
+            return reject err if err?
 
-          @source    = source
-          @sourceMap = sourceMap
+            @source    = source
+            @sourceMap = sourceMap
 
-          callback()
+            resolve()
+    p.callback cb
+    p
 
   # parse source file into ast
-  parse: (opts, callback) ->
-    if typeof opts == 'function'
-      [callback, opts] = [opts, {}]
+  parse: (opts, cb) ->
+    if isFunction opts
+      [cb, opts] = [opts, {}]
 
     if opts.deep
       for k,v of @moduleCache
         delete @moduleCache[k]
 
-    @compile (err) =>
-      return callback err if err?
+    p = new Promise (resolve, reject) =>
+      @compile (err) =>
+        return reject err if err?
 
-      # parse source to AST
-      @ast = parse @source,
-        filename:  @normalizedPath
-        sourceMap: @sourceMap
+        # parse source to AST
+        @ast = parse @source,
+          filename:  @normalizedPath
+          sourceMap: @sourceMap
 
-      # transform AST to use root-relative paths
-      try
-        dependencies = @transform()
-      catch err
-        return callback err
+        # transform AST to use root-relative paths
+        try
+          dependencies = @transform()
+        catch err
+          return reject err
 
-      # cache ourself
-      @moduleCache[@requireAs] = @
+        # cache ourself
+        @moduleCache[@requireAs] = @
 
-      @dependencies = {}
+        @dependencies = {}
 
-      # force include dependencies if requested
-      if @include?
-        for k,v of @include
-          mod = @findMod k, v
-          dependencies.unshift mod
+        # force include dependencies if requested
+        if @include?
+          for k,v of @include
+            mod = @findMod k, v
+            dependencies.unshift mod
 
-      # parse dependencies into fully-fledged modules
-      @traverse dependencies, opts, (err) =>
-        callback err, @
+        # parse dependencies into fully-fledged modules
+        @traverse dependencies, opts, (err) =>
+          reject err if err?
+          resolve @
+
+    p.callback cb
+    p
 
   # transform require expressions in AST to use root-relative paths
   transform: ->
@@ -188,7 +200,7 @@ class Module
         if node.type == 'CallExpression' and node.callee.name == 'require'
           [required, callback] = node.arguments
 
-          if required.type == 'Literal' and typeof required.value is 'string'
+          if required.type == 'Literal' and isString required.value
             # skip excluded modules
             if @exclude?.test required.value
               return true
@@ -217,51 +229,55 @@ class Module
     dependencies
 
   # traverse dependencies recursively, parsing them as well
-  traverse: (dependencies, opts, callback) ->
-    if typeof opts == 'function'
-      [callback, opts] = [opts, {}]
+  traverse: (dependencies, opts, cb) ->
+    if isFunction opts
+      [cb, opts] = [opts, {}]
 
     dependencies ?= @dependencies.slice 0
     opts         ?= {}
-    callback     ?= ->
+    cb           ?= ->
 
-    return callback() if dependencies.length == 0
+    p = new Promise (resolve, reject) =>
+      return resolve() if dependencies.length == 0
 
-    dep = dependencies.shift()
+      dep = dependencies.shift()
 
-    # TODO: figure out if this is needed
-    # if @exclude?.test dep.requireAs
-    #   # if excluced module, just continue
-    #   return @traverse dependencies, opts, callback
+      # TODO: figure out if this is needed
+      # if @exclude?.test dep.requireAs
+      #   # if excluced module, just continue
+      #   return @traverse dependencies, opts, callback
 
-    # already seen this module
-    if @dependencies[dep.requireAs]?
-      return @traverse dependencies, opts, callback
+      # already seen this module
+      if @dependencies[dep.requireAs]?
+        return @traverse dependencies, opts, cb
 
-    # use cached module if previously parsed by someone else
-    if (cached = @find dep.requireAs)?
-      unless cached.external
-        @dependencies[cached.requireAs] = cached
-        cached.dependents[@requireAs] = @
-      return @traverse dependencies, opts, callback
+      # use cached module if previously parsed by someone else
+      if (cached = @find dep.requireAs)?
+        unless cached.external
+          @dependencies[cached.requireAs] = cached
+          cached.dependents[@requireAs] = @
+        return @traverse dependencies, opts, cb
 
-    dep.moduleCache = @moduleCache
-    dep.resolver    = @resolver
-    dep.urlRoot     = @urlRoot
-    dep.strict      = @strict
+      dep.moduleCache = @moduleCache
+      dep.resolver    = @resolver
+      dep.urlRoot     = @urlRoot
+      dep.strict      = @strict
 
-    # create module and parse it
-    mod = new Module dep.requiredAs, dep
-    mod.exclude = @exclude
-    mod.dependents[@requireAs] = @
-    @dependencies[mod.requireAs] = mod
+      # create module and parse it
+      mod = new Module dep.requiredAs, dep
+      mod.exclude = @exclude
+      mod.dependents[@requireAs] = @
+      @dependencies[mod.requireAs] = mod
 
-    # parse dependency as well
-    mod.parse (err) =>
-      return callback err if err?
+      # parse dependency as well
+      mod.parse (err) =>
+        return reject err if err?
 
-      # continue parsing deps
-      @traverse dependencies, opts, callback
+        # continue parsing deps
+        @traverse dependencies, opts, cb
+
+    p.callback cb
+    p
 
   append: (mod) ->
     for node in mod.ast?.body ? []
@@ -321,7 +337,7 @@ class Module
 
   # walk dependencies calling fn
   walkDependencies: (mod, fn) ->
-    if typeof mod == 'function'
+    if isFunction mod
       [fn, mod] = [mod, @]
 
     # maintain a reference of modules seen to prevent infinite recursion (and for efficiency)
