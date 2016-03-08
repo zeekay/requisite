@@ -79,11 +79,12 @@ module.exports = ->
       err = "Unable to resolve module '#{requiredAs}' required from '#{requiredBy}'"
       throw new Error err
 
-    extension = new RegExp (path.extname absolutePath) + '$'
+    extension   = path.extname absolutePath
+    extensionRe = new RegExp extension + '$'
 
     normalizedPath = normalizePath absolutePath, basePath
     relativePath   = normalizePath absolutePath, cwd
-    requireAs      = normalizedPath.replace extension, ''
+    requireAs      = normalizedPath.replace extensionRe, ''
                                    .replace /\/index$/, ''
 
     # Strip off any leading node_modules paths (we flatten modules)
