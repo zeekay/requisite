@@ -79,7 +79,7 @@ module.exports = ->
       err = "Unable to resolve module '#{requiredAs}' required from '#{requiredBy}'"
       throw new Error err
 
-    extension = path.extname absolutePath
+    extension = new RegExp (path.extname absolutePath) + '$'
 
     normalizedPath = normalizePath absolutePath, basePath
     relativePath   = normalizePath absolutePath, cwd
