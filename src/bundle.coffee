@@ -59,7 +59,9 @@ module.exports = (opts = {}, cb = ->) ->
       return reject err if err?
 
       # Detect async
-      unless opts.async
+      if opts.async? and opts.async
+        mod.async = true
+      else
         for k,v of mod.moduleCache
           if v.async
             opts.async = true
