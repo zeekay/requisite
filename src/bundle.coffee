@@ -8,17 +8,18 @@ Module       = require './module'
 
 createWrapper = (opts) ->
   new Prelude
-    async:         opts.async
     bare:          opts.bare
     globalRequire: opts.globalRequire
     prelude:       opts.prelude
     preludeAsync:  opts.preludeAsync
+    includeAsync:  opts.includeAsync
 
 module.exports = (opts = {}, cb = ->) ->
   if isFunction opts
     [cb, opts] = [opts, {}]
 
   p = new Promise (resolve, reject) ->
+    # Return only prelude
     if opts.preludeOnly
       unless opts.bare
         opts.globalRequire = true
@@ -44,7 +45,8 @@ module.exports = (opts = {}, cb = ->) ->
       basePath:      basePath
       compilers:     opts.compilers
       exclude:       exclude
-      export:        opts.export
+      exported:      opts.exported
+      required:      opts.required
       include:       include
       moduleCache:   opts.moduleCache
       paths:         opts.paths ? []
@@ -63,7 +65,7 @@ module.exports = (opts = {}, cb = ->) ->
       else
         for k,v of mod.moduleCache
           if v.async
-            opts.async = true
+            opts.includeAsync = true
             break
 
       # Add wrapper

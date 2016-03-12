@@ -64,9 +64,9 @@ class Module
     @bare   = opts.bare
     @strict = opts.strict
 
-    # export or require module
-    @export  = opts.export ? false
-    @require = opts.require ? true
+    # Should module be exported or required automatically
+    @exported = opts.exported ? false
+    @required = opts.required ? true
 
     # optional urlRoot to append to async requires
     @urlRoot = opts.urlRoot ? ''
@@ -324,6 +324,7 @@ class Module
 
     for node in @ast.body
       define.body.push node
+
     define.ast
 
   # walk nodes in ast calling fn
@@ -371,11 +372,11 @@ class Module
       toplevel.body.push node
 
     unless @async or @bare
-      if @export
-        for node in (parse "global.#{@export} = require('#{@requireAs}');").body
+      if @exported
+        for node in (parse "global.#{path.basename @requireAs} = require('#{@requireAs}');").body
           toplevel.body.push node
 
-      else if @require
+      else if @required
         for node in (parse "require('#{@requireAs}');").body
           toplevel.body.push node
 

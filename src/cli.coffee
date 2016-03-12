@@ -20,21 +20,23 @@ help = ->
 
     -h, --help                   display this help
     -v, --version                display version
-    -a, --async                  prelude should support async requires
+    -a, --async                  bundle is expected to be required asynchronously
     -b, --bare                   compile without a top-level function wrapper
     -d, --dedupe                 deduplicate modules (when multiple are specified)
-    -e, --export <name>          export module as <name>
     -i, --include <module:path>  force inclusion of module found at path
-    -g, --global                 global require
+    -g, --global                 make prelude require global
+        --export                 automatically export entry module as global
+        --no-require             do not automatically require entry module
     -m, --minify                 minify output
         --minifier               minifier to use
     -o, --output <file>          write bundle to file instead of stdout, {} may be used as a placeholder
     -p, --prelude <file>         file to use as prelude
-        --no-prelude             exclude prelude from bundle
-        --source-map             enable source maps
+        --prelude-async          include async prelude
         --prelude-only           only output prelude
+        --no-prelude             exclude prelude from bundle
     -r, --resolve <module:path>  do not automatically resolve module, use provided path
         --require-as <path>      resolve bundle using providing path
+        --source-map             enable source maps
     -s, --strict                 add "use strict" to each bundled module
         --strip-debug            strip `alert`, `console`, `debugger` statements
     -w, --watch                  write bundle to file and and recompile on file changes
@@ -56,22 +58,24 @@ version = ->
   process.exit 0
 
 opts =
-  async:      false
-  bare:       false
-  base:       null
-  dedupe:     false
-  exclude:    []
-  export:     null
-  files:      []
-  include:    {}
-  minify:     false
-  output:     []
-  prelude:    null
-  resolved:   {}
-  sourceMap:  false
-  strict:     false
-  stripDebug: false
-  watch:      false
+  async:        false
+  bare:         false
+  base:         null
+  dedupe:       false
+  exclude:      []
+  exported:     null
+  files:        []
+  include:      {}
+  minify:       false
+  output:       []
+  prelude:      null
+  preludeAsync: null
+  required:     false
+  resolved:     {}
+  sourceMap:    false
+  strict:       false
+  stripDebug:   false
+  watch:        false
 
 args = process.argv.slice 2
 
@@ -91,8 +95,12 @@ while opt = args.shift()
       opts.globalRequire = true
     when '-x', '--exclude'
       opts.exclude.push args.shift()
-    when '-e', '--export'
-      opts.export = args.shift()
+    when '--require'
+      opts.required = true
+    when '--no-require'
+      opts.required = false
+    when '--export'
+      opts.exported = true
     when '-i', '--include'
       opts.include ?= {}
       [requireAs, absolutePath] = args.shift().split ':'
@@ -109,6 +117,8 @@ while opt = args.shift()
       opts.prelude = false
     when '--source-map'
       opts.sourceMap = true
+    when '--prelude-async', '--async-prelude'
+      opts.includeAsync = true
     when '--prelude-only'
       opts.preludeOnly = true
     when '-r', '--resolve'
