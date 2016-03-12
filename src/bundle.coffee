@@ -41,7 +41,6 @@ module.exports = (opts = {}, cb = ->) ->
 
     # Build module
     mod = new Module opts.entry,
-      bare:          opts.bare
       basePath:      basePath
       compilers:     opts.compilers
       exclude:       exclude
