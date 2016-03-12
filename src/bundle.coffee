@@ -28,16 +28,16 @@ module.exports = (opts = {}, cb = ->) ->
     basePath      = opts.base ? opts.src
     sourceMapRoot = basePath ? '/' + (path.relative process.cwd(), path.dirname opts.entry)
 
-    # Make sure we have sane exclude, include, resolveAs to pass to modules
-    exclude   = toRegex opts.exclude
-    include   = opts.include   ? {}
-    resolveAs = opts.resolveAs ? opts.resolve ? {}
+    # Make sure we have sane exclude, include, resolved to pass to modules
+    exclude  = toRegex opts.exclude
+    include  = opts.include  ? {}
+    resolved = opts.resolved ? {}
 
     # Do not pass empty objects
     unless (Object.keys include).length
       include = null
-    unless (Object.keys resolveAs).length
-      resolveAs = null
+    unless (Object.keys resolve).length
+      resolved = null
 
     # Build module
     mod = new Module opts.entry,
@@ -49,7 +49,7 @@ module.exports = (opts = {}, cb = ->) ->
       include:       include
       moduleCache:   opts.moduleCache
       paths:         opts.paths ? []
-      resolveAs:     resolveAs
+      resolved:      resolved
       sourceMap:     opts.sourceMap ? true
       sourceMapRoot: opts.sourceMapRoot ? sourceMapRoot
       strict:        opts.strict
@@ -70,6 +70,10 @@ module.exports = (opts = {}, cb = ->) ->
       # Add wrapper
       unless opts.bare
         mod.toplevel = createWrapper opts
+
+      # Allow declaration to be overridden
+      if opts.requireAs?
+        mod.requireAs = opts.requireAs
 
       resolve mod
 

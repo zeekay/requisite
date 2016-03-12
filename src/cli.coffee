@@ -34,6 +34,7 @@ help = ->
         --source-map             enable source maps
         --prelude-only           only output prelude
     -r, --resolve <module:path>  do not automatically resolve module, use provided path
+        --require-as <path>      resolve bundle using providing path
     -s, --strict                 add "use strict" to each bundled module
         --strip-debug            strip `alert`, `console`, `debugger` statements
     -w, --watch                  write bundle to file and and recompile on file changes
@@ -66,7 +67,7 @@ opts =
   minify:     false
   output:     []
   prelude:    null
-  resolveAs:  {}
+  resolved:   {}
   sourceMap:  false
   strict:     false
   stripDebug: false
@@ -110,10 +111,11 @@ while opt = args.shift()
       opts.sourceMap = true
     when '--prelude-only'
       opts.preludeOnly = true
-    when '-r', '--resolve', '--resolve-as'
-      opts.resolveAs ?= {}
+    when '-r', '--resolve'
       [requireAs, absolutePath] = args.shift().split ':'
-      opts.resolveAs[requireAs] = absolutePath
+      opts.resolved[requireAs]  = absolutePath
+    when '--require-as'
+      opts.requireAs = args.shift()
     when '-s', '--strict'
       opts.strict = true
     when '--strip-debug'
