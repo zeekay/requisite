@@ -80,7 +80,7 @@ class Define extends Wrapper
 
     @ast = parse """
       // source: #{sourcePath}
-      require.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename) {
+      require.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename, process) {
         #{useStrict}
       });
       """
