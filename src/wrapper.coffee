@@ -24,11 +24,11 @@ class Wrapper
 
 class Prelude extends Wrapper
   constructor: (opts = {}) ->
-    @async         = opts.async         ? true
     @bare          = opts.bare          ? false
     @globalRequire = opts.globalRequire ? false
     @prelude       = opts.prelude       ? (path.join __dirname, 'prelude.js')
     @preludeAsync  = opts.preludeAsync  ? (path.join __dirname, 'prelude-async.js')
+    @includeAsync  = opts.includeAsync  ? false
 
     super()
 
@@ -43,13 +43,13 @@ class Prelude extends Wrapper
       for node in prelude.body
         @body.push node
 
-      if @async
+      if @includeAsync
         preludeAsync = parse fs.readFileSync @preludeAsync
         for node in preludeAsync.body
           @body.push node
 
       if @globalRequire
-        for node in (parse "global.require = require").body
+        for node in (parse 'global.require = require').body
           @body.push node
 
 
