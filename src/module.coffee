@@ -36,25 +36,30 @@ class Module
     # async, whether or not to include in bundled modules
     @async = opts.async ? false
 
-    # excluded modules, forcefully included modules
+    # excluded, skipped modules and forcefully included modules
     @exclude = opts.exclude
-    @include = opts.include
+    @include = opts.include ? {}
+
+    # extend exclude regex
+    exclude = []
 
     # modules only to be included from provided path
-    if opts.resolveAs?
-      @include ?= {}
-      exclude   = []
-
-      for k, v of opts.resolveAs
+    if opts.resolved?
+      for k, v of opts.resolved
         @include[k] = v
         mod = escapeRegex k
         exclude.push "^#{mod}$|^#{mod}\/"
+        # exclude.push "^#{mod}$"
 
-      # Recreate exclude regex to ensure nothing matching module name can be resolved
+    if opts.skip?
+      for s in opts.skip
+        exclude.push escapeRegex s
+
+    # Recreate exclude regex to ensure nothing matching module name can be resolved
+    if exclude.length
       exclude = exclude.join '|'
       if @exclude?
         exclude = @exclude + '|' + exclude
-
       @exclude = new RegExp exclude
 
     # paths to search for modules

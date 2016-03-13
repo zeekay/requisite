@@ -31,6 +31,7 @@ module.exports = (opts = {}, cb = ->) ->
 
     # Make sure we have sane exclude, include, resolved to pass to modules
     exclude  = toRegex opts.exclude
+    skip     = toRegex opts.skip
     include  = opts.include  ? {}
     resolved = opts.resolved ? {}
 
@@ -46,11 +47,12 @@ module.exports = (opts = {}, cb = ->) ->
       compilers:     opts.compilers
       exclude:       exclude
       exported:      opts.exported
-      required:      opts.required
       include:       include
       moduleCache:   opts.moduleCache
       paths:         opts.paths ? []
+      required:      opts.required
       resolved:      resolved
+      skip:          skip
       sourceMap:     opts.sourceMap ? true
       sourceMapRoot: opts.sourceMapRoot ? sourceMapRoot
       strict:        opts.strict
