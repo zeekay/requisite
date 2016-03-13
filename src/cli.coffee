@@ -36,8 +36,9 @@ help = ->
         --no-prelude             exclude prelude from bundle
     -r, --resolve <module:path>  do not automatically resolve module, use provided path
         --require-as <path>      resolve bundle using providing path
+    -s, --skip <path>            skip modules matching path
         --source-map             enable source maps
-    -s, --strict                 add "use strict" to each bundled module
+        --strict                 add "use strict" to each bundled module
         --strip-debug            strip `alert`, `console`, `debugger` statements
     -w, --watch                  write bundle to file and and recompile on file changes
     -x, --exclude <glob|regex>   exclude modules matching glob or regex from being automatically parsed
@@ -72,6 +73,7 @@ opts =
   preludeAsync: null
   required:     false
   resolved:     {}
+  skip:         []
   sourceMap:    false
   strict:       false
   stripDebug:   false
@@ -95,6 +97,8 @@ while opt = args.shift()
       opts.globalRequire = true
     when '-x', '--exclude'
       opts.exclude.push args.shift()
+    when '-s', '--skip'
+      opts.skip.push args.shift()
     when '--require'
       opts.required = true
     when '--no-require'
@@ -122,8 +126,8 @@ while opt = args.shift()
     when '--prelude-only'
       opts.preludeOnly = true
     when '-r', '--resolve'
-      [requireAs, absolutePath] = args.shift().split ':'
-      opts.resolved[requireAs]  = absolutePath
+      [requireAs, modulePath]  = args.shift().split ':'
+      opts.resolved[requireAs] = modulePath
     when '--require-as'
       opts.requireAs = args.shift()
     when '-s', '--strict'

@@ -2,10 +2,14 @@ should = require('chai').should()
 bundle = require '../lib/bundle'
 
 opts =
-  entry: './fixtures/entry',
-  exclude: /excluded/
-  include: ['./fixtures/included']
-  export: 'entry'
+  entry:     './fixtures/entry',
+  export:    'entry'
+
+  exclude:   /excluded/
+  include:   ['./fixtures/included']
+
+  bare:      true
+  sourceMap: false
 
 describe 'bundle', ->
   it 'should bundle all dependencies', (done) ->
