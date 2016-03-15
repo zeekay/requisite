@@ -71,7 +71,7 @@ opts =
   output:       []
   prelude:      null
   preludeAsync: null
-  required:     false
+  required:     true
   resolved:     {}
   skip:         []
   sourceMap:    false
@@ -99,8 +99,6 @@ while opt = args.shift()
       opts.exclude.push args.shift()
     when '-s', '--skip'
       opts.skip.push args.shift()
-    when '--require'
-      opts.required = true
     when '--no-require'
       opts.required = false
     when '--export'
