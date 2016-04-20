@@ -65,8 +65,13 @@ class Module
     # paths to search for modules
     @paths = opts.paths
 
-    # whether to wrap module
+    # whether to wrap module (or deps)
     @bare   = opts.bare
+    @naked  = opts.naked
+
+    # default to bare if naked
+    @bare   = true if @naked
+
     @strict = opts.strict
 
     # Should module be exported or required automatically
@@ -267,6 +272,7 @@ class Module
       dep.resolver    = @resolver
       dep.urlRoot     = @urlRoot
       dep.strict      = @strict
+      dep.naked       = @naked
 
       # create module and parse it
       mod = new Module dep.requiredAs, dep

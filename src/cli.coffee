@@ -22,6 +22,7 @@ help = ->
     -v, --version                display version
     -a, --async                  bundle is expected to be required asynchronously
     -b, --bare                   compile without a top-level function wrapper
+    -n, --naked                  compile without a module-level function wrapper
     -d, --dedupe                 deduplicate modules (when multiple are specified)
     -i, --include <module:path>  force inclusion of module found at path
     -g, --global                 make prelude require global
@@ -68,6 +69,7 @@ opts =
   files:        []
   include:      {}
   minify:       false
+  naked:        false
   output:       []
   prelude:      null
   preludeAsync: null
@@ -91,6 +93,9 @@ while opt = args.shift()
       opts.async = true
     when '-b', '--bare'
       opts.bare = true
+    when '-n', '--naked'
+      opts.bare  = true
+      opts.naked = true
     when '-d', '--dedupe'
       opts.dedupe = true
     when '-g', '--global'

@@ -49,6 +49,7 @@ module.exports = (opts = {}, cb = ->) ->
       exported:      opts.exported
       include:       include
       moduleCache:   opts.moduleCache
+      naked:         opts.naked
       paths:         opts.paths ? []
       required:      opts.required
       resolved:      resolved
