@@ -44,7 +44,7 @@
   "dependencies": {
     "acorn": "3.0.4",
     "assert": "^1.3.0",
-    "broken": "0.1.3",
+    "broken": "0.1.4",
     "browser-request": "^0.3.3",
     "browser-resolve": "1.11.1",
     "browserify-zlib": "^0.1.4",
