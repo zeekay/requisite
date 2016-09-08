@@ -3,6 +3,10 @@ path = require 'path'
 formatErrorMessage = (source, filename, err) ->
   {first_line, last_line, first_column, last_column} = err.location
 
+  # last_line no longer exists randomly
+  unless last_line?
+    last_line = first_line
+
   # get lines from source
   lines = source.split '\n'
 
@@ -11,6 +15,7 @@ formatErrorMessage = (source, filename, err) ->
   lines[first_line] = (l.substring 0, first_column) + '\x1B[91m' + l.substring first_column
 
   # insert end
+
   l = lines[last_line]
 
   if first_line == last_line
