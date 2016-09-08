@@ -1,4 +1,4 @@
-Promise      = require 'broken'
+Promise      = require './promise'
 path         = require 'path'
 toRegex      = require 'to-regexp'
 

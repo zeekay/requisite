@@ -193,14 +193,14 @@ bundleFile = (file, moduleCache = {}) ->
 
   unless opts.watch
     requisite.bundle _opts, (err, bundle) ->
-      return console.error err.stack if err?
+      return console.error (err.formattedMessage ? err.stack) if err?
 
       outputBundle bundle, _opts
       moduleCache = if opts.dedupe then bundle.moduleCache else {}
       bundleFile opts.files.shift(), moduleCache
   else
     requisite.watch _opts, (err, bundle, filename) ->
-      return console.error err.stack if err?
+      return console.error (err.formattedMessage ? err.stack) if err?
 
       if filename?
         console.log "#{formatDate()} - recompiling, #{filename} changed"
