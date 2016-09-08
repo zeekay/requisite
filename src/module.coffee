@@ -2,7 +2,7 @@ fs          = require 'fs'
 path        = require 'path'
 escapeRegex = require 'lodash.escaperegexp'
 
-Promise = require 'broken'
+Promise = require './promise'
 
 codegen        = require './codegen'
 compilers      = require './compilers'
