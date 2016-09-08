@@ -8,7 +8,7 @@ requisite    = require '../lib'
 {formatDate} = require '../lib/utils'
 
 error = (message) ->
-  console.log message
+  console.error message
   process.exit 1
 
 help = ->
