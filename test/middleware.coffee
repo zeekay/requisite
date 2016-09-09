@@ -26,6 +26,7 @@ shouldContainModules = (text, files, done) ->
       cb null
 
   , done
+  return
 
 describe 'middleware', ->
   it 'should serve entry module', (done) ->
@@ -36,6 +37,7 @@ describe 'middleware', ->
         './fixtures/relative-prop.js'
         './fixtures/relative.js'
       ], done
+    return
 
   it.skip 'should serve async modules', (done) ->
     get '/js/async-lambda.js', (err, res) ->
@@ -45,3 +47,4 @@ describe 'middleware', ->
         './test/assets/async-lambda.js'
         './fixtures/nested-async.js'
       ], done
+    return

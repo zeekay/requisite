@@ -15,6 +15,7 @@ describe 'minify', ->
           minify: true
           minifier: 'esmangle'
         done()
+      return
 
   describe '#uglify', ->
     it 'should minify bundle', (done) ->
@@ -28,3 +29,4 @@ describe 'minify', ->
           minify: true
           minifier: 'uglify-js'
         done()
+      return
