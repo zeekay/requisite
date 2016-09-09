@@ -16,8 +16,10 @@ describe 'bundle', ->
     bundle opts, (err, bundle) ->
       bundle.toString().should.contain "require.define('./relative'"
       done()
+    return
 
   it 'should bundle all dependencies and return promise', (done) ->
     bundle(opts).then (bundle) ->
       bundle.toString().should.contain "require.define('./relative'"
       done()
+    return
