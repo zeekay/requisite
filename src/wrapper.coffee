@@ -49,7 +49,7 @@ class Prelude extends Wrapper
           @body.push node
 
       if @globalRequire
-        for node in (parse 'global.require = require').body
+        for node in (parse 'global.require = req').body
           @body.push node
 
 
@@ -80,7 +80,7 @@ class Define extends Wrapper
 
     @ast = parse """
       // source: #{sourcePath}
-      require.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename, process) {
+      rqzt.#{defineType}("#{requireAs}", function(module, exports, __dirname, __filename, process) {
         #{useStrict}
       });
       """
