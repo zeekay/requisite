@@ -211,6 +211,9 @@ class Module
           [required, callback] = node.arguments
 
           if required.type == 'Literal' and isString required.value
+            # Rewrite require
+            node.callee.name = 'rqzt'
+
             # skip excluded modules
             if @exclude?.test required.value
               return true
