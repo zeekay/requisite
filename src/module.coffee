@@ -384,11 +384,11 @@ class Module
 
     unless @async or @bare
       if @exported
-        for node in (parse "global.#{path.basename @requireAs} = require('#{@requireAs}');").body
+        for node in (parse "global.#{path.basename @requireAs} = rqzt('#{@requireAs}');").body
           toplevel.body.push node
 
       else if @required
-        for node in (parse "require('#{@requireAs}');").body
+        for node in (parse "rqzt('#{@requireAs}');").body
           toplevel.body.push node
 
     toplevel.ast

@@ -42,7 +42,10 @@ formatErrorMessage = (source, filename, err) ->
    """
 
 module.exports = (options, callback) ->
-  coffee = require 'coffee-script'
+  try
+    coffee = require 'coffee-script'
+  catch err
+    coffee = require 'coffeescript'
 
   opts =
     bare: true
