@@ -49,7 +49,7 @@ class Prelude extends Wrapper
           @body.push node
 
       if @globalRequire
-        for node in (parse 'global.require = req').body
+        for node in (parse 'global.require = rqzt').body
           @body.push node
 
 
