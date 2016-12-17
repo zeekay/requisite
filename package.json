@@ -95,7 +95,7 @@
     "mocha": "3.1.2",
     "postmortem": "0.2.4",
     "shortcake": "1.1.18",
-    "superagent": "2.3.0",
+    "superagent": "3.3.1",
     "uglify-js": "2.7.4"
   }
 }
