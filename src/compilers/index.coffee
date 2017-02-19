@@ -11,6 +11,8 @@ Object.defineProperties module.exports,
   markdown:   enumerable: true, get: -> require './markdown'
   sass:       enumerable: true, get: -> require './sass'
   stylus:     enumerable: true, get: -> require './stylus'
+  pug:        enumerable: true, get: -> require './pug'
+  pugClient:  enumerable: true, get: -> require './pug-client'
 
   # Various aliases for convenience
   md:         enumerable: true, get: -> require './markdown'
