@@ -268,11 +268,12 @@ class Module
           cached.dependents[@requireAs] = @
         return @traverse dependencies, opts, cb
 
+      dep.compilers   = @compilers
       dep.moduleCache = @moduleCache
-      dep.resolver    = @resolver
-      dep.urlRoot     = @urlRoot
-      dep.strict      = @strict
       dep.naked       = @naked
+      dep.resolver    = @resolver
+      dep.strict      = @strict
+      dep.urlRoot     = @urlRoot
 
       # create module and parse it
       mod = new Module dep.requiredAs, dep
