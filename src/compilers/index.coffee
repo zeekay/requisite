@@ -20,4 +20,4 @@ Object.defineProperties module.exports,
   scss:       enumerable: true, get: -> require './sass'
   styl:       enumerable: true, get: -> require './stylus'
   htm:        enumerable: true, get: -> require './html'
-  xml:        enumerable: true, get: -> require './xml'
+  xml:        enumerable: true, get: -> require './html'
