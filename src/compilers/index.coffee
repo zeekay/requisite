@@ -1,6 +1,6 @@
 Object.defineProperties module.exports,
   coffee:     enumerable: true, get: -> require './coffee'
-  cson:       enumerable: true, get: -> require './cson'
+  cson:       enumerable: true, get: -> require './coffee'
   css:        enumerable: true, get: -> require './css'
   html:       enumerable: true, get: -> require './html'
   jade:       enumerable: true, get: -> require './jade'

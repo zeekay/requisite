@@ -28,7 +28,7 @@ class Module
     @resolver = opts.resolver ? resolver()
 
     # compiler/extension opts
-    @compilers  = opts.compilers ? {}
+    @compilers  = Object.assign {}, compilers, opts.compilers
     @extensions = ('.' + ext for ext of @compilers)
 
     # async, whether or not to include in bundled modules
