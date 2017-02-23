@@ -18,6 +18,6 @@ Object.defineProperties module.exports,
   md:         enumerable: true, get: -> require './markdown'
   mkd:        enumerable: true, get: -> require './markdown'
   scss:       enumerable: true, get: -> require './sass'
-  styl:       enumerable: true, get: -> require './styl'
+  styl:       enumerable: true, get: -> require './stylus'
   htm:        enumerable: true, get: -> require './html'
   xml:        enumerable: true, get: -> require './xml'
