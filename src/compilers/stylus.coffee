@@ -7,6 +7,8 @@ module.exports = (opts, cb) ->
   stylus.render opts.source, filename: opts.filename, (err, css) ->
     return cb err if err?
 
+    source = JSON.stringify css
+
     cb null, """
-    module.exports = #{css}
+    module.exports = #{source};
     """
