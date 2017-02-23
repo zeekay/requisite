@@ -24,7 +24,6 @@ class Module
     # absolute path to module requiring us
     @requiredBy = opts.requiredBy
 
-    # resolver
     @resolver = opts.resolver ? resolver()
 
     # compiler/extension opts
@@ -136,7 +135,7 @@ class Module
         extension = (path.extname @absolutePath).substr 1
 
         fs.readFile @absolutePath, 'utf8', (err, source) =>
-          unless (compiler = @compilers[extension] ? compilers[extension])?
+          unless (compiler = @compilers[extension])?
             throw new Error "No suitable compiler found for #{@absolutePath}"
 
           opts =
