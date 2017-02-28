@@ -1,8 +1,7 @@
 fs          = require 'fs'
 path        = require 'path'
 escapeRegex = require 'lodash.escaperegexp'
-
-Promise = require './promise'
+Promise     = require 'broken'
 
 codegen        = require './codegen'
 compilers      = require './compilers'
@@ -193,7 +192,8 @@ class Module
 
         # parse dependencies into fully-fledged modules
         @traverse dependencies, opts, (err) =>
-          reject err if err?
+          console.log @requireAs
+          return reject err if err?
           resolve @
 
     p.callback cb
