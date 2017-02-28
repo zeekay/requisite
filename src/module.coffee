@@ -192,7 +192,6 @@ class Module
 
         # parse dependencies into fully-fledged modules
         @traverse dependencies, opts, (err) =>
-          console.log @requireAs
           return reject err if err?
           resolve @
 
