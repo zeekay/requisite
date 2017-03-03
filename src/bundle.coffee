@@ -1,4 +1,4 @@
-Promise      = require './promise'
+Promise      = require 'broken'
 path         = require 'path'
 toRegex      = require 'to-regexp'
 
@@ -80,6 +80,5 @@ module.exports = (opts = {}, cb = ->) ->
         mod.requireAs = opts.requireAs
 
       resolve mod
-
   p.callback cb
   p

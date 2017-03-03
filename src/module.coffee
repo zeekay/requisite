@@ -1,8 +1,7 @@
 fs          = require 'fs'
 path        = require 'path'
 escapeRegex = require 'lodash.escaperegexp'
-
-Promise = require './promise'
+Promise     = require 'broken'
 
 codegen        = require './codegen'
 compilers      = require './compilers'
@@ -27,10 +26,7 @@ class Module
     @resolver = opts.resolver ? resolver()
 
     # compiler/extension opts
-    @compilers = compilers
-    for k,v of opts.compilers
-      @compilers[k] = v
-
+    @compilers  = Object.assign {}, compilers, opts.compilers
     @extensions = ('.' + ext for ext of @compilers)
 
     # async, whether or not to include in bundled modules
@@ -196,7 +192,7 @@ class Module
 
         # parse dependencies into fully-fledged modules
         @traverse dependencies, opts, (err) =>
-          reject err if err?
+          return reject err if err?
           resolve @
 
     p.callback cb
@@ -271,11 +267,12 @@ class Module
           cached.dependents[@requireAs] = @
         return @traverse dependencies, opts, cb
 
+      dep.compilers   = @compilers
       dep.moduleCache = @moduleCache
-      dep.resolver    = @resolver
-      dep.urlRoot     = @urlRoot
-      dep.strict      = @strict
       dep.naked       = @naked
+      dep.resolver    = @resolver
+      dep.strict      = @strict
+      dep.urlRoot     = @urlRoot
 
       # create module and parse it
       mod = new Module dep.requiredAs, dep
