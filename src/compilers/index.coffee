@@ -1,6 +1,6 @@
 Object.defineProperties module.exports,
   coffee:     enumerable: true, get: -> require './coffee'
-  cson:       enumerable: true, get: -> require './cson'
+  cson:       enumerable: true, get: -> require './coffee'
   css:        enumerable: true, get: -> require './css'
   html:       enumerable: true, get: -> require './html'
   jade:       enumerable: true, get: -> require './jade'
@@ -11,11 +11,13 @@ Object.defineProperties module.exports,
   markdown:   enumerable: true, get: -> require './markdown'
   sass:       enumerable: true, get: -> require './sass'
   stylus:     enumerable: true, get: -> require './stylus'
+  pug:        enumerable: true, get: -> require './pug'
+  pugClient:  enumerable: true, get: -> require './pug-client'
 
   # Various aliases for convenience
   md:         enumerable: true, get: -> require './markdown'
   mkd:        enumerable: true, get: -> require './markdown'
   scss:       enumerable: true, get: -> require './sass'
-  styl:       enumerable: true, get: -> require './styl'
+  styl:       enumerable: true, get: -> require './stylus'
   htm:        enumerable: true, get: -> require './html'
-  xml:        enumerable: true, get: -> require './xml'
+  xml:        enumerable: true, get: -> require './html'
