@@ -85,7 +85,7 @@
     "brief": "^1.1.0",
     "cake-publish": "0.1.5",
     "cake-test": "0.1.0",
-    "cake-version": "0.1.9",
+    "cake-version": "0.1.10",
     "chai": "3.5.0",
     "co-mocha": "1.2.0",
     "coffee-script": "1.12.4",
