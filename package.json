@@ -81,7 +81,7 @@
     "vm-browserify": "^0.0.4"
   },
   "devDependencies": {
-    "async": "2.1.5",
+    "async": "2.2.0",
     "brief": "^1.1.0",
     "cake-publish": "0.1.5",
     "cake-test": "0.1.0",
