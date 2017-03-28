@@ -52,7 +52,7 @@
     "clone": "^2.0.0",
     "console-browserify": "^1.1.0",
     "constants-browserify": "^1.0.0",
-    "convert-source-map": "1.4.0",
+    "convert-source-map": "1.5.0",
     "crypto-browserify": "^3.11.0",
     "domain-browser": "1.1.7",
     "escodegen": "1.8.1",
