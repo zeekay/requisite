@@ -31,7 +31,7 @@
     "requisite": "./bin/requisite"
   },
   "scripts": {
-    "prepublish": "cake build",
+    "prepublishOnly": "cake build",
     "test": "cake test"
   },
   "engines": {
