@@ -2,13 +2,13 @@
   "name": "requisite",
   "version": "1.19.12",
   "description": "A cosmic javascript bundler.",
-  "homepage": "http://requisitejs.org",
+  "homepage": "https://github.com/zeekay/requisite",
   "repository": {
     "type": "git",
     "url": "https://github.com/zeekay/requisite"
   },
   "bugs": {
-    "url": "http://github.com/zeekay/mastermind/issues"
+    "url": "http://github.com/zeekay/requisite/issues"
   },
   "keywords": [
     "analysis",
@@ -24,11 +24,7 @@
     "require",
     "requirejs"
   ],
-  "author": {
-    "name": "Zach Kelling",
-    "email": "zk@monoid.io",
-    "url": "http://zeekay.io"
-  },
+  "author": "Zach Kelling <z@zeekay.io>",
   "license": "MIT",
   "main": "lib",
   "bin": {
@@ -83,6 +79,7 @@
   "devDependencies": {
     "async": "2.2.0",
     "brief": "^1.1.0",
+    "cake-outdated": "0.1.16",
     "cake-publish": "0.1.6",
     "cake-test": "0.1.0",
     "cake-version": "0.1.12",
