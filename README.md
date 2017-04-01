@@ -1,7 +1,5 @@
 # requisite [![NPM version][npm-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependency Status][dependency-img]][dependency-url] [![Gitter chat][gitter-img]][gitter-url]
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/zeekay/requisite.svg)](https://greenkeeper.io/)
-
 ## Introduction
 Requisite bundles client-side code and templates. It features asynchronous
 module loading for optimal performance of large applications,
