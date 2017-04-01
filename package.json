@@ -42,7 +42,7 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
-    "acorn": "4.0.12",
+    "acorn": "5.0.1",
     "assert": "1.4.1",
     "broken": "0.1.12",
     "browser-request": "^0.3.3",
