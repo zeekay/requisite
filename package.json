@@ -79,7 +79,7 @@
   "devDependencies": {
     "async": "2.2.0",
     "brief": "^1.1.0",
-    "cake-outdated": "0.1.16",
+    "cake-outdated": "0.1.18",
     "cake-publish": "0.1.10",
     "cake-test": "0.1.0",
     "cake-version": "0.1.14",
