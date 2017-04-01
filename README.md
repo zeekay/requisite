@@ -1,6 +1,6 @@
 # requisite [![NPM version][npm-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependency Status][dependency-img]][dependency-url] [![Gitter chat][gitter-img]][gitter-url]
 
-#### Want ES module support? See [Handroll](https://github.com/zeekay/handroll)
+#### Want ES module support? See [Handroll](https://github.com/zeekay/handroll).
 
 ## Introduction
 Requisite bundles client-side code and templates. It features asynchronous
