@@ -38,13 +38,13 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
-    "acorn": "5.0.2",
+    "acorn": "5.0.3",
     "assert": "1.4.1",
-    "broken": "0.1.12",
+    "broken": "0.1.13",
     "browser-request": "^0.3.3",
     "browser-resolve": "1.11.2",
     "browserify-zlib": "^0.1.4",
-    "buffer": "5.0.5",
+    "buffer": "5.0.6",
     "clone": "^2.1.1",
     "console-browserify": "^1.1.0",
     "constants-browserify": "^1.0.0",
@@ -55,7 +55,7 @@
     "estraverse": "4.2.0",
     "events": "1.1.1",
     "http-browserify": "^1.7.0",
-    "https-browserify": "^0.0.1",
+    "https-browserify": "^1.0.0",
     "inherits": "2.0.3",
     "lodash.escaperegexp": "4.1.2",
     "os-browserify": "0.2.1",
@@ -66,7 +66,7 @@
     "readable-stream": "2.2.6",
     "source-map": "0.5.6",
     "stream-browserify": "^2.0.1",
-    "string_decoder": "0.10.31",
+    "string_decoder": "1.0.0",
     "strip-debug": "^1.1.1",
     "timers-browserify": "2.0.2",
     "to-regexp": "^0.1.7",
@@ -77,12 +77,12 @@
     "vm-browserify": "^0.0.4"
   },
   "devDependencies": {
-    "async": "2.2.0",
+    "async": "2.3.0",
     "brief": "^1.1.0",
     "cake-outdated": "0.1.18",
     "cake-publish": "0.1.10",
     "cake-test": "0.1.0",
-    "cake-version": "0.1.14",
+    "cake-version": "0.1.15",
     "chai": "3.5.0",
     "co-mocha": "1.2.0",
     "coffee-script": "1.12.4",
@@ -91,9 +91,9 @@
     "jade": "1.11.0",
     "jade-runtime": "^2.0.0",
     "mocha": "3.2.0",
-    "postmortem": "0.2.4",
+    "postmortem": "0.2.6",
     "shortcake": "1.2.8",
     "superagent": "3.5.2",
-    "uglify-js": "2.8.20"
+    "uglify-js": "2.8.21"
   }
 }
