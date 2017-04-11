@@ -85,7 +85,7 @@
     "cake-version": "0.1.15",
     "chai": "3.5.0",
     "co-mocha": "1.2.0",
-    "coffee-script": "1.12.4",
+    "coffee-script": "1.12.5",
     "esmangle": "1.0.1",
     "express": "4.15.2",
     "jade": "1.11.0",
