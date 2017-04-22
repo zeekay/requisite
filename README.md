@@ -1,4 +1,13 @@
-# requisite [![NPM version][npm-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependency Status][dependency-img]][dependency-url] [![Gitter chat][gitter-img]][gitter-url]
+# requisite
+
+[![npm][npm-img]][npm-url]
+[![build][build-img]][build-url]
+[![dependencies][dependencies-img]][dependencies-url]
+[![downloads][downloads-img]][downloads-url]
+[![license][license-img]][license-url]
+[![chat][chat-img]][chat-url]
+
+> Cosmic JavaScript bundling
 
 #### Want ES module support? See [Handroll](https://github.com/zeekay/handroll).
 
@@ -161,6 +170,9 @@ middleware is provided for exactly this purpose. Express example:
 
 Which would make your bundle available as `http://host/js/main.js`.
 
+## License
+[MIT][license-url]
+
 [browser-field]: https://gist.github.com/defunctzombie/4339901
 [coffeescript]:  http://coffeescript.org
 [commonjs]:      http://nodejs.org/docs/latest/api/modules.html#modules_modules
@@ -168,19 +180,17 @@ Which would make your bundle available as `http://host/js/main.js`.
 [express]:       http://expressjs.com/
 [jade]:          http://jade-lang.com
 
-[travis-img]:     https://img.shields.io/travis/zeekay/requisite.svg
-[travis-url]:     https://travis-ci.org/zeekay/requisite
-[coveralls-img]:  https://coveralls.io/repos/zeekay/requisite/badge.svg?branch=master&service=github
-[coveralls-url]:  https://coveralls.io/github/zeekay/requisite?branch=master
-[dependency-url]: https://david-dm.org/zeekay/requisite
-[dependency-img]: https://david-dm.org/zeekay/requisite.svg
-[npm-img]:        https://img.shields.io/npm/v/requisite.svg
-[npm-url]:        https://www.npmjs.com/package/requisite
-[gitter-img]:     https://badges.gitter.im/join-chat.svg
-[gitter-url]:     https://gitter.im/zeekay/hi
-
-<!-- not used -->
-[downloads-img]:     https://img.shields.io/npm/dm/requisite.svg
-[downloads-url]:     http://badge.fury.io/js/requisite
-[devdependency-img]: https://david-dm.org/zeekay/requisite/dev-status.svg
-[devdependency-url]: https://david-dm.org/zeekay/requisite#info=devDependencies
+[build-img]:        https://img.shields.io/travis/zeekay/requisite.svg
+[build-url]:        https://travis-ci.org/zeekay/requisite
+[chat-img]:         https://badges.gitter.im/join-chat.svg
+[chat-url]:         https://gitter.im/zeekay/hi
+[coverage-img]:     https://coveralls.io/repos/zeekay/requisite/badge.svg?branch=master&service=github
+[coverage-url]:     https://coveralls.io/github/zeekay/requisite?branch=master
+[dependencies-img]: https://david-dm.org/zeekay/requisite.svg
+[dependencies-url]: https://david-dm.org/zeekay/requisite
+[downloads-img]:    https://img.shields.io/npm/dm/requisite.svg
+[downloads-url]:    http://badge.fury.io/js/requisite
+[license-img]:      https://img.shields.io/npm/l/requisite.svg
+[license-url]:      https://github.com/zeekay/requisite/blob/master/LICENSE
+[npm-img]:          https://img.shields.io/npm/v/requisite.svg
+[npm-url]:          https://www.npmjs.com/package/requisite
