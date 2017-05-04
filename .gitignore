@@ -3,3 +3,4 @@ docs/
 lib/
 npm-debug.log
 .test
+.sake
