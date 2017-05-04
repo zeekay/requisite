@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "async": "2.3.0",
-    "brief": "^1.1.0",
+    "brief": "1.1.1",
     "chai": "3.5.0",
     "co-mocha": "1.2.0",
     "coffee-script": "1.12.5",
