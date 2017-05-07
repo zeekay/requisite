@@ -90,7 +90,7 @@
     "jade-runtime": "^2.0.0",
     "mocha": "3.3.0",
     "postmortem": "0.2.6",
-    "sake-cli": "0.5.5",
+    "sake-cli": "0.5.6",
     "sake-outdated": "0.1.22",
     "sake-publish": "0.1.12",
     "sake-version": "0.1.19",
