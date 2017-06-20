@@ -29,7 +29,7 @@ builtins =
   repl:                 null
   request:              'browser-request/index.js'
   stream:               'stream-browserify/index.js'
-  string_decoder:       'string_decoder/index.js'
+  string_decoder:       'string_decoder/lib/string_decoder.js'
   sys:                  'util/util.js'
   timers:               'timers-browserify/main.js'
   tls:                  null
