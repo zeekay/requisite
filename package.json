@@ -46,7 +46,7 @@
     "browser-request": "^0.3.3",
     "browser-resolve": "1.11.2",
     "browserify-zlib": "^0.2.0",
-    "buffer": "5.0.6",
+    "buffer": "5.0.7",
     "clone": "^2.1.1",
     "console-browserify": "^1.1.0",
     "constants-browserify": "^1.0.0",
