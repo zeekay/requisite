@@ -85,7 +85,7 @@
     "co-mocha": "1.2.0",
     "coffee-script": "1.12.6",
     "esmangle": "1.0.1",
-    "express": "4.15.3",
+    "express": "5.0.0-alpha.6",
     "jade": "1.11.0",
     "jade-runtime": "^2.0.0",
     "mocha": "3.4.2",
