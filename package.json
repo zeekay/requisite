@@ -82,7 +82,7 @@
     "async": "2.4.1",
     "brief": "1.1.1",
     "chai": "4.0.2",
-    "co-mocha": "1.2.0",
+    "co-mocha": "1.2.1",
     "coffee-script": "1.12.6",
     "esmangle": "1.0.1",
     "express": "4.15.3",
