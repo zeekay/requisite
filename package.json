@@ -52,7 +52,7 @@
     "constants-browserify": "^1.0.0",
     "convert-source-map": "1.5.0",
     "crypto-browserify": "^3.11.0",
-    "domain-browser": "1.1.7",
+    "domain-browser": "1.2.0",
     "escodegen": "1.8.1",
     "estraverse": "4.2.0",
     "events": "1.1.1",
