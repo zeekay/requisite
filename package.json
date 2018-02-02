@@ -55,7 +55,7 @@
     "domain-browser": "1.1.7",
     "escodegen": "1.8.1",
     "estraverse": "4.2.0",
-    "events": "1.1.1",
+    "events": "2.0.0",
     "http-browserify": "^1.7.0",
     "https-browserify": "1.0.0",
     "inherits": "2.0.3",
