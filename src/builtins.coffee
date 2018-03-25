@@ -14,7 +14,7 @@ builtins =
   crypto:               'crypto-browserify/index.js'
   dgram:                null
   dns:                  null
-  domain:               'domain-browser/index.js'
+  domain:               'domain-browser/source/index.js'
   events:               'events/events.js'
   fs:                   null
   http:                 'http-browserify/index.js'
