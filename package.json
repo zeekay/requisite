@@ -92,7 +92,7 @@
     "postmortem": "0.2.6",
     "sake-cli": "0.6.3",
     "sake-outdated": "^0.2.1",
-    "sake-publish": "0.1.16",
+    "sake-publish": "0.1.17",
     "sake-version": "0.1.19",
     "superagent": "3.8.2",
     "uglify-js": "3.3.16"
