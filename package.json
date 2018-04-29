@@ -94,7 +94,7 @@
     "sake-outdated": "^0.2.1",
     "sake-publish": "0.1.16",
     "sake-version": "0.1.19",
-    "superagent": "3.8.2",
+    "superagent": "3.8.3",
     "uglify-js": "3.3.16"
   }
 }
