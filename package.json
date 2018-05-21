@@ -79,7 +79,7 @@
     "vm-browserify": "^1.0.0"
   },
   "devDependencies": {
-    "async": "2.6.0",
+    "async": "2.6.1",
     "brief": "1.1.5",
     "chai": "4.1.2",
     "co-mocha": "1.2.2",
