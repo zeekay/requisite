@@ -44,7 +44,7 @@
     "assert": "1.4.1",
     "broken": "0.1.13",
     "browser-request": "^0.3.3",
-    "browser-resolve": "1.11.2",
+    "browser-resolve": "1.11.3",
     "browserify-zlib": "^0.2.0",
     "buffer": "5.1.0",
     "clone": "^2.1.2",
