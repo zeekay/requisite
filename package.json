@@ -66,7 +66,7 @@
     "punycode": "2.1.0",
     "querystring-es3": "0.2.1",
     "readable-stream": "2.3.6",
-    "source-map": "0.7.2",
+    "source-map": "0.5.6",
     "stream-browserify": "2.0.1",
     "string_decoder": "1.1.1",
     "strip-debug": "3.0.0",
@@ -96,5 +96,26 @@
     "sake-version": "0.1.19",
     "superagent": "3.8.2",
     "uglify-js": "3.3.20"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "async",
+      "brief",
+      "chai",
+      "co-mocha",
+      "coffee-script",
+      "esmangle",
+      "express",
+      "jade",
+      "jade-runtime",
+      "mocha",
+      "postmortem",
+      "sake-cli",
+      "sake-outdated",
+      "sake-publish",
+      "sake-version",
+      "superagent",
+      "uglify-js"
+    ]
   }
 }
