@@ -74,7 +74,7 @@
     "to-regexp": "0.1.7",
     "tty-browserify": "0.0.1",
     "url": "0.11.0",
-    "util": "0.11.0",
+    "util": "0.11.1",
     "vigil": "0.7.3",
     "vm-browserify": "1.1.0"
   },
