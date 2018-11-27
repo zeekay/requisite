@@ -68,7 +68,7 @@
     "readable-stream": "2.3.6",
     "source-map": "0.7.3",
     "stream-browserify": "2.0.1",
-    "string_decoder": "1.1.1",
+    "string_decoder": "1.2.0",
     "strip-debug": "3.0.0",
     "timers-browserify": "2.0.10",
     "to-regexp": "0.1.7",
