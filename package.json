@@ -67,7 +67,7 @@
     "querystring-es3": "0.2.1",
     "readable-stream": "2.3.6",
     "source-map": "0.7.3",
-    "stream-browserify": "2.0.1",
+    "stream-browserify": "3.0.0",
     "string_decoder": "1.1.1",
     "strip-debug": "3.0.0",
     "timers-browserify": "2.0.10",
